@@ -1,0 +1,20 @@
+{
+  "name": "formata",
+  "module": "index.ts",
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "cd packages/playground && bun run dev",
+    "build": "cd packages/core && bun run build"
+  },
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
