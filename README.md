@@ -34,24 +34,26 @@ It works everywhere — React, Svelte, Vue, or plain HTML — because it’s bui
 ---
 
 ## Architecture overview
+```
+ ┌────────────────────────────┐
+ │       Your App (any)       │
+ │  React / Svelte / Vanilla  │
+ └────────────┬───────────────┘
+              │
+      (Web Components)
+              │
+ ┌────────────┴────────────┐
+ │   Form Renderer Core    │ ← parses JSON Schema + UI hints
+ │    - Layout engine      │
+ │    - Field registry     │
+ │    - Validation (AJV)   │
+ └────────────┬────────────┘
+              │
+        (Schema + Data)
+              │
+   ┌──────────┴──────────┐
+   │ Mongo / PocketBase  │
+   │  or REST / GraphQL  │
+   └─────────────────────┘
 
-┌────────────────────────────┐
-│ Your App (any) │
-│ React / Svelte / Vanilla │
-└────────────┬───────────────┘
-│
-(Web Components)
-│
-┌────────────┴────────────┐
-│ Form Renderer Core │ ← parses JSON Schema + UI hints
-│ - Layout engine │
-│ - Field registry │
-│ - Validation (AJV) │
-└────────────┬────────────┘
-│
-(Schema + Data)
-│
-┌──────────┴──────────┐
-│ Mongo / PocketBase │
-│ or REST / GraphQL │
-└─────────────────────┘
+```
