@@ -50,6 +50,7 @@
 		"@sjsf/schemasafe-validator": "^3.2.1",
 		"@sjsf/shadcn4-theme": "^3.2.1",
 		"@sjsf/skeleton4-theme": "^3.2.1",
+		"@skeletonlabs/skeleton-svelte": "^4.12.0",
 		"@svar-ui/svelte-core": "^2.4.0",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
 		"ajv": "^8.17.1",
