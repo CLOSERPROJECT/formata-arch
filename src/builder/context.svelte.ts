@@ -73,10 +73,6 @@ type Sample = {
 	schema: Schema;
 	uiSchema: UiSchema;
 	initialValue: FormValue;
-	validator: Validator;
-	theme: Theme;
-	resolver: Resolver;
-	icons: Icons;
 	html5Validation: boolean;
 };
 
@@ -106,10 +102,6 @@ export interface NodeIssue {
 
 export interface BuilderState1 {
 	rootNode?: CustomizableNode;
-	theme: Theme;
-	resolver: Resolver;
-	icons: Icons;
-	validator: Validator;
 	ignoreWarnings: boolean;
 	html5Validation: boolean;
 	route: Route;
@@ -172,10 +164,18 @@ export class BuilderContext {
 		}
 	});
 
-	theme = $state.raw<Theme>(ActualTheme.Shadcn4);
-	resolver = $state.raw(Resolver.Basic);
-	icons = $state.raw(Icons.None);
-	validator = $state.raw(Validator.Ajv);
+	get theme(): Theme {
+		return ActualTheme.Shadcn4;
+	}
+	get resolver(): Resolver {
+		return Resolver.Basic;
+	}
+	get icons(): Icons {
+		return Icons.Lucide;
+	}
+	get validator(): Validator {
+		return Validator.Ajv;
+	}
 
 	readonly availableCustomizableNodeTypes = $derived(THEME_CUSTOMIZABLE_NODE_TYPES[this.theme]);
 	readonly availableRangeValueTypes = $derived(THEME_RANGE_VALUE_TYPES[this.theme]);
@@ -315,7 +315,6 @@ export class BuilderContext {
 				theme: this.theme,
 				schema: this.schema,
 				uiSchema: this.uiSchema,
-				validator: this.validator,
 				html5Validation: this.html5Validation
 			})
 		)
@@ -328,8 +327,7 @@ export class BuilderContext {
 				fileFieldMode: this.#uiSchemaOutput.fileFieldMode,
 				resolver: this.resolver,
 				theme: this.theme,
-				icons: this.icons,
-				validator: this.validator
+				icons: this.icons
 			})
 		)
 	);
@@ -345,8 +343,7 @@ export class BuilderContext {
 			buildInstallSh({
 				widgets: this.#uiSchemaOutput.widgets,
 				theme: this.theme,
-				icons: this.icons,
-				validator: this.validator
+				icons: this.icons
 			})
 		)
 	);
@@ -395,7 +392,6 @@ export class BuilderContext {
 				return;
 			}
 			const snap = $state.snapshot({
-				theme: this.theme,
 				ignoreWarnings: this.ignoreWarnings,
 				rootNode: this.rootNode
 			});
@@ -413,7 +409,14 @@ export class BuilderContext {
 	}
 
 	importState(data: State) {
-		Object.assign(this, data);
+		const { rootNode, ignoreWarnings, html5Validation, route, livePreview } = data;
+		this.rootNode = rootNode;
+		this.ignoreWarnings = ignoreWarnings;
+		this.html5Validation = html5Validation;
+		this.route = route;
+		if ('livePreview' in data) {
+			this.livePreview = data.livePreview;
+		}
 		if (this.route.name === RouteName.Preview) {
 			this.build();
 		}
@@ -422,13 +425,9 @@ export class BuilderContext {
 	exportState(): State {
 		return $state.snapshot({
 			rootNode: this.rootNode,
-			icons: this.icons,
 			livePreview: this.livePreview,
 			ignoreWarnings: this.ignoreWarnings,
-			resolver: this.resolver,
 			route: this.route,
-			theme: this.theme,
-			validator: this.validator,
 			html5Validation: this.html5Validation
 		});
 	}
@@ -438,10 +437,6 @@ export class BuilderContext {
 			schema: this.schema,
 			uiSchema: this.uiSchema ?? {},
 			initialValue: null,
-			validator: this.validator,
-			theme: ActualTheme.Shadcn4,
-			resolver: this.resolver,
-			icons: this.icons,
 			html5Validation: true
 		};
 	}

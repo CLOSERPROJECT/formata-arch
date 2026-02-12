@@ -7,8 +7,6 @@
 	import { CopyButton } from '$lib/components/copy-button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import { THEME_TITLES, THEMES } from '$lib/sjsf/theme.js';
-	import Select from '$lib/components/select.svelte';
 	import { encodeJson } from '$lib/url.js';
 
 	import { PreviewSubRouteName, RouteName } from '../model.js';
@@ -24,16 +22,6 @@
 
 <Container class="mb-4 flex flex-col gap-4 p-3">
 	<div class="text-md py-2 font-medium">Form options</div>
-	<div class="flex flex-col gap-1.5">
-		<Label for={`${uniqueId}-theme`}>Theme</Label>
-		<Select
-			class="w-full"
-			labelId="{uniqueId}-theme"
-			bind:value={ctx.theme}
-			items={THEMES}
-			labels={THEME_TITLES}
-		/>
-	</div>
 	<div class="flex items-center gap-2">
 		<Checkbox id={`${uniqueId}-live`} bind:checked={ctx.livePreview} />
 		<Label class="text-base" for={`${uniqueId}-live`}>Live preview</Label>
