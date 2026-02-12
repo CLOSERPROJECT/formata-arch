@@ -4,7 +4,6 @@ import type { FormValue, Schema, SchemaValue, UiSchema } from '@sjsf/form';
 import { addFormComponents, createFormValidator } from '@sjsf/ajv8-validator';
 import { DragDropManager, Draggable, Droppable } from '@dnd-kit/dom';
 import type { HighlighterCore } from 'shiki/core';
-import type { Sample } from '$apps/playground2/src/core/sample.js';
 
 import {
 	createNode,
@@ -69,6 +68,17 @@ type UniqueId = string | number;
 export interface DndData {
 	node: Node;
 }
+
+type Sample = {
+	schema: Schema;
+	uiSchema: UiSchema;
+	initialValue: FormValue;
+	validator: Validator;
+	theme: Theme;
+	resolver: Resolver;
+	icons: Icons;
+	html5Validation: boolean;
+};
 
 export interface DroppableOptions<N extends Node> {
 	accept: (node: Node) => node is N;
@@ -429,10 +439,10 @@ export class BuilderContext {
 			uiSchema: this.uiSchema ?? {},
 			initialValue: null,
 			validator: this.validator,
-			theme: this.theme === ActualTheme.Daisy5 ? 'daisy5' : this.theme,
+			theme: ActualTheme.Shadcn4,
 			resolver: this.resolver,
 			icons: this.icons,
-			html5Validation: this.html5Validation
+			html5Validation: true
 		};
 	}
 
