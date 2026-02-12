@@ -3,10 +3,7 @@
 
 	import Code, { type CodeFile } from '$lib/components/code.svelte';
 
-	import DeviconPlainSvelte from '~icons/devicon-plain/svelte';
-	import DeviconPlainTypescript from '~icons/devicon-plain/typescript';
-	import DeviconPlainBash from '~icons/devicon-plain/bash';
-	import DeviconPlainCss from '~icons/devicon-plain/css';
+	import DeviconPlainHtml from '~icons/devicon-plain/html5';
 	import MdiCodeJson from '~icons/mdi/code-json';
 
 	import { getBuilderContext } from '../context.svelte.js';
@@ -18,48 +15,22 @@
 	const ctx = getBuilderContext();
 
 	const ROUTE_FILES: Record<PreviewSubRouteName, () => CodeFile[]> = {
-		[PreviewSubRouteName.Code]: () => {
-			const files: CodeFile[] = [
-				{
-					Icon: DeviconPlainSvelte,
-					title: 'form.svelte',
-					get content() {
-						return ctx.formDotSvelte;
-					}
-				},
-				{
-					Icon: DeviconPlainTypescript,
-					title: 'defaults.ts',
-					get content() {
-						return ctx.formDefaults;
-					}
-				},
-				{
-					Icon: DeviconPlainBash,
-					title: 'install.sh',
-					get content() {
-						return ctx.installSh;
-					}
+		[PreviewSubRouteName.Code]: () => [
+			{
+				Icon: DeviconPlainHtml,
+				title: 'index.html',
+				get content() {
+					return ctx.formataFormHtml;
 				}
-			];
-			if (ctx.appCss.length > 0) {
-				files.splice(2, 0, {
-					Icon: DeviconPlainCss,
-					title: 'app.css',
-					get content() {
-						return ctx.appCss;
-					}
-				});
 			}
-			return files;
-		},
+		],
 		[PreviewSubRouteName.Schema]: () => {
 			const files = [
 				{
 					Icon: MdiCodeJson,
 					title: 'schema.json',
 					get content() {
-						return ctx.highlight('json', JSON.stringify(ctx.schema, null, 2));
+						return ctx.highlight('json', JSON.stringify(ctx.schema, null, '\t'));
 					}
 				}
 			];
@@ -68,7 +39,7 @@
 					Icon: MdiCodeJson,
 					title: 'ui-schema.json',
 					get content() {
-						return ctx.highlight('json', JSON.stringify(ctx.uiSchema ?? {}, null, 2));
+						return ctx.highlight('json', JSON.stringify(ctx.uiSchema ?? {}, null, '\t'));
 					}
 				});
 			}

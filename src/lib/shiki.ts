@@ -9,6 +9,7 @@ const bundledLanguages = {
   typescript: () => import("@shikijs/langs/typescript"),
   bash: () => import("@shikijs/langs/bash"),
   css: () => import("@shikijs/langs/css"),
+  html: () => import("@shikijs/langs/html"),
 };
 
 /** The languages configured for the highlighter */

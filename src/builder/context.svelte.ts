@@ -26,13 +26,12 @@ import {
 	buildUiSchema,
 	type Scope,
 	type SchemaBuilderContext,
-	isFileNode,
 	createObjectProperty
 } from '$lib/builder/index.js';
 import { ActualTheme, mergeUiSchemas, type Theme, type WidgetType } from '$lib/sjsf/theme.js';
 import { Validator } from '$lib/sjsf/validators.js';
 import { Resolver } from '$lib/sjsf/resolver.js';
-import { Icons, ICONS_APP_CSS } from '$lib/sjsf/icons.js';
+import { Icons } from '$lib/sjsf/icons.js';
 import { highlight, type SupportedLanguage } from '$lib/shiki.js';
 import { mergeSchemas } from '$lib/json-schema.js';
 import { addBuilderFormats } from '$lib/ajv.js';
@@ -42,10 +41,6 @@ import {
 	CHECKBOXES_WIDGET_OPTIONS,
 	DEFAULT_COMPONENTS,
 	DEFAULT_WIDGETS,
-	FILE_FIELD_MULTIPLE_MODE,
-	FILE_FIELD_NATIVE_MULTIPLE_MODE,
-	FILE_FIELD_NATIVE_SINGLE_MODE,
-	FILE_FIELD_SINGLE_MODE,
 	RADIO_WIDGET_OPTIONS,
 	RouteName,
 	TEXT_WIDGET_OPTIONS,
@@ -53,13 +48,12 @@ import {
 } from './model.js';
 import type { NodeContext } from './node-context.js';
 import {
-	THEME_APP_CSS,
 	THEME_CUSTOMIZABLE_NODE_TYPES,
 	THEME_RANGE_VALUE_TYPES,
 	THEME_SCHEMAS,
 	THEME_UI_SCHEMAS
 } from './theme-schemas.js';
-import { buildFormDefaults, buildFormDotSvelte, buildInstallSh, join } from './code-builders.js';
+import { buildFormataFormHtml } from './code-builders.js';
 
 export const [getBuilderContext, setBuilderContext] = createContext<BuilderContext>();
 
@@ -245,8 +239,6 @@ export class BuilderContext {
 		this.theme;
 		this.resolver;
 		return untrack(() => {
-			let fileFieldMode = 0;
-			const widgets = new Set<WidgetType>();
 			const uiSchema =
 				this.rootNode &&
 				this.#buildOutput &&
@@ -255,17 +247,7 @@ export class BuilderContext {
 						propertyNames: this.#buildOutput.propertyNames,
 						propertiesOrder: [],
 						uiComponents: (node) => {
-							if (isFileNode(node)) {
-								fileFieldMode |= node.options.native
-									? node.options.multiple
-										? FILE_FIELD_NATIVE_MULTIPLE_MODE
-										: FILE_FIELD_NATIVE_SINGLE_MODE
-									: node.options.multiple
-										? FILE_FIELD_MULTIPLE_MODE
-										: FILE_FIELD_SINGLE_MODE;
-							}
 							const widget = node.options.widget as WidgetType;
-							widgets.add(widget);
 							const components = Object.assign(
 								{} satisfies UiSchema['ui:components'],
 								DEFAULT_COMPONENTS[this.resolver][node.type](node as never)
@@ -303,49 +285,13 @@ export class BuilderContext {
 					},
 					this.rootNode
 				);
-			return { uiSchema, widgets, fileFieldMode };
+			return { uiSchema };
 		});
 	});
 	readonly uiSchema = $derived(this.#uiSchemaOutput.uiSchema);
 
-	readonly formDotSvelte = $derived(
-		this.highlight(
-			'svelte',
-			buildFormDotSvelte({
-				theme: this.theme,
-				schema: this.schema,
-				uiSchema: this.uiSchema,
-				html5Validation: this.html5Validation
-			})
-		)
-	);
-	readonly formDefaults = $derived(
-		this.highlight(
-			'typescript',
-			buildFormDefaults({
-				widgets: this.#uiSchemaOutput.widgets,
-				fileFieldMode: this.#uiSchemaOutput.fileFieldMode,
-				resolver: this.resolver,
-				theme: this.theme,
-				icons: this.icons
-			})
-		)
-	);
-	readonly appCss = $derived.by(() => {
-		const content = join(THEME_APP_CSS[this.theme], ICONS_APP_CSS[this.icons]);
-		return (
-			content && this.highlight('css', `/* Add these lines to the app.css file */\n${content}`)
-		);
-	});
-	readonly installSh = $derived(
-		this.highlight(
-			'bash',
-			buildInstallSh({
-				widgets: this.#uiSchemaOutput.widgets,
-				theme: this.theme,
-				icons: this.icons
-			})
-		)
+	readonly formataFormHtml = $derived(
+		this.highlight('html', buildFormataFormHtml({ schema: this.schema, uiSchema: this.uiSchema }))
 	);
 
 	constructor(private readonly highlighter: HighlighterCore) {
