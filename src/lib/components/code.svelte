@@ -2,7 +2,10 @@
 	export interface CodeFile {
 		Icon: Component<SVGAttributes<SVGSVGElement>>;
 		title: string;
+		/** Rendered content (e.g. Shiki HTML) for display */
 		content: string;
+		/** Plain text to copy to clipboard. If omitted, copy uses content (may include HTML). */
+		copyText?: string;
 	}
 </script>
 
@@ -47,7 +50,7 @@
 					{file.title}</Button
 				>
 			{/each}
-			<CopyButton class="ml-auto" size="sm" variant="ghost" text={() => selected.content} />
+			<CopyButton class="ml-auto" size="sm" variant="ghost" text={() => selected.copyText ?? selected.content} />
 		</div>
 		<div>
 			{@html selected.content}

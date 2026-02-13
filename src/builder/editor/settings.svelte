@@ -12,12 +12,29 @@
 	import { PreviewSubRouteName, RouteName } from '../model.js';
 	import { getBuilderContext } from '../context.svelte.js';
 	import Container from '../container.svelte';
-
-	import NodeSettings from './node-settings.svelte';
+	import { themeManager } from '../../theme.svelte.js';
 
 	const ctx = getBuilderContext();
 	const uniqueId = $props.id();
 	const selected = $derived(ctx.selectedNode);
+
+	type FormataFormElement = HTMLElement & {
+		schema?: object;
+		uiSchema?: object;
+		darkMode?: boolean;
+	};
+	let formataEl = $state<FormataFormElement>();
+
+	const schema = $derived(selected && isCustomizableNode(selected) ? ctx.nodeSchema(selected) : undefined);
+	const uiSchema = $derived(selected && isCustomizableNode(selected) ? ctx.nodeUiSchema(selected) : undefined);
+	const hasUiSchema = $derived(uiSchema != null && Object.keys(uiSchema).length > 0);
+
+	$effect(() => {
+		if (!formataEl || !schema) return;
+		formataEl.schema = schema;
+		formataEl.uiSchema = hasUiSchema ? uiSchema : undefined;
+		formataEl.darkMode = themeManager.isDark;
+	});
 </script>
 
 <Container class="mb-4 flex flex-col gap-4 p-3">
@@ -68,6 +85,8 @@
 </Container>
 {#if selected && isCustomizableNode(selected)}
 	<Container class="p-3">
-		<NodeSettings bind:node={() => selected, (n) => ctx.updateSelectedNode(n)} />
+		{#key selected.id}
+			<formata-form bind:this={formataEl}></formata-form>
+		{/key}
 	</Container>
 {/if}

@@ -24,6 +24,7 @@ import {
 import { STRING_NODE_OPTIONS_SCHEMA, type StringNode } from './string-node.js';
 import { NUMBER_NODE_OPTIONS_SCHEMA, type NumberNode } from './number-node.js';
 import { RANGE_NODE_OPTIONS_SCHEMA, type RangeNode } from './range-node.js';
+import { QR_NODE_OPTIONS_SCHEMA, type QrNode } from './qr-node.js';
 
 export interface PredicateNode extends AbstractNode<NodeType.Predicate> {
 	operator: OperatorNode | undefined;
@@ -465,6 +466,7 @@ export type Node =
 	| FileNode
 	| TagsNode
 	| RangeNode
+	| QrNode
 	| PredicateNode
 	| OperatorNode;
 
@@ -485,7 +487,8 @@ export const CUSTOMIZABLE_TYPE_TITLES: Record<CustomizableNodeType, string> = {
 	[NodeType.Boolean]: 'Boolean',
 	[NodeType.File]: 'File',
 	[NodeType.Tags]: 'Tags',
-	[NodeType.Range]: 'Range'
+	[NodeType.Range]: 'Range',
+	[NodeType.QrCode]: 'QR code'
 };
 
 export const CUSTOMIZABLE_TYPES = Object.keys(CUSTOMIZABLE_TYPE_TITLES) as CustomizableNodeType[];
@@ -503,7 +506,8 @@ export const NODE_OPTIONS_SCHEMAS: {
 	[NodeType.Boolean]: mergeSchemas(COMMON_OPTIONS_SCHEMA, BOOLEAN_NODE_OPTIONS_SCHEMA),
 	[NodeType.File]: mergeSchemas(COMMON_OPTIONS_SCHEMA, FILE_NODE_OPTIONS_SCHEMA),
 	[NodeType.Tags]: mergeSchemas(COMMON_OPTIONS_SCHEMA, TAGS_NODE_OPTIONS_SCHEMA),
-	[NodeType.Range]: mergeSchemas(COMMON_OPTIONS_SCHEMA, RANGE_NODE_OPTIONS_SCHEMA)
+	[NodeType.Range]: mergeSchemas(COMMON_OPTIONS_SCHEMA, RANGE_NODE_OPTIONS_SCHEMA),
+	[NodeType.QrCode]: mergeSchemas(COMMON_OPTIONS_SCHEMA, QR_NODE_OPTIONS_SCHEMA)
 };
 
 const COMMON_UI_SCHEMA: UiSchemaRoot = {
@@ -622,5 +626,8 @@ export const NODE_OPTIONS_UI_SCHEMAS = {
 		'ui:options': order('widget', 'native', 'multiple', '*', 'help')
 	}),
 	[NodeType.Tags]: COMMON_UI_SCHEMA,
-	[NodeType.Range]: COMMON_UI_SCHEMA
+	[NodeType.Range]: COMMON_UI_SCHEMA,
+	[NodeType.QrCode]: mergeUiSchemas(COMMON_UI_SCHEMA, {
+		'ui:options': order('placeholder', 'help', 'default', '*')
+	})
 } satisfies Record<CustomizableNodeType, UiSchemaRoot>;

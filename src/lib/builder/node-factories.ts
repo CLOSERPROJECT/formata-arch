@@ -18,6 +18,7 @@ import { NUMBER_NODE_OPTIONS_SCHEMA } from './number-node.js';
 import { OperatorType } from './operator.js';
 import { createRangeNode, RANGE_NODE_OPTIONS_SCHEMA, RangeValueType } from './range-node.js';
 import { STRING_NODE_OPTIONS_SCHEMA } from './string-node.js';
+import { QR_NODE_OPTIONS_SCHEMA } from './qr-node.js';
 
 function nodeId(): NodeId {
 	return crypto.randomUUID() as NodeId;
@@ -130,7 +131,16 @@ const NODE_FACTORIES: {
 			title: 'Range field',
 			required: true,
 			widget: RANGE_NODE_OPTIONS_SCHEMA.properties.widget.default
-		})
+		}),
+	[NodeType.QrCode]: (id) => ({
+		id,
+		type: NodeType.QrCode,
+		options: {
+			title: 'QR code',
+			required: true,
+			widget: QR_NODE_OPTIONS_SCHEMA.properties.widget.default
+		}
+	})
 };
 
 export function createNode<T extends CustomizableNodeType>(

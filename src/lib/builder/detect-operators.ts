@@ -43,7 +43,8 @@ const NODE_TO_OPERATORS: {
 	[NodeType.Boolean]: noExtraOperators,
 	[NodeType.File]: (node) => (node.options.multiple ? filesOperators : empty),
 	[NodeType.Tags]: multiEnumOperatorsConstant,
-	[NodeType.Range]: objectOperators
+	[NodeType.Range]: objectOperators,
+	[NodeType.QrCode]: stringOperators
 };
 
 const COMMON_OPERATORS = new Set([

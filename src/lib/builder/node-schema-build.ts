@@ -485,6 +485,14 @@ const NODE_SCHEMA_BUILDERS: {
 			schema.required = ['start', 'end'];
 		}
 		return assignSchemaOptions(schema, options);
+	},
+	[NodeType.QrCode]: (_, { options }) => {
+		return assignSchemaOptions(
+			{
+				type: 'string'
+			},
+			options
+		);
 	}
 };
 

@@ -191,7 +191,8 @@ const NODE_UI_SCHEMA_BUILDERS: {
 	[NodeType.Range]: (ctx, node) =>
 		leafNode(ctx, node, {
 			collectErrors: true
-		})
+		}),
+	[NodeType.QrCode]: leafNode
 };
 
 export function buildUiSchema(ctx: UiSchemaBuilderContext, node: Node): UiSchema | undefined {

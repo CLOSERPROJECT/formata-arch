@@ -7,6 +7,7 @@
 	import MdiCodeJson from '~icons/mdi/code-json';
 
 	import { getBuilderContext } from '../context.svelte.js';
+	import { buildFormataFormHtml } from '../code-builders.js';
 	import { PreviewSubRouteName, type PreviewRoute } from '../model.js';
 	import Form from './form.svelte';
 
@@ -21,6 +22,9 @@
 				title: 'index.html',
 				get content() {
 					return ctx.formataFormHtml;
+				},
+				get copyText() {
+					return buildFormataFormHtml({ schema: ctx.schema, uiSchema: ctx.uiSchema });
 				}
 			}
 		],
@@ -31,6 +35,9 @@
 					title: 'schema.json',
 					get content() {
 						return ctx.highlight('json', JSON.stringify(ctx.schema, null, '\t'));
+					},
+					get copyText() {
+						return JSON.stringify(ctx.schema, null, '\t');
 					}
 				}
 			];
@@ -40,6 +47,9 @@
 					title: 'ui-schema.json',
 					get content() {
 						return ctx.highlight('json', JSON.stringify(ctx.uiSchema ?? {}, null, '\t'));
+					},
+					get copyText() {
+						return JSON.stringify(ctx.uiSchema ?? {}, null, '\t');
 					}
 				});
 			}

@@ -18,7 +18,8 @@ export enum NodeType {
 	Boolean = 'boolean',
 	File = 'file',
 	Tags = 'tags',
-	Range = 'range'
+	Range = 'range',
+	QrCode = 'qr-code'
 }
 
 export type NodeId = Brand<'node-id'>;

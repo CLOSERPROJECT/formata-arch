@@ -99,3 +99,5 @@ export const isFileNode = createNodeGuard(NodeType.File);
 export const isTagsNode = createNodeGuard(NodeType.Tags);
 
 export const isRangeNode = createNodeGuard(NodeType.Range);
+
+export const isQrNode = createNodeGuard(NodeType.QrCode);
