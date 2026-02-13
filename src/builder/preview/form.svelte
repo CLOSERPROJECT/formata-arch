@@ -9,12 +9,17 @@
 	const uiSchema = $derived(ctx.uiSchema ?? {});
 	const hasUiSchema = $derived(uiSchema && !isRecordEmpty(uiSchema));
 	const uiSchemaJson = $derived(uiSchema);
-	$inspect(schemaJson);
+
+	const key = $derived(JSON.stringify({ ...schemaJson, ...uiSchema }));
+	$inspect(schemaJson, typeof schemaJson);
+	$inspect(uiSchemaJson, typeof uiSchemaJson);
 </script>
 
-<div class="flex flex-col gap-2">
-	<div class="rounded-md border border-(--global-border) p-4">
-		<formata-form schema={schemaJson} ui-schema={hasUiSchema ? uiSchemaJson : undefined}
-		></formata-form>
+{#key key}
+	<div class="flex flex-col gap-2">
+		<div class="rounded-md border border-(--global-border) p-4">
+			<formata-form schema={schemaJson} ui-schema={hasUiSchema ? uiSchemaJson : undefined}
+			></formata-form>
+		</div>
 	</div>
-</div>
+{/key}
