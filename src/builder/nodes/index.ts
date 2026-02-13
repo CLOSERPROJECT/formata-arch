@@ -31,7 +31,8 @@ export const NODES: {
 	[NodeType.Boolean]: BasicField,
 	[NodeType.File]: BasicField,
 	[NodeType.Tags]: BasicField,
-	[NodeType.Range]: RangeNode
+	[NodeType.Range]: RangeNode,
+	[NodeType.QrCode]: BasicField
 } satisfies {
 	[T in CustomizableNodeType]: NodeComponent<T>;
 } & {

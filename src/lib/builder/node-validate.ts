@@ -33,6 +33,7 @@ import {
 	isGridNode,
 	isNumberNode,
 	isObjectNode,
+	isQrNode,
 	isStringNode,
 	isTagsNode
 } from './node-guards.js';
@@ -97,7 +98,7 @@ function createValueTypeCheckAgainstAffectedNode(ctx: ValidatorContext, node: No
 				if (!isJsonValueArray(value)) {
 					return ExpectedValueType.JsonArray;
 				}
-			} else if (isStringNode(affected)) {
+			} else if (isStringNode(affected) || isQrNode(affected)) {
 				if (!isJsonValueString(value)) {
 					return ExpectedValueType.JsonString;
 				}
@@ -505,7 +506,8 @@ const NODE_VALIDATORS: {
 				`Invalid range value type "${RANGE_VALUE_TYPE_TITLES[node.valueType]}", one of the following values is expected: ${JSON.stringify(allowed.map((t) => RANGE_VALUE_TYPE_TITLES[t]))}`
 			);
 		}
-	}
+	},
+	[NodeType.QrCode]: noop
 };
 
 export function validateNode(ctx: ValidatorContext, node: Node) {

@@ -2,6 +2,7 @@ export * from './enum.js';
 export * from './operator.js';
 export * from './node.js';
 export * from './range-node.js';
+export * from './qr-node.js';
 
 export * from './node-base.js';
 export * from './string-node.js';

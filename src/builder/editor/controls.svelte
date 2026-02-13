@@ -35,6 +35,7 @@
   import MdiFileTree from '~icons/mdi/file-tree';
   import MdiArrowLeftRight from '~icons/mdi/arrow-left-right';
   import MdiFormatText from '~icons/mdi/format-text';
+  import MdiQrcode from '~icons/mdi/qrcode';
 
 	import {
 		createNode,
@@ -68,6 +69,7 @@
     [NodeType.File]: MdiAttachFile,
     [NodeType.Tags]: MdiTag,
     [NodeType.Range]: MdiArrowLeftRight,
+    [NodeType.QrCode]: MdiQrcode,
   };
 
   const OPERATOR_ICONS: Record<OperatorType, Component<SVGAttributes<SVGSVGElement>>> = {

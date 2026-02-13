@@ -544,7 +544,8 @@ const BASIC_THEME_CUSTOMIZABLE_NODE_TYPES = [
 	NodeType.String,
 	NodeType.Number,
 	NodeType.Boolean,
-	NodeType.File
+	NodeType.File,
+	NodeType.QrCode
 ] satisfies CustomizableNodeType[];
 
 export const THEME_CUSTOMIZABLE_NODE_TYPES: Record<Theme, CustomizableNodeType[]> = {

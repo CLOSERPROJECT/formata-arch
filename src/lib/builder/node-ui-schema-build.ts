@@ -23,7 +23,7 @@ export interface UiSchemaBuilderContext {
 	useLabelOptions: (node: WidgetNode) => UiOptions;
 }
 
-const UI_OPTIONS_KEYS = ['help'] as const satisfies (keyof UiOptions)[];
+const UI_OPTIONS_KEYS = ['help', 'placeholder'] as const satisfies (keyof UiOptions)[];
 
 function assignUiOptions<T extends Pick<UiOptions, (typeof UI_OPTIONS_KEYS)[number]> | {}>(
 	target: UiOptions,
@@ -191,7 +191,8 @@ const NODE_UI_SCHEMA_BUILDERS: {
 	[NodeType.Range]: (ctx, node) =>
 		leafNode(ctx, node, {
 			collectErrors: true
-		})
+		}),
+	[NodeType.QrCode]: leafNode
 };
 
 export function buildUiSchema(ctx: UiSchemaBuilderContext, node: Node): UiSchema | undefined {

@@ -222,6 +222,9 @@ export const DEFAULT_COMPONENTS: Record<
 		}),
 		[NodeType.Range]: constant({
 			objectField: 'aggregatedField'
+		}),
+		[NodeType.QrCode]: constant({
+			stringField: 'formataQrField'
 		})
 	},
 	[Resolver.Compat]: {
@@ -247,6 +250,9 @@ export const DEFAULT_COMPONENTS: Record<
 		}),
 		[NodeType.Range]: constant({
 			objectField: 'aggregatedField'
+		}),
+		[NodeType.QrCode]: constant({
+			stringField: 'formataQrField'
 		})
 	}
 };
@@ -259,7 +265,8 @@ export const DEFAULT_WIDGETS: Record<WidgetNodeType, WidgetType> = {
 	[NodeType.Boolean]: BOOLEAN_NODE_OPTIONS_SCHEMA.properties.widget.default,
 	[NodeType.File]: FILE_NODE_OPTIONS_SCHEMA.properties.widget.default,
 	[NodeType.Tags]: FILE_NODE_OPTIONS_SCHEMA.properties.widget.default,
-	[NodeType.Range]: 'aggregatedWidget'
+	[NodeType.Range]: 'aggregatedWidget',
+	[NodeType.QrCode]: 'textWidget'
 };
 
 const BASE_WIDGETS = [
