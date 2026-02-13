@@ -30,15 +30,6 @@
 		Edit
 	</Button>
 	<div class="flex flex-col gap-2">
-		<Button
-			variant="ghost"
-			class="flex items-center gap-2"
-			onclick={() => {
-				const url = `https://x0k.github.io/svelte-jsonschema-form/playground3#${encodeJson(ctx.createPlaygroundSample())}`;
-				window.open(url);
-			}}
-			>Playground <div><ExternalLink tabindex={-1} /></div></Button
-		>
 		<CopyButton
 			text={() => {
 				const url = new URL(window.location.href);

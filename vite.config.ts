@@ -6,7 +6,10 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import Icons from 'unplugin-icons/vite';
 
 export default defineConfig({
-	base: '/svelte-jsonschema-form/builder3/',
+	base: '/formata-arch/',
+	build: {
+		outDir: 'docs'
+	},
 	plugins: [tailwindcss(), svelte(), Icons({ compiler: 'svelte' })],
 	resolve: {
 		alias: {

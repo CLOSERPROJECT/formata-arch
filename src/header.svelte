@@ -13,7 +13,7 @@
 	import ConfirmationDialog from './projects/confirmation-dialog.svelte';
 	import GenericProjectDialog from './projects/generic-project-dialog.svelte';
 	import { themeManager } from './theme.svelte.js';
-	
+
 	const { ctx }: { ctx: ProjectsContext } = $props();
 
 	preventPageReload({
@@ -26,15 +26,15 @@
 	clearLink.search = '';
 	clearLink.hash = '';
 
-  const hash = location.hash.substring(1);
-	ctx.init(hash)
+	const hash = location.hash.substring(1);
+	ctx.init(hash);
 </script>
 
 <div class="mx-auto flex items-center gap-2 px-8 py-3">
 	<a href={clearLink.toString()} class="text-xl font-bold">Form Builder</a>
 	<ProjectsDialog class="mr-auto" {ctx} />
 	<ProjectsControls {ctx} />
-	<Button variant="ghost" size="icon" href="https://x0k.github.io/svelte-jsonschema-form/">
+	<!-- <Button variant="ghost" size="icon" href="https://x0k.github.io/svelte-jsonschema-form/">
 		<OpenBook class="size-6" />
 	</Button>
 	<Button
@@ -44,7 +44,7 @@
 		size="icon"
 	>
 		<Github class="size-6" />
-	</Button>
+	</Button> -->
 	<Button
 		variant="ghost"
 		size="icon"
