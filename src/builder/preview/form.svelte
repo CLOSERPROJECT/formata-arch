@@ -2,6 +2,7 @@
 	import { isRecordEmpty } from '@sjsf/form/lib/object';
 
 	import { getBuilderContext } from '../context.svelte.js';
+	import { themeManager } from '../../theme.svelte.js';
 
 	//
 
@@ -13,13 +14,20 @@
 
 	//
 
-	type FormataFormElement = HTMLElement & { schema?: object; uiSchema?: object };
+	type FormataFormElement = HTMLElement & {
+		schema?: object;
+		uiSchema?: object;
+		darkMode?: boolean;
+		preventPageReload?: boolean;
+	};
 	let formataEl = $state<FormataFormElement>();
 
 	$effect(() => {
 		if (!formataEl) return;
 		formataEl.schema = schema;
 		formataEl.uiSchema = hasUiSchema ? uiSchema : undefined;
+		formataEl.darkMode = themeManager.isDark;
+		formataEl.preventPageReload = false;
 	});
 
 	//
