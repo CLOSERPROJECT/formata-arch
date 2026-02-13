@@ -8,13 +8,10 @@
 	import type { AppDBSchema } from './shared/index.js';
 	import { IDBProjectsRepository } from './projects/idb-projects-repository.js';
 	import { BuilderContext } from './builder/context.svelte.js';
-	import { setShadcnContext } from './shadcn-context.js';
 	import { themeManager } from './theme.svelte.js';
 	import { ProjectsContext } from './projects/context.svelte.js';
 	import Builder from './builder/builder.svelte';
 	import Header from './header.svelte';
-
-	setShadcnContext();
 
 	const clearLink = new URL(location.href);
 	clearLink.search = '';

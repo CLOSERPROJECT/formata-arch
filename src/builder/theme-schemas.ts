@@ -572,15 +572,3 @@ export const THEME_RANGE_VALUE_TYPES: Record<Theme, RangeValueType[]> = {
 	[LabTheme.Svar]: [RangeValueType.String],
 	[LabTheme.BeerCSS]: []
 };
-
-export const THEME_APP_CSS: Record<Theme, string> = {
-	[ActualTheme.Basic]: "@import '@sjsf/basic-theme/css/basic.css';",
-	[ActualTheme.Pico]:
-		"@import '@picocss/pico/css/pico.css';\n@import '@sjsf/basic-theme/css/pico.css';",
-	[ActualTheme.Daisy5]: '@source "../node_modules/@sjsf/daisyui5-theme/dist";',
-	[ActualTheme.Flowbite3]: '@source "../node_modules/@sjsf/flowbite3-theme/dist";',
-	[ActualTheme.Skeleton4]: '@source "../node_modules/@sjsf/skeleton3-theme/dist";',
-	[ActualTheme.Shadcn4]: '@source "../node_modules/@sjsf/shadcn4-theme/dist";',
-	[LabTheme.Svar]: '',
-	[LabTheme.BeerCSS]: ''
-};
