@@ -2,10 +2,51 @@ import type {
 	ComponentProps,
 	ComponentType,
 	FieldCommonProps,
+	Theme as SJSFTheme,
 	UiOptions,
 	UiSchema
 } from '@sjsf/form';
 import type { WidgetCommonProps } from '@sjsf/form/fields/widgets';
+
+import '@sjsf/form/fields/extra/aggregated-include';
+import '@sjsf/form/fields/extra/boolean-select-include';
+import '@sjsf/form/fields/extra/enum-include';
+import '@sjsf/form/fields/extra/file-include';
+import '@sjsf/form/fields/extra/multi-enum-include';
+import '@sjsf/form/fields/extra/unknown-native-file-include';
+import '@sjsf/form/fields/extra/array-native-files-include';
+import '@sjsf/form/fields/extra/array-files-include';
+import '@sjsf/form/fields/extra/array-tags-include';
+
+import { theme as basic } from '@sjsf/basic-theme';
+import basicStyles from '@sjsf/basic-theme/css/basic.css?raw';
+import picoStyles from '@picocss/pico/css/pico.css?raw';
+import picoAdapterStyles from '@sjsf/basic-theme/css/pico.css?raw';
+import '@sjsf/basic-theme/extra-widgets/checkboxes-include';
+import '@sjsf/basic-theme/extra-widgets/date-picker-include';
+import '@sjsf/basic-theme/extra-widgets/file-include';
+import '@sjsf/basic-theme/extra-widgets/multi-select-include';
+import '@sjsf/basic-theme/extra-widgets/radio-include';
+import '@sjsf/basic-theme/extra-widgets/range-include';
+import '@sjsf/basic-theme/extra-widgets/textarea-include';
+
+
+import { theme as shadcn4 } from '@sjsf/shadcn4-theme';
+import shadcn4Styles from '@sjsf/shadcn4-theme/styles.css?raw';
+import '@sjsf/shadcn4-theme/extra-widgets/checkboxes-include';
+import '@sjsf/shadcn4-theme/extra-widgets/combobox-include';
+import '@sjsf/shadcn4-theme/extra-widgets/date-picker-include';
+import '@sjsf/shadcn4-theme/extra-widgets/date-range-picker-include';
+import '@sjsf/shadcn4-theme/extra-widgets/file-include';
+import '@sjsf/shadcn4-theme/extra-widgets/multi-select-include';
+import '@sjsf/shadcn4-theme/extra-widgets/radio-buttons-include';
+import '@sjsf/shadcn4-theme/extra-widgets/radio-include';
+import '@sjsf/shadcn4-theme/extra-widgets/range-include';
+import '@sjsf/shadcn4-theme/extra-widgets/range-slider-include';
+import '@sjsf/shadcn4-theme/extra-widgets/switch-include';
+import '@sjsf/shadcn4-theme/extra-widgets/textarea-include';
+
+
 
 export type FieldType = {
 	[T in ComponentType]: ComponentProps[T] extends FieldCommonProps<any> ? T : never;
@@ -16,26 +57,15 @@ export type WidgetType = {
 }[ComponentType];
 
 export enum ActualTheme {
-	Basic = 'basic',
-	Pico = 'pico',
-	Daisy5 = 'daisyui5',
-	Flowbite3 = 'flowbite3',
-	Skeleton4 = 'skeleton4',
 	Shadcn4 = 'shadcn4'
 }
 
 const ACTUAL_THEMES = Object.values(ActualTheme);
 
-export enum LabTheme {
-	Svar = 'svar',
-	BeerCSS = 'beercss'
-}
 
-const LAB_THEMES = Object.values(LabTheme);
+export type Theme = ActualTheme;
 
-export type Theme = ActualTheme | LabTheme;
-
-export const THEMES = [...ACTUAL_THEMES, ...LAB_THEMES];
+export const THEMES = [...ACTUAL_THEMES];
 
 interface MergeArraysOptions<T> {
 	merge?: (l: T, r: T) => T;

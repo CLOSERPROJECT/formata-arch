@@ -23,7 +23,7 @@ export interface UiSchemaBuilderContext {
 	useLabelOptions: (node: WidgetNode) => UiOptions;
 }
 
-const UI_OPTIONS_KEYS = ['help', 'placeholder'] as const satisfies (keyof UiOptions)[];
+const UI_OPTIONS_KEYS = ['help'] as const satisfies (keyof UiOptions)[];
 
 function assignUiOptions<T extends Pick<UiOptions, (typeof UI_OPTIONS_KEYS)[number]> | {}>(
 	target: UiOptions,

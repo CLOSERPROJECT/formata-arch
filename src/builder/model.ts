@@ -20,7 +20,6 @@ import {
 } from '$lib/builder/index.js';
 import {
 	ActualTheme,
-	LabTheme,
 	type Theme,
 	type FieldType,
 	type WidgetType
@@ -62,69 +61,12 @@ function basicTextOptions(params: TextWidgetParams): UiOptions {
 }
 
 export const TEXT_WIDGET_OPTIONS: Record<Theme, (params: TextWidgetParams) => UiOptions> = {
-	[ActualTheme.Basic]: basicTextOptions,
-	[ActualTheme.Pico]: basicTextOptions,
-	[ActualTheme.Daisy5]: basicTextOptions,
-	[ActualTheme.Flowbite3]: (params) => ({ flowbite3Text: { ...params } }),
-	[ActualTheme.Skeleton4]: basicTextOptions,
 	[ActualTheme.Shadcn4]: (params) => ({ shadcn4Text: { ...params } }),
-	[LabTheme.Svar]: (params) => ({
-		svarText: { placeholder: params.placeholder, type: params.type as any }
-	}),
-	[LabTheme.BeerCSS]: basicTextOptions
+
 };
 
 export const CHECKBOXES_WIDGET_OPTIONS: Record<Theme, (inline: boolean) => UiOptions> = {
-	[ActualTheme.Basic]: (inline) =>
-		inline
-			? {}
-			: {
-					layouts: {
-						'field-content': {
-							style: 'display: flex; flex-direction: column; gap: 0.2rem;'
-						}
-					}
-				},
-	[ActualTheme.Pico]: (inline) =>
-		inline
-			? {}
-			: {
-					layouts: {
-						'field-content': {
-							style: 'display: flex; flex-direction: column; gap: 0.2rem;'
-						}
-					}
-				},
-	[ActualTheme.Daisy5]: (inline) =>
-		inline
-			? {
-					layouts: {
-						'field-content': {
-							style: 'display: flex; gap: 0.5rem;'
-						}
-					}
-				}
-			: {},
-	[ActualTheme.Flowbite3]: (inline) =>
-		inline
-			? {}
-			: {
-					layouts: {
-						'field-content': {
-							style: 'flex-direction: column; gap: 0.2rem;'
-						}
-					}
-				},
-	[ActualTheme.Skeleton4]: (inline) =>
-		inline
-			? {}
-			: {
-					layouts: {
-						'field-content': {
-							style: 'flex-direction: column; gap: 0.2rem;'
-						}
-					}
-				},
+	
 	[ActualTheme.Shadcn4]: (inline) =>
 		inline
 			? {
@@ -135,22 +77,7 @@ export const CHECKBOXES_WIDGET_OPTIONS: Record<Theme, (inline: boolean) => UiOpt
 					}
 				}
 			: {},
-	[LabTheme.Svar]: (inline) =>
-		inline
-			? {
-					svarCheckboxes: {
-						type: 'inline'
-					}
-				}
-			: {},
-	[LabTheme.BeerCSS]: (inline) =>
-		inline
-			? {}
-			: {
-					beercssCheckboxesContainer: {
-						class: 'vertical'
-					}
-				}
+
 };
 
 export const RADIO_WIDGET_OPTIONS: Record<Theme, (inline: boolean) => UiOptions> = {
@@ -163,22 +90,7 @@ export const RADIO_WIDGET_OPTIONS: Record<Theme, (inline: boolean) => UiOptions>
 					}
 				}
 			: {},
-	[LabTheme.Svar]: (inline) =>
-		inline
-			? {
-					svarRadio: {
-						type: 'inline'
-					}
-				}
-			: {},
-	[LabTheme.BeerCSS]: (inline) =>
-		inline
-			? {}
-			: {
-					beercssRadioContainer: {
-						class: 'vertical'
-					}
-				}
+
 };
 
 export const DEFAULT_COMPONENTS: Record<
@@ -325,20 +237,10 @@ export const WIDGET_EXTRA_FIELD: Record<WidgetType, StripFieldSuffix<FieldType> 
 	rangeWidget: undefined,
 	textareaWidget: undefined,
 	radioButtonsWidget: 'enum',
-	ratingWidget: undefined,
 	switchWidget: undefined,
 	comboboxWidget: 'enum',
-	daisyui5FilterRadioButtonsWidget: 'enum',
-	daisyui5CallyDatePickerWidget: undefined,
-	skeleton4SliderWidget: undefined,
-	skeleton4FileUploadWidget: undefined,
-	flowbite3ToggleRadioButtonsWidget: 'enum',
 	shadcn4DateRangePickerWidget: 'aggregated',
 	aggregatedWidget: 'aggregated',
-	skeleton4DateRangePickerWidget: 'aggregated',
-	svarColorPickerWidget: undefined,
-	svarColorSelectWidget: undefined,
-	svarDateRangePickerWidget: 'aggregated',
 	dateRangePickerWidget: 'aggregated',
 	rangeSliderWidget: 'aggregated'
 };
@@ -357,20 +259,10 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
 	rangeWidget: 'Range',
 	textareaWidget: 'Textarea',
 	radioButtonsWidget: 'Radio buttons',
-	ratingWidget: 'Rating',
 	switchWidget: 'Switch',
 	comboboxWidget: 'Combobox',
-	daisyui5FilterRadioButtonsWidget: 'Filter radio buttons',
-	daisyui5CallyDatePickerWidget: 'Cally date picker',
-	skeleton4FileUploadWidget: 'Drop zone',
-	skeleton4SliderWidget: 'Slider',
-	flowbite3ToggleRadioButtonsWidget: 'Toggle radio buttons',
 	aggregatedWidget: 'Invalid widget',
 	shadcn4DateRangePickerWidget: 'Date range picker',
-	skeleton4DateRangePickerWidget: 'Date range picker',
-	svarDateRangePickerWidget: 'Date range picker',
-	svarColorPickerWidget: 'Color picker',
-	svarColorSelectWidget: 'Color select',
 	dateRangePickerWidget: 'Date range picker',
 	rangeSliderWidget: 'Range slider'
 };
@@ -389,21 +281,11 @@ const WIDGET_USE_LABEL: Record<WidgetType, boolean | Set<Theme>> = {
 	rangeWidget: true,
 	textareaWidget: true,
 	radioButtonsWidget: false,
-	ratingWidget: false,
 	switchWidget: true,
 	comboboxWidget: true,
-	daisyui5FilterRadioButtonsWidget: false,
-	daisyui5CallyDatePickerWidget: true,
-	skeleton4SliderWidget: true,
-	skeleton4FileUploadWidget: true,
-	flowbite3ToggleRadioButtonsWidget: false,
 	aggregatedWidget: false,
 	shadcn4DateRangePickerWidget: false,
-	skeleton4DateRangePickerWidget: false,
-	svarColorPickerWidget: true,
-	svarColorSelectWidget: true,
-	svarDateRangePickerWidget: true,
-	dateRangePickerWidget: new Set([LabTheme.Svar, ActualTheme.Flowbite3]),
+	dateRangePickerWidget: new Set([ActualTheme.Shadcn4]),
 	rangeSliderWidget: false
 };
 
@@ -425,19 +307,9 @@ export const EXTRA_WIDGET_IMPORTS: Record<ExtraWidgetType, string> = {
 	rangeWidget: 'range',
 	textareaWidget: 'textarea',
 	radioButtonsWidget: 'radio-buttons',
-	ratingWidget: 'rating',
 	switchWidget: 'switch',
 	comboboxWidget: 'combobox',
-	daisyui5FilterRadioButtonsWidget: 'filter-radio-buttons',
-	daisyui5CallyDatePickerWidget: 'cally-date-picker',
-	skeleton4SliderWidget: 'slider',
-	skeleton4FileUploadWidget: 'file-upload',
-	flowbite3ToggleRadioButtonsWidget: 'toggle-radio-buttons',
-	skeleton4DateRangePickerWidget: 'date-range-picker',
 	shadcn4DateRangePickerWidget: 'date-range-picker',
-	svarDateRangePickerWidget: 'date-range-picker',
-	svarColorPickerWidget: 'color-picker',
-	svarColorSelectWidget: 'color-select',
 	aggregatedWidget: 'virtual-widget-import',
 	dateRangePickerWidget: 'date-range-picker',
 	rangeSliderWidget: 'range-slider'
