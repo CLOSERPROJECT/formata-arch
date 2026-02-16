@@ -16,6 +16,7 @@
 		"@lucide/svelte": "^0.544.0",
 		"@tailwindcss/vite": "^4.1.18",
 		"@total-typescript/tsconfig": "^1.0.4",
+		"@types/node": "^25.2.3",
 		"beercss": "^4.0.2",
 		"bits-ui": "^2.15.5",
 		"clsx": "^2.1.1",
