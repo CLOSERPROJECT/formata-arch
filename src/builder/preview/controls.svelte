@@ -24,7 +24,7 @@
 		onclick={preview(PreviewSubRouteName.Code)}
 		data-active={subRoute === PreviewSubRouteName.Code}
 	>
-		<Code class="size-4" />
+		<Code class="shrink-0 size-4" />
 		Code
 	</button>
 	<button
@@ -32,7 +32,7 @@
 		onclick={preview(PreviewSubRouteName.Schema)}
 		data-active={subRoute === PreviewSubRouteName.Schema}
 	>
-		<Braces class="size-4" />
+		<Braces class="shrink-0 size-4" />
 		Schemas
 	</button>
 	<button
@@ -40,7 +40,7 @@
 		onclick={preview()}
 		data-active={subRoute === undefined}
 	>
-		<Eye class="size-4" />
+		<Eye class="shrink-0 size-4" />
 		Preview
 	</button>
 </div>
