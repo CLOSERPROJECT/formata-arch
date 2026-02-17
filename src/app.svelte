@@ -12,6 +12,7 @@
 	import { ProjectsContext } from './projects/context.svelte.js';
 	import Builder from './builder/builder.svelte';
 	import Header from './header.svelte';
+	import { setShadcnThemeContext } from '$lib/sjsf/theme.shadcn.js';
 
 	const clearLink = new URL(location.href);
 	clearLink.search = '';
@@ -31,6 +32,9 @@
 			}
 		})
 	]);
+
+	// Needed for `node-settings.svelte` to work
+	setShadcnThemeContext();
 </script>
 
 <Toaster richColors theme={themeManager.theme} />
@@ -42,7 +46,7 @@
 			{@const builder = new BuilderContext(highlighter)}
 			{@const projects = new ProjectsContext(builder, new IDBProjectsRepository(db))}
 			<div class="sticky top-0 z-50 bg-background">
-        <Header ctx={projects} />
+				<Header ctx={projects} />
 			</div>
 			<Builder ctx={builder} />
 		{/await}
