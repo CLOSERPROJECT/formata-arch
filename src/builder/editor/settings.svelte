@@ -3,13 +3,9 @@
 	import CircleAlert from '@lucide/svelte/icons/circle-alert';
 
 	import { isCustomizableNode } from '$lib/builder/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { CopyButton } from '$lib/components/copy-button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import { encodeJson } from '$lib/url.js';
 
-	import { PreviewSubRouteName, RouteName } from '../model.js';
 	import { getBuilderContext } from '../context.svelte.js';
 	import Container from '../container.svelte';
 	import NodeSettings from './node-settings.svelte';
@@ -29,17 +25,6 @@
 		<Checkbox id={`${uniqueId}-ignore`} bind:checked={ctx.ignoreWarnings} />
 		<Label class="text-base" for={`${uniqueId}-ignore`}>Ignore warnings</Label>
 	</div>
-	<Button
-		disabled={ctx.rootNode === undefined}
-		onclick={() => {
-			if (ctx.validate()) {
-				ctx.build();
-				ctx.route = { name: RouteName.Preview, subRoute: PreviewSubRouteName.Code };
-			}
-		}}
-	>
-		Build
-	</Button>
 	{#if ctx.errorsCount || ctx.warningsCount}
 		<div class="flex flex-wrap items-center justify-start gap-4">
 			{#if ctx.errorsCount}
@@ -56,14 +41,6 @@
 			{/if}
 		</div>
 	{/if}
-	<CopyButton
-		text={() => {
-			const url = new URL(window.location.href);
-			url.search = '';
-			url.hash = encodeJson(ctx.exportState());
-			return url.toString();
-		}}>Share</CopyButton
-	>
 </Container>
 
 {#if selected && isCustomizableNode(selected)}

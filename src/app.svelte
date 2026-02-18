@@ -46,7 +46,7 @@
 			{@const builder = new BuilderContext(highlighter)}
 			{@const projects = new ProjectsContext(builder, new IDBProjectsRepository(db))}
 			<div class="sticky top-0 z-50 bg-background">
-				<Header ctx={projects} />
+				<Header ctx={projects} builder={builder} />
 			</div>
 			<Builder ctx={builder} />
 		{/await}
