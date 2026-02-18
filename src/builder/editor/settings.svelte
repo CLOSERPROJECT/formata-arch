@@ -10,7 +10,7 @@
 </script>
 
 {#if selected && isCustomizableNode(selected)}
-	<Container class="p-3">
+	<Container class="p-3 border-blue-600">
 		<NodeSettings bind:node={() => selected, (n) => ctx.updateSelectedNode(n)} />
 	</Container>
 {:else}
