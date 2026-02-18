@@ -30,15 +30,10 @@
 	);
 </script>
 
-<div
-	class={[
-		'mx-auto grid gap-6',
-		ctx.livePreview ? 'grid-cols-[1fr_3fr_3fr_2fr]' : 'grid-cols-[1fr_6fr_2fr]'
-	]}
->
+<div class={['mx-auto grid gap-6', 'grid-cols-[1fr_3fr_2fr_3fr]']}>
 	<div
 		bind:this={rootElements[0]}
-		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[120px] overflow-y-auto pb-4 pl-8"
+		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[150px] overflow-y-auto pb-4 pl-8"
 	>
 		<Controls />
 	</div>
@@ -47,16 +42,14 @@
 		<Content />
 	</div>
 
-	{#if ctx.livePreview}
-		<div class="overflow-x-hidden pb-4">
-			<Form />
-		</div>
-	{/if}
-
 	<div
 		bind:this={rootElements[2]}
-		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[200px] overflow-y-auto pr-8 pb-4"
+		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[200px] overflow-y-auto pb-4"
 	>
 		<Settings />
+	</div>
+
+	<div class="overflow-x-hidden pb-4 pr-8">
+		<Form />
 	</div>
 </div>

@@ -70,7 +70,7 @@
   class={cn(
     draggable.isDragged && "opacity-70",
     ctx.selectedNode?.id === node.id
-      ? "border-primary"
+      ? "border-blue-600"
       : error
         ? "border-destructive"
         : warning && "border-chart-3",

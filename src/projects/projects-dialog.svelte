@@ -39,6 +39,7 @@
 		Import Project
 	</Button>
 {/snippet}
+
 <Dialog.Root
 	bind:open
 	onOpenChange={(open) => {
@@ -47,7 +48,7 @@
 		}
 	}}
 >
-	<Dialog.Trigger class={buttonVariants({ variant: 'ghost', className })}>
+	<Dialog.Trigger class={buttonVariants({ variant: 'outline', className })}>
 		{currentProject?.title ?? 'Projects'}
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px] md:max-w-xl lg:max-w-2xl">
