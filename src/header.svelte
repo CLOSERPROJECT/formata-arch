@@ -1,6 +1,6 @@
 <script lang="ts">
 	import OpenBook from '@lucide/svelte/icons/book-open';
-	import { Moon, Sun, Hammer } from '@lucide/svelte';
+	import { Moon, Sun, Hammer, Pencil } from '@lucide/svelte';
 	import { preventPageReload } from '@sjsf/form/prevent-page-reload.svelte';
 
 	import Github from '$lib/components/github.svelte';
@@ -37,19 +37,31 @@
 	<a href={clearLink.toString()} class="text-xl font-bold">Form Builder</a>
 	<ProjectsDialog class="mr-auto" {ctx} />
 	<div class="flex items-center gap-2">
-		<Button
-			variant="default"
-			disabled={builder.rootNode === undefined}
-			onclick={() => {
-				if (builder.validate()) {
-					builder.build();
-					builder.route = { name: RouteName.Preview, subRoute: PreviewSubRouteName.Code };
-				}
-			}}
-		>
-			<Hammer class="size-4" />
-			Build
-		</Button>
+		{#if builder.route.name === RouteName.Preview}
+			<Button
+				variant="default"
+				onclick={() => {
+					builder.route = { name: RouteName.Editor };
+				}}
+			>
+				<Pencil />
+				Edit
+			</Button>
+		{:else}
+			<Button
+				variant="default"
+				disabled={builder.rootNode === undefined}
+				onclick={() => {
+					if (builder.validate()) {
+						builder.build();
+						builder.route = { name: RouteName.Preview, subRoute: PreviewSubRouteName.Code };
+					}
+				}}
+			>
+				<Hammer />
+				Build
+			</Button>
+		{/if}
 
 		<ProjectsControls {ctx} />
 

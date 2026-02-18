@@ -1,11 +1,7 @@
 <script lang="ts">
-	import ExternalLink from '@lucide/svelte/icons/external-link';
-
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { CopyButton } from '$lib/components/copy-button/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-	import { encodeJson } from '$lib/url.js';
 
 	import { RouteName } from '../model.js';
 	import { getBuilderContext } from '../context.svelte.js';
@@ -29,14 +25,4 @@
 	>
 		Edit
 	</Button>
-	<div class="flex flex-col gap-2">
-		<CopyButton
-			text={() => {
-				const url = new URL(window.location.href);
-				url.search = '';
-				url.hash = encodeJson(ctx.exportState());
-				return url.toString();
-			}}>Share</CopyButton
-		>
-	</div>
 </Container>
