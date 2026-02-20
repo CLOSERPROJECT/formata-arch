@@ -2,6 +2,7 @@ import type { AttestaConfig } from './schema.js';
 import sourceYaml from './source.yaml?raw';
 import { deserialize } from './serde.js';
 import type { Entities } from './repositories/utils.js';
+import { getRepository, type Repository } from './repositories/index.js';
 
 //
 
@@ -13,5 +14,11 @@ if (configResult.isErr) {
 export const config = $state<AttestaConfig>(configResult.value);
 
 export const state = $state({
-	currentCollection: 'Department' as Entities
+	currentCollection: 'User' as Entities
 });
+
+const repository = $derived(getRepository(state.currentCollection, config));
+
+export function getCurrentRepository(): Repository<any> {
+	return repository;
+}
