@@ -11,7 +11,7 @@
 
 	setShadcnThemeContext();
 
-	const repository = getCurrentRepository();
+	const repository = $derived(getCurrentRepository());
 </script>
 
 <Sidebar.Provider>

@@ -31,6 +31,22 @@ describe("UserRepository", () => {
 		});
 	});
 
+	describe("list", () => {
+		it("returns all users", () => {
+			const user = { id: "u1", name: "Alice", departmentId: "d1" };
+			const config = createTestConfig([user]);
+			const repo = new UserRepository(config);
+			expect(repo.list()).toEqual([user]);
+			expect(repo.list()).toHaveLength(1);
+		});
+
+		it("returns empty array when no users", () => {
+			const config = createTestConfig();
+			const repo = new UserRepository(config);
+			expect(repo.list()).toEqual([]);
+		});
+	});
+
 	describe("getOne", () => {
 		it("returns Ok(user) when user exists", () => {
 			const user = { id: "u1", name: "Alice", departmentId: "d1" };

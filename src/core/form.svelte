@@ -1,16 +1,27 @@
 <script lang="ts" generics="T extends object">
 	import { onDestroy, untrack } from 'svelte';
-	import { Content,SimpleForm ,createForm, ON_CHANGE, ON_INPUT, setFormContext, validate, type Schema, type UiSchema, Form } from '@sjsf/form';
+	import {
+		Content,
+		SimpleForm,
+		createForm,
+		ON_CHANGE,
+		ON_INPUT,
+		setFormContext,
+		validate,
+		type Schema,
+		type UiSchema,
+		Form,
+		BasicForm
+	} from '@sjsf/form';
 	import { omitExtraData } from '@sjsf/form/omit-extra-data';
 
 	import * as defaults from '$builder/editor/node-settings.js';
 
-
 	interface Props {
 		schema: Schema;
 		uiSchema?: UiSchema;
-        initialValue?: Partial<T>;
-            onSubmit?: (value: T) => void;
+		initialValue?: Partial<T>;
+		onSubmit?: (value: T) => void;
 	}
 
 	let { schema, uiSchema, initialValue, onSubmit }: Props = $props();
@@ -37,7 +48,10 @@
 			return uiSchema;
 		},
 		fieldsValidationMode: ON_INPUT | ON_CHANGE,
-		fieldsValidationDebounceMs: 200
+		fieldsValidationDebounceMs: 200,
+		onSubmit(value, e) {
+			onSubmit?.(value as T);
+		}
 	});
 
 	setFormContext(form);
@@ -46,15 +60,13 @@
 		form.fieldsValidation.abort();
 	});
 
-	$effect(() => {
-		if (form.fieldsValidation.isProcessed) {
-			return;
-		}
-		const { value } = validate(form);
-		onSubmit?.(value as T);
-	});
+	// $effect(() => {
+	// 	if (form.fieldsValidation.isProcessed) {
+	// 		return;
+	// 	}
+	// 	const { value } = validate(form);
+	// 	onSubmit?.(value as T);
+	// });
 </script>
 
-<Form>
-    <Content />
-</Form>
+<BasicForm {form} />

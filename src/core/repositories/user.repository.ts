@@ -16,6 +16,10 @@ export class UserRepository implements Repository<User> {
 		return getEntitySchema("User");
 	}
 
+	list(): User[] {
+		return this.config.users;
+	}
+
 	getOne(key: string): Result<User, Error> {
 		const user = this.config.users.find((u) => u.id === key);
 		return user !== undefined ? Result.ok(user) : Result.err(new Error(`User not found: ${key}`));
