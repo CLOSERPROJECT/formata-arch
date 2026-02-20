@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Test from '$core/test.svelte';
+	import Manager from '$core/manager.svelte';
 </script>
 
-<Test />
+<Manager />

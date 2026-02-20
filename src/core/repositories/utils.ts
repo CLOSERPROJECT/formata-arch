@@ -6,6 +6,8 @@ import { cloneDeep } from 'lodash';
 
 export type Entities = keyof typeof AttestaConfigSchema.$defs;
 
+export const entities = Object.keys(AttestaConfigSchema.$defs) as Entities[];
+
 export function getEntitySchema(entity: Entities): Schema {
 	const schema = cloneDeep({ ...AttestaConfigSchema });
 	// @ts-expect-error
