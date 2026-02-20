@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
@@ -14,11 +15,16 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			$lib: resolve('./src/lib'),
-			$apps: fileURLToPath(new URL('..', import.meta.url))
+			$apps: fileURLToPath(new URL('..', import.meta.url)),
+			$core: resolve('./src/core')
 		}
 	},
 	optimizeDeps: {
 		exclude: ['@jis3r/icons'],
 		include: ['@svar-ui/svelte-core', 'svelte-sonner']
-	}
+	},
+	test: {
+		include: ['src/**/*.test.ts'],
+		environment: 'node',
+	},
 });
