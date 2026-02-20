@@ -17,8 +17,8 @@ export const state = $state({
 	currentCollection: 'User' as Entities
 });
 
-const repository = $derived(getRepository(state.currentCollection, config));
+const currentRepository = $derived(getRepository(state.currentCollection, config));
 
 export function getCurrentRepository(): Repository<any> {
-	return repository;
+	return currentRepository;
 }
