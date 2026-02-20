@@ -124,11 +124,6 @@ export const AttestaConfigSchema = {
 	}
 } as const satisfies Schema;
 
-type AttestaConfigSchema = typeof AttestaConfigSchema;
+export type AttestaConfigSchema = typeof AttestaConfigSchema;
 
 export type AttestaConfig = FromSchema<AttestaConfigSchema>;
-export type DPP = FromSchema<AttestaConfigSchema['$defs']['Dpp']>;
-export type Department = FromSchema<AttestaConfigSchema['$defs']['Department']>;
-export type User = FromSchema<AttestaConfigSchema['$defs']['User']>;
-export type Step = FromSchema<AttestaConfigSchema['$defs']['Step']>;
-export type Substep = FromSchema<AttestaConfigSchema['$defs']['Substep']>;
