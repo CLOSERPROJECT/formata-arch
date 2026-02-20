@@ -16,7 +16,8 @@ export default defineConfig({
 		alias: {
 			$lib: resolve('./src/lib'),
 			$apps: fileURLToPath(new URL('..', import.meta.url)),
-			$core: resolve('./src/core')
+			$core: resolve('./src/core'),
+			$builder: resolve('./src/builder')
 		}
 	},
 	optimizeDeps: {
@@ -25,6 +26,6 @@ export default defineConfig({
 	},
 	test: {
 		include: ['src/**/*.test.ts'],
-		environment: 'node',
-	},
+		environment: 'node'
+	}
 });

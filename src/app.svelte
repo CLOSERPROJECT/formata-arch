@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LegacyApp from './app.legacy.svelte';
+	import Test from '$core/test.svelte';
 </script>
 
-<LegacyApp />
+<Test />
