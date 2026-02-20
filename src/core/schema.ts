@@ -1,8 +1,9 @@
 import type { Schema } from "@sjsf/form";
+import type { FromSchema } from "json-schema-to-ts";
 
 // 
 
-export const sourceSchema: Schema = {
+export const AttestaConfigSchema = {
   $id: "formata-arch/config",
   $ref: "#/$defs/Config",
   $defs: {
@@ -111,6 +112,13 @@ export const sourceSchema: Schema = {
       },
     },
   },
-} as const;
+} as const satisfies Schema;
 
-export type SourceSchema = typeof sourceSchema;
+type AttestaConfigSchema = typeof AttestaConfigSchema;
+
+export type  AttestaConfig =FromSchema <AttestaConfigSchema>;
+export type DPP = FromSchema <AttestaConfigSchema['$defs']['Dpp']>;
+export type Department = FromSchema <AttestaConfigSchema['$defs']['Department']>;
+export type User = FromSchema <AttestaConfigSchema['$defs']['User']>;
+export type Step = FromSchema <AttestaConfigSchema['$defs']['Step']>;
+export type Substep = FromSchema <AttestaConfigSchema['$defs']['Substep']>;

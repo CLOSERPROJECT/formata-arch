@@ -1,28 +1,29 @@
 import { describe, it, expect } from 'vitest';
-import {Ajv} from 'ajv';
+import { Ajv } from 'ajv';
 import YAML from 'yaml';
-import { sourceSchema } from './schema.js';
-import sourceYamlRaw from './source.yaml?raw';
-
-// 
+import { AttestaConfigSchema } from './schema.js';
 
 describe('sourceSchema', () => {
 	it('compiles with AJV', () => {
 		const ajv = new Ajv();
-		const compile = () => ajv.compile(sourceSchema);
+		const compile = () => ajv.compile(AttestaConfigSchema);
 		expect(compile).not.toThrow();
 		const validate = compile();
 		expect(typeof validate).toBe('function');
 	});
 
-	it('validates parsed source.yaml', () => {
-		const data = YAML.parse(sourceYamlRaw) as unknown;
+	it('validates parsed source.yaml', async () => {
+		const url = new URL('source.yaml', import.meta.url);
+		const raw = await Bun.file(url).text();
+		const data = YAML.parse(raw) as unknown;
 		const ajv = new Ajv();
-		const validate = ajv.compile(sourceSchema);
-		const valid = validate(data);
-		if (!valid && validate.errors) {
+		ajv.addSchema(AttestaConfigSchema);
+
+        
+		const valid = ajv.validate(AttestaConfigSchema.$id, data);
+		if (!valid && ajv.errors) {
 			// eslint-disable-next-line no-console
-			console.error(validate.errors);
+			console.error(ajv.errors);
 		}
 		expect(valid).toBe(true);
 	});
