@@ -7,7 +7,11 @@
 
 	const links: Array<{ label: string; href: ReturnType<typeof p> }> = [
 		{ label: 'Home', href: p('/') },
-		{ label: 'Departments', href: p('/departments') }
+		{ label: 'Departments', href: p('/departments') },
+		{ label: 'Users', href: p('/users') },
+		{ label: 'DPP', href: p('/dpp') },
+		{ label: 'Steps', href: p('/steps') },
+		{ label: 'Workflow', href: p('/workflow') }
 	];
 </script>
 
