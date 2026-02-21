@@ -36,6 +36,7 @@
         "lodash": "^4.17.23",
         "lz-string": "^1.5.0",
         "shiki": "^3.21.0",
+        "sv-router": "^0.14.0",
         "true-myth": "^9.3.1",
         "yaml": "^2.8.2",
       },
@@ -729,6 +730,8 @@
     "style-to-object": ["style-to-object@1.0.14", "", { "dependencies": { "inline-style-parser": "0.2.7" } }, "sha512-LIN7rULI0jBscWQYaSswptyderlarFkjQ+t79nzty8tcIAceVomEVlLzH5VP4Cmsv6MtKhs7qaAiwlcp+Mgaxw=="],
 
     "supports-preserve-symlinks-flag": ["supports-preserve-symlinks-flag@1.0.0", "", {}, "sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w=="],
+
+    "sv-router": ["sv-router@0.14.0", "", { "dependencies": { "esm-env": "^1.2.2" }, "peerDependencies": { "svelte": "^5" }, "bin": { "sv-router": "src/cli/index.js" } }, "sha512-zzi2k2ZG2UbTgBOjYmXWMv3XdXFCBpABD7vUsoL2XLvlnannXXLvieY9wGKMIvHIeocXOq4l47PXYtHPI23qgA=="],
 
     "svelte": ["svelte@5.50.2", "", { "dependencies": { "@jridgewell/remapping": "^2.3.4", "@jridgewell/sourcemap-codec": "^1.5.0", "@sveltejs/acorn-typescript": "^1.0.5", "@types/estree": "^1.0.5", "acorn": "^8.12.1", "aria-query": "^5.3.1", "axobject-query": "^4.1.0", "clsx": "^2.1.1", "devalue": "^5.6.2", "esm-env": "^1.2.1", "esrap": "^2.2.2", "is-reference": "^3.0.3", "locate-character": "^3.0.0", "magic-string": "^0.30.11", "zimmerframe": "^1.1.2" } }, "sha512-WCxzm3BBf+Ase6RwiDPR4G36cM4Kb0NuhmLK6x44I+D6reaxizDDg8kBkk4jT/19+Rgmc44eZkOvMO6daoSFIw=="],
 

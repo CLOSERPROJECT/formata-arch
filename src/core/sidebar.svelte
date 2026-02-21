@@ -2,6 +2,13 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { entities } from '$core/repositories/utils.js';
 	import { state } from '$core/state.svelte.js';
+
+	import { p, isActive } from '../routes/_index.js';
+
+	const links: Array<{ label: string; href: ReturnType<typeof p> }> = [
+		{ label: 'Home', href: p('/') },
+		{ label: 'Departments', href: p('/departments') }
+	];
 </script>
 
 <Sidebar.Root>
@@ -9,13 +16,20 @@
 	<Sidebar.Content>
 		<Sidebar.Group>
 			<Sidebar.Menu>
-				{#each entities as entity}
+				{#each links as link}
 					<Sidebar.MenuItem>
-						<Sidebar.MenuButton
-							isActive={state.currentCollection === entity}
-							onclick={() => (state.currentCollection = entity)}
-						>
-							{entity}
+						<Sidebar.MenuButton>
+							{#snippet child({ props })}
+								<a
+									href={link.href}
+									{...props}
+									class={[
+										isActive(link.href as '/') && 'bg-sidebar-accent text-sidebar-accent-foreground'
+									]}
+								>
+									{link.label}
+								</a>
+							{/snippet}
 						</Sidebar.MenuButton>
 					</Sidebar.MenuItem>
 				{/each}
