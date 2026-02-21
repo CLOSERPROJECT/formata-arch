@@ -8,6 +8,7 @@
 	import Crud from './crud.svelte';
 	import { getRepository } from './repositories/index.js';
 	import { getCurrentRepository } from './state.svelte.js';
+	import { themeManager } from '../theme.svelte.js';
 
 	setShadcnThemeContext();
 
@@ -23,4 +24,4 @@
 </Sidebar.Provider>
 <Form schema={AttestaConfigSchema} />
 
-<Toaster />
+<Toaster richColors theme={themeManager.theme} />

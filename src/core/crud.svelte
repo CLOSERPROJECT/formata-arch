@@ -8,11 +8,6 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 
-	// Defer toast to next tick to avoid svelte-sonner race (Toast.svelte reads heights[].toastId)
-	function showToast(fn: () => void) {
-		queueMicrotask(fn);
-	}
-
 	interface Props {
 		repository: Repository<T>;
 	}
@@ -61,19 +56,19 @@
 			const key = getKey(editingRecord);
 			const result = repository.update(key, value);
 			if (result.isOk) {
-				showToast(() => toast.success('Record updated'));
+				toast.success('Record updated');
 				sheetOpen = false;
 				editingRecord = null;
 			} else {
-				showToast(() => toast.error(result.error.message));
+				toast.error(result.error.message);
 			}
 		} else {
 			const result = repository.create(value);
 			if (result.isOk) {
-				showToast(() => toast.success('Record created'));
+				toast.success('Record created');
 				sheetOpen = false;
 			} else {
-				showToast(() => toast.error(result.error.message));
+				toast.error(result.error.message);
 			}
 		}
 	}
@@ -83,11 +78,11 @@
 		const key = getKey(recordToDelete);
 		const result = repository.delete(key);
 		if (result.isOk) {
-			showToast(() => toast.success('Record deleted'));
+			toast.success('Record deleted');
 			deleteDialogOpen = false;
 			recordToDelete = null;
 		} else {
-			showToast(() => toast.error(result.error.message));
+			toast.error(result.error.message);
 		}
 	}
 
