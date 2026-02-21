@@ -122,7 +122,9 @@
 						<Table.Cell>
 							<div class="flex gap-2">
 								<Button variant="outline" size="sm" onclick={() => openEdit(record)}>Edit</Button>
-								<Button variant="destructive" size="sm" onclick={() => openDelete(record)}>Delete</Button>
+								<Button variant="destructive" size="sm" onclick={() => openDelete(record)}
+									>Delete</Button
+								>
 							</div>
 						</Table.Cell>
 					</Table.Row>
@@ -133,16 +135,12 @@
 </div>
 
 <Sheet.Root bind:open={sheetOpen}>
-	<Sheet.Content>
+	<Sheet.Content class="overflow-y-auto">
 		<Sheet.Header>
 			<Sheet.Title>{editingRecord != null ? 'Edit' : 'Create'}</Sheet.Title>
 		</Sheet.Header>
 		<div class="p-4">
-			<Form
-				schema={schema}
-				initialValue={editingRecord ?? undefined}
-				onSubmit={handleSubmit}
-			/>
+			<Form {schema} initialValue={editingRecord ?? undefined} onSubmit={handleSubmit} />
 		</div>
 		<Sheet.Footer>
 			<Button variant="outline" onclick={() => (sheetOpen = false)}>Cancel</Button>
@@ -154,9 +152,7 @@
 	<AlertDialog.Content>
 		<AlertDialog.Header>
 			<AlertDialog.Title>Delete record</AlertDialog.Title>
-			<AlertDialog.Description>
-				This action cannot be undone.
-			</AlertDialog.Description>
+			<AlertDialog.Description>This action cannot be undone.</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>

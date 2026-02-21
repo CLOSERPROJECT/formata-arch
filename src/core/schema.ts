@@ -72,6 +72,15 @@ export const AttestaConfigSchema = {
 					type: 'object',
 					description: 'UI schema overrides'
 				}
+			},
+			if: {
+				properties: {
+					inputType: { const: 'formata' }
+				},
+				required: ['inputType']
+			},
+			then: {
+				required: ['schema', 'uiSchema']
 			}
 		},
 		Department: {

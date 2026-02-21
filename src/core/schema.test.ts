@@ -19,7 +19,6 @@ describe('sourceSchema', () => {
 		const ajv = new Ajv();
 		ajv.addSchema(AttestaConfigSchema);
 
-        
 		const valid = ajv.validate(AttestaConfigSchema.$id, data);
 		if (!valid && ajv.errors) {
 			// eslint-disable-next-line no-console
