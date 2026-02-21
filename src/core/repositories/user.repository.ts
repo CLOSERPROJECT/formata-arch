@@ -1,19 +1,33 @@
-import type { Repository } from "./index.js";
-import type { AttestaConfig, AttestaConfigSchema } from "$core/schema.js";
-import type { FromSchema } from "json-schema-to-ts";
-import type { Schema } from "@sjsf/form";
-import { getEntitySchema } from "./utils.js";
-import Result from "true-myth/result";
+import type { Repository } from './index.js';
+import type { AttestaConfig, AttestaConfigSchema } from '$core/schema.js';
+import type { FromSchema } from 'json-schema-to-ts';
+import type { Schema, UiSchema } from '@sjsf/form';
+import { getEntitySchema } from './utils.js';
+import Result from 'true-myth/result';
+import SelectDepartment from '$core/form/select-department.svelte';
 
 //
 
-export type User = FromSchema<AttestaConfigSchema["$defs"]["User"]>;
+export type User = FromSchema<AttestaConfigSchema['$defs']['User']>;
 
 export class UserRepository implements Repository<User> {
 	constructor(private readonly config: AttestaConfig) {}
 
 	getSchema(): Schema {
-		return getEntitySchema("User");
+		return getEntitySchema('User');
+	}
+
+	getUiSchema(): UiSchema {
+		return {
+			departmentId: {
+				'ui:components': {
+					textWidget: SelectDepartment
+				},
+				'ui:options': {
+					attestaConfig: this.config
+				}
+			}
+		};
 	}
 
 	list(): User[] {

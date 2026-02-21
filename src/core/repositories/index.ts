@@ -1,4 +1,4 @@
-import type { Schema } from '@sjsf/form';
+import type { Schema, UiSchema } from '@sjsf/form';
 import type Result from 'true-myth/result';
 import type { Entities } from './utils.js';
 import type { AttestaConfig } from '$core/schema.js';
@@ -14,6 +14,7 @@ import { WorkflowRepository } from './workflow.repository.js';
 
 export type Repository<T> = {
 	getSchema: () => Schema;
+	getUiSchema?: () => UiSchema;
 	list(): T[];
 	getOne(key: string): Result<T, Error>;
 	/** Return stable key for a record (default: (record as any).id) */

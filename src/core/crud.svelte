@@ -15,6 +15,7 @@
 	let { repository }: Props = $props();
 
 	const schema = $derived(repository.getSchema());
+	const uiSchema = $derived(repository.getUiSchema?.());
 	const records = $derived(repository.list());
 
 	const entityName = $derived(
@@ -135,7 +136,7 @@
 			<Sheet.Title>{editingRecord != null ? 'Edit' : 'Create'}</Sheet.Title>
 		</Sheet.Header>
 		<div class="p-4">
-			<Form {schema} initialValue={editingRecord ?? undefined} onSubmit={handleSubmit} />
+			<Form {schema} {uiSchema} initialValue={editingRecord ?? undefined} onSubmit={handleSubmit} />
 		</div>
 		<Sheet.Footer>
 			<Button variant="outline" onclick={() => (sheetOpen = false)}>Cancel</Button>
