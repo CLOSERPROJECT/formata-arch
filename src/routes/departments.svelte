@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { PlusIcon } from '@lucide/svelte';
 	import { Crud } from '$core/crud.svelte.js';
 	import { DepartmentRepository } from '$core/repositories/department.repository.js';
 	import { config } from '$core/state.svelte.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import NewButton from '$lib/components/new-button.svelte';
 	import { setTopbar } from '$lib/layout.js';
 
 	//
@@ -18,10 +17,7 @@
 </script>
 
 {#snippet topbarRight()}
-	<Button onclick={() => crud.openCreate()}>
-		<PlusIcon class="h-4 w-4" />
-		New
-	</Button>
+	<NewButton onClick={() => crud.openCreate()} />
 {/snippet}
 
 <crud.Component self={crud} />
