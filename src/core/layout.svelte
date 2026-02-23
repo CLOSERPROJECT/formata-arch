@@ -43,6 +43,8 @@
 				{@render navbarState.right()}
 			{/if}
 		</div>
-		{@render children()}
+		<div class="p-4">
+			{@render children()}
+		</div>
 	</main>
 </Sidebar.Provider>
