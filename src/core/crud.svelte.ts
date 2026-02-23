@@ -1,4 +1,3 @@
-import { getValueSnapshot } from '@sjsf/form';
 import { toast } from 'svelte-sonner';
 
 import type { Repository } from './repositories/index.js';
@@ -54,9 +53,9 @@ export class Crud<T extends object> {
 		return this.#form;
 	}
 
+	formElement = $state<HTMLFormElement>();
 	submitForm() {
-		// TODO: Perform validation before
-		this.handleSubmit(getValueSnapshot(this.form) as T);
+		this.formElement?.requestSubmit();
 	}
 
 	sheetOpen = $state(false);
@@ -90,7 +89,6 @@ export class Crud<T extends object> {
 			if (result.isOk) {
 				toast.success('Record updated');
 				this.sheetOpen = false;
-				this.editingRecord = null;
 			} else {
 				toast.error(result.error.message);
 			}

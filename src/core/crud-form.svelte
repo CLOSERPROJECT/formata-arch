@@ -18,9 +18,9 @@
 {#key crud.form}
 	<CrudFormContext {crud}>
 		{#if !hideSubmitButton}
-			<BasicForm form={crud.form} />
+			<BasicForm form={crud.form} bind:ref={crud.formElement} />
 		{:else}
-			<Form>
+			<Form bind:ref={crud.formElement}>
 				<Content />
 			</Form>
 		{/if}
