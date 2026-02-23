@@ -2,6 +2,7 @@ import { toast } from 'svelte-sonner';
 
 import type { Repository } from './repositories/index.js';
 
+import CrudForm from './crud-form.svelte';
 import CrudComponent from './crud.svelte';
 import { makeForm } from './form.svelte.js';
 
@@ -10,8 +11,11 @@ import { makeForm } from './form.svelte.js';
 export class Crud<T extends object> {
 	constructor(private repository: Repository<T>) {}
 
-	get Component() {
+	get Table() {
 		return CrudComponent;
+	}
+	get Form() {
+		return CrudForm;
 	}
 
 	get schema() {

@@ -8,11 +8,11 @@
 	//
 
 	interface Props {
-		crud: Crud<T>;
+		self: Crud<T>;
 		hideSubmitButton?: boolean;
 	}
 
-	let { crud, hideSubmitButton = false }: Props = $props();
+	let { self: crud, hideSubmitButton = false }: Props = $props();
 </script>
 
 {#key crud.form}

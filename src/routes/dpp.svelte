@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { SaveIcon } from '@lucide/svelte';
-	import CrudForm from '$core/crud-form.svelte';
 	import { Crud } from '$core/crud.svelte.js';
 	import { setTopbar } from '$core/layout.svelte';
 	import { DppRepository } from '$core/repositories/dpp.repository.js';
@@ -26,4 +25,4 @@
 	</Button>
 {/snippet}
 
-<CrudForm {crud} hideSubmitButton />
+<crud.Form self={crud} hideSubmitButton />

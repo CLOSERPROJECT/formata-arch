@@ -20,4 +20,4 @@
 	<NewButton onClick={() => crud.openCreate()} />
 {/snippet}
 
-<crud.Component self={crud} />
+<crud.Table self={crud} />
