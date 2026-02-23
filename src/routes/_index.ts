@@ -1,5 +1,5 @@
-import { createRouter } from 'sv-router';
 import layout from '$core/layout.svelte';
+import { createRouter } from 'sv-router';
 
 export const { p, navigate, isActive, route } = createRouter({
 	layout,
@@ -7,6 +7,5 @@ export const { p, navigate, isActive, route } = createRouter({
 	'/departments': () => import('./departments.svelte'),
 	'/users': () => import('./users.svelte'),
 	'/dpp': () => import('./dpp.svelte'),
-	'/steps': () => import('./steps.svelte'),
 	'/workflow': () => import('./workflow.svelte')
 });

@@ -8,7 +8,10 @@ import CrudComponent from './crud.svelte';
 
 export class Crud<T extends object> {
 	constructor(private repository: Repository<T>) {}
-	Component = CrudComponent;
+
+	get Component() {
+		return CrudComponent;
+	}
 
 	get schema() {
 		return this.repository.getSchema();

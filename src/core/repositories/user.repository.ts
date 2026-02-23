@@ -1,10 +1,13 @@
-import type { Repository } from './index.js';
+import type { Schema, UiSchema } from '@sjsf/form';
 import type { AttestaConfig, AttestaConfigSchema } from '$core/schema.js';
 import type { FromSchema } from 'json-schema-to-ts';
-import type { Schema, UiSchema } from '@sjsf/form';
-import { getEntitySchema } from './utils.js';
-import Result from 'true-myth/result';
+
 import SelectDepartment from '$core/form/select-department.svelte';
+import Result from 'true-myth/result';
+
+import type { Repository } from './index.js';
+
+import { getEntitySchema } from './utils.js';
 
 //
 
