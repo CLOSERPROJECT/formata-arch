@@ -31,7 +31,7 @@
 	<AppSidebar />
 	<main class="grow">
 		<div
-			class="sticky top-0 flex h-[53px] items-center justify-between border-b bg-background p-2 pr-4"
+			class="sticky top-0 z-10 flex h-[53px] items-center justify-between border-b bg-background p-2 pr-4"
 		>
 			<div class="flex items-center gap-2">
 				<Sidebar.Trigger />

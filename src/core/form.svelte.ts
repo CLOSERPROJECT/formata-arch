@@ -7,11 +7,18 @@ import {
 	type Schema,
 	type UiSchema
 } from '@sjsf/form';
+import { overrideByRecord } from '@sjsf/form/lib/resolver';
 import { omitExtraData } from '@sjsf/form/omit-extra-data';
 import * as defaults from '$builder/editor/node-settings.js';
 import { onDestroy, untrack } from 'svelte';
 
+import AnimatedArray from './form/animated-array.svelte';
+
 //
+
+const theme = overrideByRecord(defaults.theme, {
+	arrayField: AnimatedArray
+});
 
 interface Props<T> {
 	schema: Schema;
@@ -25,6 +32,7 @@ export function makeForm<T>(props: Props<T>): FormState<T> {
 
 	const form = createForm({
 		...defaults,
+		theme,
 		validator: (options) => {
 			const v = defaults.validator(options);
 			return {

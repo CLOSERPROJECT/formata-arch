@@ -1,17 +1,21 @@
-import type { Repository } from "./index.js";
-import type { AttestaConfig, AttestaConfigSchema } from "$core/schema.js";
-import type { FromSchema } from "json-schema-to-ts";
-import type { Schema } from "@sjsf/form";
-import { getEntitySchema } from "./utils.js";
-import Result from "true-myth/result";
+import type { Schema } from '@sjsf/form';
+import type { AttestaConfig } from '$core/schema.js';
 
-export type Step = FromSchema<AttestaConfigSchema["$defs"]["Step"]>;
+import Result from 'true-myth/result';
+
+import type { Repository } from './index.js';
+
+import { getEntitySchema } from './utils.js';
+
+//
+
+export type Step = AttestaConfig['workflow']['steps'][number];
 
 export class StepRepository implements Repository<Step> {
 	constructor(private readonly config: AttestaConfig) {}
 
 	getSchema(): Schema {
-		return getEntitySchema("Step");
+		return getEntitySchema('Step');
 	}
 
 	list(): Step[] {

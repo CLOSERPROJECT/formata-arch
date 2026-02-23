@@ -1,22 +1,49 @@
-import type { Repository } from "./index.js";
-import type { AttestaConfig, AttestaConfigSchema } from "$core/schema.js";
-import type { FromSchema } from "json-schema-to-ts";
-import type { Schema } from "@sjsf/form";
-import { getEntitySchema } from "./utils.js";
-import Result from "true-myth/result";
+import type { Schema, UiSchema } from '@sjsf/form';
+import type { AttestaConfig } from '$core/schema.js';
 
-const WORKFLOW_KEY = "workflow";
+import SelectDepartment from '$core/form/select-department.svelte';
+import Result from 'true-myth/result';
 
-export type Workflow = FromSchema<AttestaConfigSchema["$defs"]["Workflow"]>;
+import type { Repository } from './index.js';
+
+import { getEntitySchema } from './utils.js';
+
+//
+
+const WORKFLOW_KEY = 'workflow';
+
+export type Workflow = AttestaConfig['workflow'];
 
 export class WorkflowRepository implements Repository<Workflow> {
 	constructor(private readonly config: AttestaConfig) {}
 
 	getSchema(): Schema {
-		return getEntitySchema("Workflow");
+		return getEntitySchema('Workflow');
 	}
 
-	getKey(_record: Workflow): string {
+	getUiSchema(): UiSchema {
+		return {
+			steps: {
+				items: {
+					substeps: {
+						items: {
+							role: {
+								'ui:components': {
+									textWidget: SelectDepartment
+								},
+								'ui:options': {
+									attestaConfig: this.config
+								}
+							}
+						}
+					}
+				}
+			}
+		};
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	getKey(_: Workflow): string {
 		return WORKFLOW_KEY;
 	}
 
@@ -44,7 +71,8 @@ export class WorkflowRepository implements Repository<Workflow> {
 		return Result.ok(this.config.workflow);
 	}
 
-	delete(_key: string): Result<void, Error> {
-		return Result.err(new Error("Cannot delete workflow"));
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	delete(_: string): Result<void, Error> {
+		return Result.err(new Error('Cannot delete workflow'));
 	}
 }
