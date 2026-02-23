@@ -1,9 +1,7 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { entities } from '$core/repositories/utils.js';
-	import { state } from '$core/state.svelte.js';
 
-	import { p, isActive } from '../routes/_index.js';
+	import { isActive, p } from '../routes/_index.js';
 
 	const links: Array<{ label: string; href: ReturnType<typeof p> }> = [
 		{ label: 'Home', href: p('/') },
@@ -20,7 +18,7 @@
 	<Sidebar.Content>
 		<Sidebar.Group>
 			<Sidebar.Menu>
-				{#each links as link}
+				{#each links as link, index (index)}
 					<Sidebar.MenuItem>
 						<Sidebar.MenuButton>
 							{#snippet child({ props })}
@@ -28,6 +26,7 @@
 									href={link.href}
 									{...props}
 									class={[
+										props.class,
 										isActive(link.href as '/') && 'bg-sidebar-accent text-sidebar-accent-foreground'
 									]}
 								>

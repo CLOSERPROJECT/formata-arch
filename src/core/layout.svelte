@@ -1,9 +1,24 @@
+<script module lang="ts">
+	type TopbarState = {
+		title: string;
+		right?: Snippet;
+	};
+
+	let navbarState = $state.raw<TopbarState>();
+
+	export function setTopbar(state: TopbarState) {
+		navbarState = state;
+	}
+</script>
+
 <script lang="ts">
-	import { Toaster } from '$lib/components/ui/sonner/index.js';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import AppSidebar from './sidebar.svelte';
-	import { themeManager } from '../theme.svelte.js';
 	import type { Snippet } from 'svelte';
+
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+
+	import AppSidebar from './sidebar.svelte';
+
+	//
 
 	type Props = {
 		children: Snippet;
@@ -14,8 +29,20 @@
 
 <Sidebar.Provider>
 	<AppSidebar />
-	<main>
-		<Sidebar.Trigger />
+	<main class="grow">
+		<div
+			class="sticky top-0 flex h-[53px] items-center justify-between border-b bg-background p-2 pr-4"
+		>
+			<div class="flex items-center gap-2">
+				<Sidebar.Trigger />
+				{#if navbarState?.title}
+					<p class="font-medium">{navbarState.title}</p>
+				{/if}
+			</div>
+			{#if navbarState?.right}
+				{@render navbarState.right()}
+			{/if}
+		</div>
 		{@render children()}
 	</main>
 </Sidebar.Provider>
