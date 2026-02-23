@@ -46,16 +46,20 @@ export function makeForm<T>(props: Props<T>): FormState<T> {
 		},
 		fieldsValidationMode: ON_INPUT | ON_CHANGE,
 		fieldsValidationDebounceMs: 200,
-		onSubmit(value) {
+		onSubmit(value, e) {
+			e.preventDefault();
 			onSubmit?.(value as T);
 		}
 	});
 
+	return form as FormState<T>;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function setComponentContext(form: FormState<any>) {
 	setFormContext(form);
 
 	onDestroy(() => {
 		form.fieldsValidation.abort();
 	});
-
-	return form as FormState<T>;
 }

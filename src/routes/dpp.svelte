@@ -1,9 +1,29 @@
 <script lang="ts">
-	import Crud from '$core/crud.svelte';
+	import { SaveIcon } from '@lucide/svelte';
+	import CrudForm from '$core/crud-form.svelte';
+	import { Crud } from '$core/crud.svelte.js';
+	import { setTopbar } from '$core/layout.svelte';
 	import { DppRepository } from '$core/repositories/dpp.repository.js';
 	import { config } from '$core/state.svelte.js';
+	import Button from '$lib/components/ui/button/button.svelte';
+
+	//
 
 	const repository = new DppRepository(config);
+	const crud = new Crud(repository);
+	crud.editingRecord = repository.list()[0];
+
+	setTopbar({
+		title: 'DPP Config',
+		right: topbarRight
+	});
 </script>
 
-<Crud {repository} />
+{#snippet topbarRight()}
+	<Button onclick={() => crud.submitForm()}>
+		<SaveIcon />
+		Save
+	</Button>
+{/snippet}
+
+<CrudForm {crud} hideSubmitButton />

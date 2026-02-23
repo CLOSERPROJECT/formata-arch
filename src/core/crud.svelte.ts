@@ -1,8 +1,10 @@
+import { getValueSnapshot } from '@sjsf/form';
 import { toast } from 'svelte-sonner';
 
 import type { Repository } from './repositories/index.js';
 
 import CrudComponent from './crud.svelte';
+import { makeForm } from './form.svelte.js';
 
 //
 
@@ -37,6 +39,24 @@ export class Crud<T extends object> {
 			this.def.properties
 			? (Object.keys(this.def.properties as object) as string[]).filter((k) => k !== '__stepId')
 			: [];
+	}
+
+	#form = $derived.by(() =>
+		makeForm<T>({
+			schema: this.schema,
+			uiSchema: this.uiSchema,
+			initialValue: this.editingRecord ?? undefined,
+			onSubmit: (value) => this.handleSubmit(value)
+		})
+	);
+
+	get form() {
+		return this.#form;
+	}
+
+	submitForm() {
+		// TODO: Perform validation before
+		this.handleSubmit(getValueSnapshot(this.form) as T);
 	}
 
 	sheetOpen = $state(false);

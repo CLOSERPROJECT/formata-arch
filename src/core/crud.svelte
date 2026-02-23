@@ -1,13 +1,12 @@
 <script lang="ts" generics="T extends object">
 	import { PencilIcon, TrashIcon } from '@lucide/svelte';
+	import { BasicForm } from '@sjsf/form';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
 
 	import type { Crud } from './crud.svelte.js';
-
-	import Form from './form.svelte';
 
 	//
 
@@ -58,12 +57,7 @@
 			<Sheet.Title>{crud.editingRecord != null ? 'Edit' : 'Create'}</Sheet.Title>
 		</Sheet.Header>
 		<div class="p-4">
-			<Form
-				schema={crud.schema}
-				uiSchema={crud.uiSchema}
-				initialValue={crud.editingRecord ?? undefined}
-				onSubmit={(value) => crud.handleSubmit(value as T)}
-			/>
+			<BasicForm form={crud.form} />
 		</div>
 		<Sheet.Footer>
 			<Button variant="outline" onclick={() => (crud.sheetOpen = false)}>Cancel</Button>
