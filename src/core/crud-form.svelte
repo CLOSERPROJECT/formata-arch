@@ -15,14 +15,14 @@
 	let { self: crud, hideSubmitButton = false }: Props = $props();
 </script>
 
-{#if !hideSubmitButton}
-	<BasicForm form={crud.form} bind:ref={crud.formElement} />
-{:else}
-	{#key crud.form}
-		<CrudFormContext {crud}>
+{#key crud.form}
+	<CrudFormContext {crud}>
+		{#if !hideSubmitButton}
+			<BasicForm form={crud.form} bind:ref={crud.formElement} />
+		{:else}
 			<Form bind:ref={crud.formElement}>
 				<Content />
 			</Form>
-		</CrudFormContext>
-	{/key}
-{/if}
+		{/if}
+	</CrudFormContext>
+{/key}

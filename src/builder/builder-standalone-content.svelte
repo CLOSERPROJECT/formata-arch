@@ -1,13 +1,22 @@
 <script lang="ts">
 	import { on } from 'svelte/events';
 
-	import { getBuilderContext } from '../context.svelte.js';
-	import Form from '../preview/form.svelte';
-	import Content from './content.svelte';
-	import Controls from './controls.svelte';
-	import Settings from './settings.svelte';
+	import { BuilderContext, setBuilderContext } from './context.svelte.js';
+	import Content from './editor/content.svelte';
+	import Controls from './editor/controls.svelte';
+	import Settings from './editor/settings.svelte';
+	import Form from './preview/form.svelte';
 
-	const ctx = getBuilderContext();
+	type Props = {
+		ctx: BuilderContext;
+		onInit?: (ctx: BuilderContext) => void;
+	};
+	const { ctx, onInit }: Props = $props();
+
+	setBuilderContext(ctx);
+	$effect(() => {
+		onInit?.(ctx);
+	});
 
 	let rootElements = $state(new Array<HTMLDivElement | null>(3));
 	$effect(() =>
@@ -32,23 +41,23 @@
 <div class={['mx-auto grid gap-6', 'grid-cols-[1fr_3fr_2fr_3fr]']}>
 	<div
 		bind:this={rootElements[0]}
-		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[150px] overflow-y-auto pb-4 pl-8"
+		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[150px] overflow-y-auto"
 	>
 		<Controls />
 	</div>
 
-	<div bind:this={rootElements[1]} class="pb-4">
+	<div bind:this={rootElements[1]}>
 		<Content />
 	</div>
 
 	<div
 		bind:this={rootElements[2]}
-		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[200px] overflow-y-auto pb-4"
+		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[200px] overflow-y-auto"
 	>
 		<Settings />
 	</div>
 
-	<div class="overflow-x-hidden pr-8 pb-4">
+	<div class="overflow-x-hidden">
 		<Form />
 	</div>
 </div>

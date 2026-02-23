@@ -12,6 +12,7 @@ import { omitExtraData } from '@sjsf/form/omit-extra-data';
 import * as defaults from '$builder/editor/node-settings.js';
 import { onDestroy, untrack } from 'svelte';
 
+import { resolver } from './form.resolver.js';
 import AnimatedArray from './form/animated-array.svelte';
 
 //
@@ -32,6 +33,7 @@ export function makeForm<T>(props: Props<T>): FormState<T> {
 
 	const form = createForm({
 		...defaults,
+		resolver,
 		theme,
 		validator: (options) => {
 			const v = defaults.validator(options);

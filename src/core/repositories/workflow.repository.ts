@@ -1,6 +1,8 @@
 import type { Schema, UiSchema } from '@sjsf/form';
 import type { AttestaConfig } from '$core/schema.js';
 
+import FormataConfigField from '$core/form/formata-config-field.svelte';
+import HiddenObjectField from '$core/form/hidden-object-field.svelte';
 import SelectDepartment from '$core/form/select-department.svelte';
 import Result from 'true-myth/result';
 
@@ -33,6 +35,16 @@ export class WorkflowRepository implements Repository<Workflow> {
 								},
 								'ui:options': {
 									attestaConfig: this.config
+								}
+							},
+							uiSchema: {
+								'ui:components': {
+									objectField: HiddenObjectField
+								}
+							},
+							schema: {
+								'ui:components': {
+									objectField: FormataConfigField
 								}
 							}
 						}

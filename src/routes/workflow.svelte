@@ -49,4 +49,8 @@
 	:global([data-layout='object-properties']) {
 		@apply gap-5;
 	}
+
+	:global([data-slot='select-trigger']) {
+		@apply bg-background;
+	}
 </style>

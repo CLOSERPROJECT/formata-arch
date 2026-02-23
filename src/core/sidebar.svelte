@@ -27,7 +27,7 @@
 	</Sidebar.Header>
 	<Sidebar.Content>
 		{@render group(main, 'Main')}
-		{@render group(users, 'Access')}
+		{@render group(users, 'Access control')}
 	</Sidebar.Content>
 	<Sidebar.Footer />
 </Sidebar.Root>
