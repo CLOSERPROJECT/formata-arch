@@ -79,6 +79,7 @@
 		"json-schema-to-zod": "^2.7.0",
 		"lodash": "^4.17.23",
 		"lz-string": "^1.5.0",
+		"rune-sync": "^0.2.1",
 		"shiki": "^3.21.0",
 		"sv-router": "^0.14.0",
 		"true-myth": "^9.3.1",

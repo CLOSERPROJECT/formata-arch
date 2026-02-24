@@ -1,4 +1,5 @@
 import { Config } from '$core';
+import { lsSync } from 'rune-sync/localstorage';
 
 import sourceYaml from './config/config.sample.yaml?raw';
 
@@ -9,4 +10,4 @@ if (configResult.isErr) {
 	throw new Error(configResult.error.message);
 }
 
-export const config = $state<Config.Config>(configResult.value);
+export const config = lsSync('formata-config', configResult.value);
