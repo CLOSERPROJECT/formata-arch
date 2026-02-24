@@ -1,39 +1,23 @@
-import { describe, it, expect } from "vitest";
-import type { AttestaConfig } from "$core/schema.js";
-import { ConfigRepository } from "./config.repository.js";
+import { Config } from '$core';
+import { describe, expect, it } from 'vitest';
 
-function createTestConfig(): AttestaConfig {
-	return {
-		workflow: { name: "Test", steps: [] },
-		departments: [{ id: "d1", name: "Dept", color: "#000", border: "#000" }],
-		users: [],
-		dpp: {
-			enabled: false,
-			gtin: "",
-			lotInputKey: "",
-			lotDefault: "",
-			serialInputKey: "",
-			serialStrategy: "",
-			productName: "",
-			productDescription: "",
-			ownerName: ""
-		}
-	};
-}
+import { ConfigRepository } from './config.repository.js';
 
-describe("ConfigRepository", () => {
-	describe("getSchema", () => {
-		it("returns schema with $ref to Config", () => {
-			const config = createTestConfig();
+//
+
+describe('ConfigRepository', () => {
+	describe('getSchema', () => {
+		it('returns schema with $ref to Config', () => {
+			const config = Config.createTestSample();
 			const repo = new ConfigRepository(config);
 			const schema = repo.getSchema();
-			expect(schema.$ref).toBe("#/$defs/Config");
+			expect(schema.$ref).toBe('#/$defs/Config');
 		});
 	});
 
-	describe("list", () => {
-		it("returns array with single config", () => {
-			const config = createTestConfig();
+	describe('list', () => {
+		it('returns array with single config', () => {
+			const config = Config.createTestSample();
 			const repo = new ConfigRepository(config);
 			const list = repo.list();
 			expect(list).toHaveLength(1);
@@ -41,11 +25,11 @@ describe("ConfigRepository", () => {
 		});
 	});
 
-	describe("getOne", () => {
+	describe('getOne', () => {
 		it("returns Ok(config) when key is 'config'", () => {
-			const config = createTestConfig();
+			const config = Config.createTestSample();
 			const repo = new ConfigRepository(config);
-			const result = repo.getOne("config");
+			const result = repo.getOne('config');
 			expect(result.isOk).toBe(true);
 			if (result.isOk) {
 				expect(result.value).toBe(config);
@@ -53,21 +37,21 @@ describe("ConfigRepository", () => {
 		});
 
 		it("returns Err when key is not 'config'", () => {
-			const config = createTestConfig();
+			const config = Config.createTestSample();
 			const repo = new ConfigRepository(config);
-			const result = repo.getOne("other");
+			const result = repo.getOne('other');
 			expect(result.isErr).toBe(true);
 			if (result.isErr) {
-				expect(result.error.message).toBe("Config not found: other");
+				expect(result.error.message).toBe('Config not found: other');
 			}
 		});
 	});
 
-	describe("create", () => {
-		it("updates config and returns Ok(config)", () => {
-			const config = createTestConfig();
+	describe('create', () => {
+		it('updates config and returns Ok(config)', () => {
+			const config = Config.createTestSample();
 			const repo = new ConfigRepository(config);
-			const newWorkflow = { name: "NewWorkflow", steps: [] };
+			const newWorkflow = { name: 'NewWorkflow', steps: [] };
 			const result = repo.create({
 				...config,
 				workflow: newWorkflow
@@ -80,35 +64,35 @@ describe("ConfigRepository", () => {
 		});
 	});
 
-	describe("update", () => {
+	describe('update', () => {
 		it("updates config when key is 'config'", () => {
-			const config = createTestConfig();
+			const config = Config.createTestSample();
 			const repo = new ConfigRepository(config);
 			const updated = {
 				...config,
-				workflow: { name: "Updated", steps: [] }
+				workflow: { name: 'Updated', steps: [] }
 			};
-			const result = repo.update("config", updated);
+			const result = repo.update('config', updated);
 			expect(result.isOk).toBe(true);
-			expect(config.workflow.name).toBe("Updated");
+			expect(config.workflow.name).toBe('Updated');
 		});
 
 		it("returns Err when key is not 'config'", () => {
-			const config = createTestConfig();
+			const config = Config.createTestSample();
 			const repo = new ConfigRepository(config);
-			const result = repo.update("other", config);
+			const result = repo.update('other', config);
 			expect(result.isErr).toBe(true);
 		});
 	});
 
-	describe("delete", () => {
-		it("returns Err (cannot delete config)", () => {
-			const config = createTestConfig();
+	describe('delete', () => {
+		it('returns Err (cannot delete config)', () => {
+			const config = Config.createTestSample();
 			const repo = new ConfigRepository(config);
-			const result = repo.delete("config");
+			const result = repo.delete('config');
 			expect(result.isErr).toBe(true);
 			if (result.isErr) {
-				expect(result.error.message).toBe("Cannot delete config");
+				expect(result.error.message).toBe('Cannot delete config');
 			}
 		});
 	});

@@ -12,7 +12,7 @@
 			"$lib": ["./src/lib"],
 			"$lib/*": ["./src/lib/*"],
 			"$apps/*": ["../*"],
-			"$core": ["./src/core"],
+			"$core": ["./src/core/index.ts"],
 			"$core/*": ["./src/core/*"],
 			"$builder": ["./src/builder"],
 			"$builder/*": ["./src/builder/*"]

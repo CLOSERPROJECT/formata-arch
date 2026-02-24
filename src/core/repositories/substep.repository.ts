@@ -1,32 +1,35 @@
-import type { Repository } from "./index.js";
-import type { AttestaConfig, AttestaConfigSchema } from "$core/schema.js";
-import type { FromSchema } from "json-schema-to-ts";
-import type { Schema } from "@sjsf/form";
-import { getEntitySchema } from "./utils.js";
-import Result from "true-myth/result";
+import type { Schema } from '@sjsf/form';
 
-export type Substep = FromSchema<AttestaConfigSchema["$defs"]["Substep"]>;
+import { Config } from '$core';
+import Result from 'true-myth/result';
+
+import type { Repository } from './_types.js';
+import type { Step } from './step.repository.js';
+
+//
+
+export type Substep = Step['substeps'][number];
 
 /** Listed substeps include stepId for composite key (stepId:substepId) */
 export type SubstepWithStepId = Substep & { __stepId: string };
 
 function parseKey(key: string): { stepId: string; substepId: string } {
-	const idx = key.indexOf(":");
+	const idx = key.indexOf(':');
 	if (idx === -1) {
-		return { stepId: "", substepId: key };
+		return { stepId: '', substepId: key };
 	}
 	return { stepId: key.slice(0, idx), substepId: key.slice(idx + 1) };
 }
 
 export class SubstepRepository implements Repository<SubstepWithStepId> {
-	constructor(private readonly config: AttestaConfig) {}
+	constructor(private readonly config: Config.Config) {}
 
 	getKey(record: SubstepWithStepId): string {
 		return `${record.__stepId}:${record.id}`;
 	}
 
 	getSchema(): Schema {
-		return getEntitySchema("Substep");
+		return Config.getEntitySchema('Substep');
 	}
 
 	list(): SubstepWithStepId[] {
@@ -57,6 +60,7 @@ export class SubstepRepository implements Repository<SubstepWithStepId> {
 		if (step.substeps.some((s) => s.id === data.id)) {
 			return Result.err(new Error(`Substep already exists: ${data.id}`));
 		}
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { __stepId: _, ...substep } = data;
 		step.substeps = [...step.substeps, substep].sort((a, b) => a.order - b.order);
 		return Result.ok(data);
@@ -72,6 +76,7 @@ export class SubstepRepository implements Repository<SubstepWithStepId> {
 		if (index === -1) {
 			return Result.err(new Error(`Substep not found: ${key}`));
 		}
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { __stepId: _, ...substep } = data;
 		step.substeps = step.substeps.map((s) => (s.id === substepId ? substep : s));
 		return Result.ok(data);

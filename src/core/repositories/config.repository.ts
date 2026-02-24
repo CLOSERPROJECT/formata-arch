@@ -1,34 +1,38 @@
-import type { Repository } from "./index.js";
-import type { AttestaConfig } from "$core/schema.js";
-import type { Schema } from "@sjsf/form";
-import { getEntitySchema } from "./utils.js";
-import Result from "true-myth/result";
+import type { Schema } from '@sjsf/form';
 
-const CONFIG_KEY = "config";
+import { Config } from '$core';
+import Result from 'true-myth/result';
 
-export class ConfigRepository implements Repository<AttestaConfig> {
-	constructor(private readonly config: AttestaConfig) {}
+import type { Repository } from './_types.js';
+
+//
+
+const CONFIG_KEY = 'config';
+
+export class ConfigRepository implements Repository<Config.Config> {
+	constructor(private readonly config: Config.Config) {}
 
 	getSchema(): Schema {
-		return getEntitySchema("Config");
+		return Config.getEntitySchema('Config');
 	}
 
-	getKey(_record: AttestaConfig): string {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	getKey(_: Config.Config): string {
 		return CONFIG_KEY;
 	}
 
-	list(): AttestaConfig[] {
+	list(): Config.Config[] {
 		return [this.config];
 	}
 
-	getOne(key: string): Result<AttestaConfig, Error> {
+	getOne(key: string): Result<Config.Config, Error> {
 		if (key !== CONFIG_KEY) {
 			return Result.err(new Error(`Config not found: ${key}`));
 		}
 		return Result.ok(this.config);
 	}
 
-	create(data: AttestaConfig): Result<AttestaConfig, Error> {
+	create(data: Config.Config): Result<Config.Config, Error> {
 		this.config.workflow = data.workflow;
 		this.config.departments = data.departments;
 		this.config.users = data.users;
@@ -36,7 +40,7 @@ export class ConfigRepository implements Repository<AttestaConfig> {
 		return Result.ok(this.config);
 	}
 
-	update(key: string, data: AttestaConfig): Result<AttestaConfig, Error> {
+	update(key: string, data: Config.Config): Result<Config.Config, Error> {
 		if (key !== CONFIG_KEY) {
 			return Result.err(new Error(`Config not found: ${key}`));
 		}
@@ -47,7 +51,8 @@ export class ConfigRepository implements Repository<AttestaConfig> {
 		return Result.ok(this.config);
 	}
 
-	delete(_key: string): Result<void, Error> {
-		return Result.err(new Error("Cannot delete config"));
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	delete(_: string): Result<void, Error> {
+		return Result.err(new Error('Cannot delete config'));
 	}
 }

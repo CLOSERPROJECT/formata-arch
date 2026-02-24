@@ -1,9 +1,12 @@
-import { describe, it, expect } from 'vitest';
-import { serialize, deserialize } from './serde.js';
+import { describe, expect, it } from 'vitest';
+
+import { deserialize, serialize } from './serde.js';
+
+//
 
 describe('serde', () => {
-	it('deserializes source.yaml to AttestaConfig shape', async () => {
-		const url = new URL('source.yaml', import.meta.url);
+	it('deserializes config.sample.yaml to Config shape', async () => {
+		const url = new URL('config.sample.yaml', import.meta.url);
 		const raw = await Bun.file(url).text();
 		const result = deserialize(raw);
 		expect(result.isOk).toBe(true);
@@ -17,7 +20,7 @@ describe('serde', () => {
 	});
 
 	it('round-trips: deserialize(serialize(config)) equals config', async () => {
-		const url = new URL('source.yaml', import.meta.url);
+		const url = new URL('config.sample.yaml', import.meta.url);
 		const raw = await Bun.file(url).text();
 		const parseResult = deserialize(raw);
 		expect(parseResult.isOk).toBe(true);

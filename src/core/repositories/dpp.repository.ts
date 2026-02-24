@@ -1,22 +1,26 @@
-import type { Repository } from "./index.js";
-import type { AttestaConfig, AttestaConfigSchema } from "$core/schema.js";
-import type { FromSchema } from "json-schema-to-ts";
-import type { Schema } from "@sjsf/form";
-import { getEntitySchema } from "./utils.js";
-import Result from "true-myth/result";
+import type { Schema } from '@sjsf/form';
+import type { FromSchema } from 'json-schema-to-ts';
 
-const DPP_KEY = "dpp";
+import { Config } from '$core';
+import Result from 'true-myth/result';
 
-export type Dpp = FromSchema<AttestaConfigSchema["$defs"]["Dpp"]>;
+import type { Repository } from './_types.js';
+
+//
+
+const DPP_KEY = 'dpp';
+
+export type Dpp = FromSchema<Config.Schema['$defs']['Dpp']>;
 
 export class DppRepository implements Repository<Dpp> {
-	constructor(private readonly config: AttestaConfig) {}
+	constructor(private readonly config: Config.Config) {}
 
 	getSchema(): Schema {
-		return getEntitySchema("Dpp");
+		return Config.getEntitySchema('Dpp');
 	}
 
-	getKey(_record: Dpp): string {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	getKey(_: Dpp): string {
 		return DPP_KEY;
 	}
 
@@ -44,7 +48,8 @@ export class DppRepository implements Repository<Dpp> {
 		return Result.ok(this.config.dpp);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	delete(_key: string): Result<void, Error> {
-		return Result.err(new Error("Cannot delete dpp"));
+		return Result.err(new Error('Cannot delete dpp'));
 	}
 }

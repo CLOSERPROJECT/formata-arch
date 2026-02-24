@@ -1,21 +1,19 @@
 import type { Schema } from '@sjsf/form';
-import type { AttestaConfig } from '$core/schema.js';
 
+import { Config } from '$core';
 import Result from 'true-myth/result';
 
-import type { Repository } from './index.js';
-
-import { getEntitySchema } from './utils.js';
+import type { Repository } from './_types.js';
 
 //
 
-export type Step = AttestaConfig['workflow']['steps'][number];
+export type Step = Config.Config['workflow']['steps'][number];
 
 export class StepRepository implements Repository<Step> {
-	constructor(private readonly config: AttestaConfig) {}
+	constructor(private readonly config: Config.Config) {}
 
 	getSchema(): Schema {
-		return getEntitySchema('Step');
+		return Config.getEntitySchema('Step');
 	}
 
 	list(): Step[] {

@@ -1,19 +1,20 @@
-import type { Repository } from "./index.js";
-import type { AttestaConfig, AttestaConfigSchema } from "$core/schema.js";
-import type { FromSchema } from "json-schema-to-ts";
-import type { Schema } from "@sjsf/form";
-import { getEntitySchema } from "./utils.js";
-import Result from "true-myth/result";
+import type { Schema } from '@sjsf/form';
+import type { FromSchema } from 'json-schema-to-ts';
+
+import { Config } from '$core';
+import Result from 'true-myth/result';
+
+import type { Repository } from './_types.js';
 
 //
 
-export type Department = FromSchema<AttestaConfigSchema["$defs"]["Department"]>;
+export type Department = FromSchema<Config.Schema['$defs']['Department']>;
 
 export class DepartmentRepository implements Repository<Department> {
-	constructor(private readonly config: AttestaConfig) {}
+	constructor(private readonly config: Config.Config) {}
 
 	getSchema(): Schema {
-		return getEntitySchema("Department");
+		return Config.getEntitySchema('Department');
 	}
 
 	list(): Department[] {
@@ -22,7 +23,9 @@ export class DepartmentRepository implements Repository<Department> {
 
 	getOne(key: string): Result<Department, Error> {
 		const dept = this.config.departments.find((d) => d.id === key);
-		return dept !== undefined ? Result.ok(dept) : Result.err(new Error(`Department not found: ${key}`));
+		return dept !== undefined
+			? Result.ok(dept)
+			: Result.err(new Error(`Department not found: ${key}`));
 	}
 
 	create(data: Department): Result<Department, Error> {

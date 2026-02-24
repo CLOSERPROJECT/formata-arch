@@ -1,10 +1,12 @@
-/// <reference types="vitest" />
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
-import tailwindcss from '@tailwindcss/vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
 import Icons from 'unplugin-icons/vite';
+import { defineConfig } from 'vite';
+import 'vitest/config';
+
+//
 
 export default defineConfig({
 	base: '/formata-arch/',

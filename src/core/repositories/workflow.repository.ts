@@ -1,26 +1,24 @@
 import type { Schema, UiSchema } from '@sjsf/form';
-import type { AttestaConfig } from '$core/schema.js';
 
+import { Config } from '$core';
 import FormataConfigField from '$core/form/formata-config-field.svelte';
 import HiddenObjectField from '$core/form/hidden-object-field.svelte';
 import SelectDepartment from '$core/form/select-department.svelte';
 import Result from 'true-myth/result';
 
-import type { Repository } from './index.js';
-
-import { getEntitySchema } from './utils.js';
+import type { Repository } from './_types.js';
 
 //
 
 const WORKFLOW_KEY = 'workflow';
 
-export type Workflow = AttestaConfig['workflow'];
+export type Workflow = Config.Config['workflow'];
 
 export class WorkflowRepository implements Repository<Workflow> {
-	constructor(private readonly config: AttestaConfig) {}
+	constructor(private readonly config: Config.Config) {}
 
 	getSchema(): Schema {
-		return getEntitySchema('Workflow');
+		return Config.getEntitySchema('Workflow');
 	}
 
 	getUiSchema(): UiSchema {
