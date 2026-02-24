@@ -98,7 +98,6 @@ export class SubstepRepository implements Repository<SubstepWithStepId> {
 	}
 
 	update(key: string, data: SubstepWithStepId): Result<SubstepWithStepId, Error> {
-		console.log('UPDATE', data);
 		const { stepId, substepId } = parseKey(key);
 		const step = this.config.workflow.steps.find((s) => s.id === stepId);
 		if (!step) {

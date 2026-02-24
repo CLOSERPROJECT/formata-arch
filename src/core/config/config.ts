@@ -53,7 +53,6 @@ export const Schema = {
 		Substep: {
 			type: 'object',
 			required: ['id', 'title', 'order', 'role', 'inputKey', 'inputType'],
-			additionalProperties: false,
 			properties: {
 				id: { type: 'string' },
 				title: { type: 'string' },
@@ -76,8 +75,7 @@ export const Schema = {
 			if: {
 				properties: {
 					inputType: { const: 'formata' }
-				},
-				required: ['inputType']
+				}
 			},
 			then: {
 				required: ['schema', 'uiSchema']

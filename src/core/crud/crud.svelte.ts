@@ -153,4 +153,8 @@ export class Crud<T extends object> {
 		if (typeof value === 'object') return JSON.stringify(value);
 		return String(value);
 	}
+
+	getKey(record: T): string {
+		return this.repository.getKey(record);
+	}
 }

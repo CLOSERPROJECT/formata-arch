@@ -22,7 +22,6 @@
 
 	function getInitialState(): { schema: Schema; uiSchema?: UiSchema } | undefined {
 		const formData = getValueSnapshot(ctx);
-		console.log(formData);
 		const schemaValue = get(formData, schemaPath);
 		const uiSchemaValue = get(formData, uiSchemaPath);
 		if (!schemaValue || typeof schemaValue !== 'object' || !('type' in schemaValue)) {
@@ -35,14 +34,16 @@
 	function handleSave() {
 		if (!builder) return;
 		if (!builder.validate()) return;
+		const formData = getValueSnapshot(ctx);
+		const base = typeof formData === 'object' && formData !== null ? formData : {};
+		setValue(ctx, {
+			...base,
+			schema: builder.schema,
+			uiSchema: builder.uiSchema ?? get(formData, uiSchemaPath)
+		} as Record<string, unknown>);
 		// @ts-expect-error - Slight type mismatch between builder.schema and form value
 		value = builder.schema;
-		if (builder.uiSchema) {
-			console.log(builder.uiSchema);
-			setValue(ctx, { ...getValueSnapshot(ctx), uiSchema: builder.uiSchema });
-		}
 		open = false;
-		console.log(getValueSnapshot(ctx));
 	}
 
 	function handleBuilderInit(b: BuilderContext) {
