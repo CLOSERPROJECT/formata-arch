@@ -54,10 +54,12 @@
 		bind:this={rootElements[0]}
 		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[150px] overflow-y-auto"
 	>
+		{@render label('Available fields')}
 		<Controls />
 	</div>
 
 	<div bind:this={rootElements[1]}>
+		{@render label('Form structure')}
 		<Content />
 	</div>
 
@@ -65,10 +67,16 @@
 		bind:this={rootElements[2]}
 		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[200px] overflow-y-auto"
 	>
+		{@render label('Field settings')}
 		<Settings />
 	</div>
 
 	<div class="overflow-x-hidden">
+		{@render label('Form preview')}
 		<Form />
 	</div>
 </div>
+
+{#snippet label(text: string)}
+	<p class="mb-2 text-sm font-medium text-muted-foreground">{text}</p>
+{/snippet}
