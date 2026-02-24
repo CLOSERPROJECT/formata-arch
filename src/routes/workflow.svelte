@@ -160,7 +160,7 @@
 		<tree.Tree self={tree} />
 	</div>
 
-	<div class="min-w-0">
+	<div class="min-w-0 grow p-4">
 		{#if formMode === 'step'}
 			<stepCrud.Forms
 				self={stepCrud}

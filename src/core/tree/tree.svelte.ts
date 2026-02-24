@@ -66,11 +66,35 @@ export class Tree {
 	}
 
 	handleMoveUp(path: Path) {
-		if (this.canMoveUp(path)) this.options.onMoveUp?.(path);
+		if (!this.canMoveUp(path)) return;
+		const sel = this.selection;
+		const wasSelected =
+			sel.state === 'selected' &&
+			path.length === sel.path.length &&
+			path.every((v, i) => v === sel.path[i]) &&
+			this.getNodeAt(path)?.type === sel.type;
+		this.options.onMoveUp?.(path);
+		if (wasSelected) {
+			const last = path.length - 1;
+			const newPath: Path = [...path.slice(0, last), path[last] - 1];
+			this.select(newPath, sel.type);
+		}
 	}
 
 	handleMoveDown(path: Path) {
-		if (this.canMoveDown(path)) this.options.onMoveDown?.(path);
+		if (!this.canMoveDown(path)) return;
+		const sel = this.selection;
+		const wasSelected =
+			sel.state === 'selected' &&
+			path.length === sel.path.length &&
+			path.every((v, i) => v === sel.path[i]) &&
+			this.getNodeAt(path)?.type === sel.type;
+		this.options.onMoveDown?.(path);
+		if (wasSelected) {
+			const last = path.length - 1;
+			const newPath: Path = [...path.slice(0, last), path[last] + 1];
+			this.select(newPath, sel.type);
+		}
 	}
 
 	handleDelete(path: Path) {
