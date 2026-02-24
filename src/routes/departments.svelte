@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Crud } from '$core/crud.svelte.js';
+	import { Crud } from '$core';
 	import { DepartmentRepository } from '$core/repositories/department.repository.js';
 	import { config } from '$core/state.svelte.js';
 	import NewButton from '$lib/components/new-button.svelte';

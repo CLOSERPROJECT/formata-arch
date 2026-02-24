@@ -1,10 +1,11 @@
 import type { Schema, UiSchema } from '@sjsf/form';
 
 import { Config } from '$core';
-import SelectDepartment from '$core/form/select-department.svelte';
 import Result from 'true-myth/result';
 
 import type { Repository } from './_types.js';
+
+import SelectDepartment from './components/select-department.svelte';
 
 //
 

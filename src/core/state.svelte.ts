@@ -1,13 +1,12 @@
-import type { AttestaConfig } from './schema.js';
+import { Config } from '$core';
 
-import { deserialize } from './serde.js';
-import sourceYaml from './source.yaml?raw';
+import sourceYaml from './config/config.sample.yaml?raw';
 
 //
 
-const configResult = deserialize(sourceYaml);
+const configResult = Config.deserialize(sourceYaml);
 if (configResult.isErr) {
 	throw new Error(configResult.error.message);
 }
 
-export const config = $state<AttestaConfig>(configResult.value);
+export const config = $state<Config.Config>(configResult.value);

@@ -11,12 +11,10 @@
 
 import type { Schema, UiSchema } from '@sjsf/form';
 
+import type { CustomizableNode, ObjectNode } from './node.js';
+
 import { EnumValueType } from './enum.js';
 import { NodeType, type NodeId } from './node-base.js';
-import type {
-	CustomizableNode,
-	ObjectNode
-} from './node.js';
 import { createEnumItemNode, createNode, createObjectProperty } from './node-factories.js';
 import { createRangeNode, RangeValueType } from './range-node.js';
 
@@ -64,11 +62,15 @@ function inferWidgetFromUiSchema(
 	const components = uiSchema['ui:components'];
 	if (components && typeof components === 'object') {
 		// Check for known component -> widget mappings used by the builder
+		// @ts-expect-error - Type is missing in the library but exists in formata-form
 		if (components['stringField'] === 'formataQrField') return 'textWidget';
 		if (components['objectField'] === 'aggregatedField') return 'aggregatedWidget';
 		if (components['arrayField'] === 'multiEnumField') return 'checkboxesWidget';
 		if (components['arrayField'] === 'arrayTagsField') return 'tagsWidget';
-		if (components['arrayField'] === 'arrayFilesField' || components['arrayField'] === 'arrayNativeFilesField')
+		if (
+			components['arrayField'] === 'arrayFilesField' ||
+			components['arrayField'] === 'arrayNativeFilesField'
+		)
 			return 'fileWidget';
 	}
 	// ui:options might not store widget directly; theme uses shadcn4Text etc.
@@ -103,7 +105,10 @@ function isRangeSchema(schema: Schema): boolean {
 	const startType = startSchema.type;
 	const endType = endSchema.type;
 	if (startType === 'string' && endType === 'string') return true;
-	if ((startType === 'number' || startType === 'integer') && (endType === 'number' || endType === 'integer'))
+	if (
+		(startType === 'number' || startType === 'integer') &&
+		(endType === 'number' || endType === 'integer')
+	)
 		return true;
 	return false;
 }
@@ -129,10 +134,7 @@ export type ParseSchemaContext = {
  * Parse a JSON Schema (and optional UI Schema) into a CustomizableNode tree.
  * Root must be type 'object'. Returns an ObjectNode suitable for BuilderContext.rootNode.
  */
-export function parseSchemaToRootNode(
-	schema: Schema,
-	uiSchema?: UiSchema
-): ObjectNode {
+export function parseSchemaToRootNode(schema: Schema, uiSchema?: UiSchema): ObjectNode {
 	if (schema.type !== 'object') {
 		throw new Error('parseSchemaToRootNode: root schema must have type "object"');
 	}
@@ -168,9 +170,7 @@ function parseObject(
 	const properties = schema.properties;
 	if (!properties || typeof properties !== 'object') return obj;
 
-	const requiredSet = new Set(
-		Array.isArray(schema.required) ? schema.required : []
-	);
+	const requiredSet = new Set(Array.isArray(schema.required) ? schema.required : []);
 
 	for (const [key, propSchema] of Object.entries(properties)) {
 		if (!propSchema || typeof propSchema !== 'object') continue;
@@ -205,7 +205,11 @@ function parseSchemaValue(
 		enumNode.options.title = (opts.title as string) ?? titleFallback;
 		enumNode.options.required = opts.required !== false;
 		if (opts.default !== undefined) enumNode.options.defaultValue = JSON.stringify(opts.default);
-		enumNode.options.widget = inferWidgetFromUiSchema(uiSchema, NodeType.Enum, 'radioWidget') as never;
+		enumNode.options.widget = inferWidgetFromUiSchema(
+			uiSchema,
+			NodeType.Enum,
+			'radioWidget'
+		) as never;
 		if (uiSchema?.['ui:options'] && typeof uiSchema['ui:options'] === 'object') {
 			const uio = uiSchema['ui:options'] as Record<string, unknown>;
 			if (typeof uio.inline === 'boolean') enumNode.options.inline = uio.inline;
@@ -223,7 +227,11 @@ function parseSchemaValue(
 				applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
 				fileNode.options.multiple = true;
 				fileNode.options.native = false;
-				fileNode.options.widget = inferWidgetFromUiSchema(uiSchema, NodeType.File, 'fileWidget') as never;
+				fileNode.options.widget = inferWidgetFromUiSchema(
+					uiSchema,
+					NodeType.File,
+					'fileWidget'
+				) as never;
 				return fileNode;
 			}
 			// MultiEnum: items.enum + uniqueItems
@@ -239,8 +247,13 @@ function parseSchemaValue(
 				applyCommonOptions(multiNode, schema, uiSchema, titleFallback);
 				if (opts.minItems !== undefined) multiNode.options.minItems = Number(opts.minItems);
 				if (opts.maxItems !== undefined) multiNode.options.maxItems = Number(opts.maxItems);
-				if (opts.default !== undefined) multiNode.options.defaultValue = defaultArrayValueFromSchema(schema);
-				multiNode.options.widget = inferWidgetFromUiSchema(uiSchema, NodeType.MultiEnum, 'checkboxesWidget') as never;
+				if (opts.default !== undefined)
+					multiNode.options.defaultValue = defaultArrayValueFromSchema(schema);
+				multiNode.options.widget = inferWidgetFromUiSchema(
+					uiSchema,
+					NodeType.MultiEnum,
+					'checkboxesWidget'
+				) as never;
 				if (uiSchema?.['ui:options'] && typeof uiSchema['ui:options'] === 'object') {
 					const uio = uiSchema['ui:options'] as Record<string, unknown>;
 					if (typeof uio.inline === 'boolean') multiNode.options.inline = uio.inline;
@@ -251,15 +264,23 @@ function parseSchemaValue(
 			if (items.type === 'string' && schema.uniqueItems === true) {
 				const tagsNode = createNode(NodeType.Tags);
 				applyCommonOptions(tagsNode, schema, uiSchema, titleFallback);
-				tagsNode.options.widget = inferWidgetFromUiSchema(uiSchema, NodeType.Tags, 'tagsWidget') as never;
+				tagsNode.options.widget = inferWidgetFromUiSchema(
+					uiSchema,
+					NodeType.Tags,
+					'tagsWidget'
+				) as never;
 				return tagsNode;
 			}
 		}
 		// Generic array
 		const arrayNode = createNode(NodeType.Array) as import('./node.js').ArrayNode;
 		applyCommonOptions(arrayNode, schema, uiSchema, titleFallback);
-		if (opts.default !== undefined) arrayNode.options.defaultValue = defaultArrayValueFromSchema(schema);
-		const itemSchema = items && typeof items === 'object' && !Array.isArray(items) ? (items as Schema) : { type: 'string' as const };
+		if (opts.default !== undefined)
+			arrayNode.options.defaultValue = defaultArrayValueFromSchema(schema);
+		const itemSchema =
+			items && typeof items === 'object' && !Array.isArray(items)
+				? (items as Schema)
+				: { type: 'string' as const };
 		const itemUi = uiSchema?.items as UiSchema | undefined;
 		arrayNode.item = parseSchemaValue(itemSchema, itemUi, ctx, 'Item');
 		return arrayNode;
@@ -272,7 +293,11 @@ function parseSchemaValue(
 			applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
 			fileNode.options.multiple = false;
 			fileNode.options.native = false;
-			fileNode.options.widget = inferWidgetFromUiSchema(uiSchema, NodeType.File, 'fileWidget') as never;
+			fileNode.options.widget = inferWidgetFromUiSchema(
+				uiSchema,
+				NodeType.File,
+				'fileWidget'
+			) as never;
 			return fileNode;
 		}
 		const stringNode = createNode(NodeType.String);
@@ -281,13 +306,21 @@ function parseSchemaValue(
 		if (opts.minLength !== undefined) stringNode.options.minLength = Number(opts.minLength);
 		if (opts.maxLength !== undefined) stringNode.options.maxLength = Number(opts.maxLength);
 		if (opts.pattern !== undefined) stringNode.options.pattern = String(opts.pattern);
-		stringNode.options.widget = inferWidgetFromUiSchema(uiSchema, NodeType.String, 'textWidget') as never;
+		stringNode.options.widget = inferWidgetFromUiSchema(
+			uiSchema,
+			NodeType.String,
+			'textWidget'
+		) as never;
 		if (uiSchema?.['ui:options'] && typeof uiSchema['ui:options'] === 'object') {
 			const uio = uiSchema['ui:options'] as Record<string, unknown>;
 			if (typeof uio.placeholder === 'string') stringNode.options.placeholder = uio.placeholder;
 			// Theme may store in shadcn4Text.text.placeholder
 			const textOpts = uio.text ?? (uio as Record<string, unknown>).shadcn4Text;
-			if (textOpts && typeof textOpts === 'object' && (textOpts as Record<string, unknown>).placeholder)
+			if (
+				textOpts &&
+				typeof textOpts === 'object' &&
+				(textOpts as Record<string, unknown>).placeholder
+			)
 				stringNode.options.placeholder = String((textOpts as Record<string, unknown>).placeholder);
 		}
 		return stringNode;
@@ -302,7 +335,11 @@ function parseSchemaValue(
 		if (opts.minimum !== undefined) numberNode.options.minimum = Number(opts.minimum);
 		if (opts.maximum !== undefined) numberNode.options.maximum = Number(opts.maximum);
 		if (opts.multipleOf !== undefined) numberNode.options.multipleOf = Number(opts.multipleOf);
-		numberNode.options.widget = inferWidgetFromUiSchema(uiSchema, NodeType.Number, 'numberWidget') as never;
+		numberNode.options.widget = inferWidgetFromUiSchema(
+			uiSchema,
+			NodeType.Number,
+			'numberWidget'
+		) as never;
 		return numberNode;
 	}
 
@@ -311,7 +348,11 @@ function parseSchemaValue(
 		const booleanNode = createNode(NodeType.Boolean);
 		applyCommonOptions(booleanNode, schema, uiSchema, titleFallback);
 		if (opts.default !== undefined) booleanNode.options.default = Boolean(opts.default);
-		booleanNode.options.widget = inferWidgetFromUiSchema(uiSchema, NodeType.Boolean, 'checkboxWidget') as never;
+		booleanNode.options.widget = inferWidgetFromUiSchema(
+			uiSchema,
+			NodeType.Boolean,
+			'checkboxWidget'
+		) as never;
 		return booleanNode;
 	}
 

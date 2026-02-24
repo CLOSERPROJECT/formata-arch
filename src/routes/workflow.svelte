@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SaveIcon } from '@lucide/svelte';
-	import { Crud } from '$core/crud.svelte.js';
-	import { WorkflowRepository } from '$core/repositories/workflow.repository.js';
+	import { Crud } from '$core';
+	import { WorkflowRepository } from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 

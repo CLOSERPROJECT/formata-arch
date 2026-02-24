@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SaveIcon } from '@lucide/svelte';
-	import { Crud } from '$core/crud.svelte.js';
-	import { DppRepository } from '$core/repositories/dpp.repository.js';
+	import { Crud } from '$core';
+	import { DppRepository } from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 

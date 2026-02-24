@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Crud } from '$core/crud.svelte.js';
-	import { UserRepository } from '$core/repositories/user.repository.js';
+	import { Crud } from '$core';
+	import { UserRepository } from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
 	import NewButton from '$lib/components/new-button.svelte';
 
