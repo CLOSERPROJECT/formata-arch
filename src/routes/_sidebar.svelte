@@ -1,9 +1,12 @@
 <script lang="ts">
 	import type { Icon } from '$lib/types.js';
 
-	import { BuildingIcon, IdCardIcon, UserIcon, WaypointsIcon } from '@lucide/svelte';
+	import { BuildingIcon, DownloadIcon, IdCardIcon, UploadIcon, UserIcon, WaypointsIcon } from '@lucide/svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { toast } from 'svelte-sonner';
 
+	import { Config } from '$core';
+	import { config } from '$core/state.svelte.js';
 	import { isActive, p } from './_index.js';
 
 	//
@@ -19,7 +22,62 @@
 		{ label: 'Departments', href: p('/departments'), icon: BuildingIcon },
 		{ label: 'Users', href: p('/users'), icon: UserIcon }
 	];
+
+	let importInput: HTMLInputElement | undefined = $state();
+
+	function exportConfig() {
+		const result = Config.serialize(config);
+		if (result.isErr) {
+			toast.error(result.error.message);
+			return;
+		}
+		const blob = new Blob([result.value], { type: 'application/yaml' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'formata-config.yaml';
+		a.click();
+		URL.revokeObjectURL(url);
+		toast.success('Config exported');
+	}
+
+	function onImportChange(e: Event) {
+		const input = e.target as HTMLInputElement;
+		const file = input.files?.[0];
+		input.value = '';
+		if (!file) return;
+		const reader = new FileReader();
+		reader.onload = () => {
+			const text = reader.result as string;
+			const result = Config.deserialize(text);
+			if (result.isErr) {
+				toast.error(result.error.message);
+				return;
+			}
+			const data = result.value;
+			config.workflow = data.workflow;
+			config.departments = data.departments;
+			config.users = data.users;
+			config.dpp = data.dpp;
+			toast.success('Config imported');
+		};
+		reader.readAsText(file, 'utf-8');
+	}
+
+	function triggerImport() {
+		importInput?.click();
+	}
 </script>
+
+<input
+	type="file"
+	accept=".yaml,.yml,application/x-yaml,text/yaml"
+	class="hidden"
+	bind:this={importInput}
+	onchange={onImportChange}
+	aria-hidden="true"
+	tabindex="-1"
+/>
 
 <Sidebar.Root>
 	<Sidebar.Header class="h-[53px] justify-center border-b px-4">
@@ -28,6 +86,23 @@
 	<Sidebar.Content>
 		{@render group(main, 'Main')}
 		{@render group(users, 'Access control')}
+		<Sidebar.Group>
+			<Sidebar.GroupLabel>Data</Sidebar.GroupLabel>
+			<Sidebar.Menu>
+				<Sidebar.MenuItem>
+					<Sidebar.MenuButton onclick={exportConfig}>
+						<DownloadIcon />
+						Export
+					</Sidebar.MenuButton>
+				</Sidebar.MenuItem>
+				<Sidebar.MenuItem>
+					<Sidebar.MenuButton onclick={triggerImport}>
+						<UploadIcon />
+						Import
+					</Sidebar.MenuButton>
+				</Sidebar.MenuItem>
+			</Sidebar.Menu>
+		</Sidebar.Group>
 	</Sidebar.Content>
 	<Sidebar.Footer />
 </Sidebar.Root>
