@@ -12,6 +12,14 @@ export type Step = Config.Config['workflow']['steps'][number];
 export class StepRepository implements Repository<Step> {
 	constructor(private readonly config: Config.Config) {}
 
+	getEntityName(): string {
+		return 'Step';
+	}
+
+	getKey(record: Step): string {
+		return record.id;
+	}
+
 	getSchema(): Schema {
 		return Config.getEntitySchema('Step');
 	}

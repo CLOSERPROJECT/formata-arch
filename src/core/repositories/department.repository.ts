@@ -13,6 +13,14 @@ export type Department = FromSchema<Config.Schema['$defs']['Department']>;
 export class DepartmentRepository implements Repository<Department> {
 	constructor(private readonly config: Config.Config) {}
 
+	getEntityName(): string {
+		return 'Department';
+	}
+
+	getKey(record: Department): string {
+		return record.id;
+	}
+
 	getSchema(): Schema {
 		return Config.getEntitySchema('Department');
 	}

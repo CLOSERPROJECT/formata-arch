@@ -12,6 +12,10 @@ const CONFIG_KEY = 'config';
 export class ConfigRepository implements Repository<Config.Config> {
 	constructor(private readonly config: Config.Config) {}
 
+	getEntityName(): string {
+		return 'Config';
+	}
+
 	getSchema(): Schema {
 		return Config.getEntitySchema('Config');
 	}

@@ -14,6 +14,14 @@ export type User = Config.Config['users'][number];
 export class UserRepository implements Repository<User> {
 	constructor(private readonly config: Config.Config) {}
 
+	getEntityName(): string {
+		return 'User';
+	}
+
+	getKey(record: User): string {
+		return record.id;
+	}
+
 	getSchema(): Schema {
 		return Config.getEntitySchema('User');
 	}

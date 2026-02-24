@@ -18,6 +18,10 @@ export type Workflow = Config.Config['workflow'];
 export class WorkflowRepository implements Repository<Workflow> {
 	constructor(private readonly config: Config.Config) {}
 
+	getEntityName(): string {
+		return 'Workflow';
+	}
+
 	getSchema(): Schema {
 		return Config.getEntitySchema('Workflow');
 	}

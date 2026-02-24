@@ -24,6 +24,10 @@ function parseKey(key: string): { stepId: string; substepId: string } {
 export class SubstepRepository implements Repository<SubstepWithStepId> {
 	constructor(private readonly config: Config.Config) {}
 
+	getEntityName(): string {
+		return 'Substep';
+	}
+
 	getKey(record: SubstepWithStepId): string {
 		return `${record.__stepId}:${record.id}`;
 	}

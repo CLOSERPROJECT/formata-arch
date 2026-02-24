@@ -15,6 +15,10 @@ export type Dpp = FromSchema<Config.Schema['$defs']['Dpp']>;
 export class DppRepository implements Repository<Dpp> {
 	constructor(private readonly config: Config.Config) {}
 
+	getEntityName(): string {
+		return 'Dpp';
+	}
+
 	getSchema(): Schema {
 		return Config.getEntitySchema('Dpp');
 	}

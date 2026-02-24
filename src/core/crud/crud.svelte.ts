@@ -12,6 +12,8 @@ import CrudTableComponent from './crud-table.svelte';
 export class Crud<T extends object> {
 	constructor(private repository: Repository<T>) {}
 
+	// Components
+
 	get Table() {
 		return CrudTableComponent;
 	}
@@ -21,6 +23,8 @@ export class Crud<T extends object> {
 	get Forms() {
 		return CrudFormsComponent;
 	}
+
+	// Getters
 
 	get schema() {
 		return this.repository.getSchema();
@@ -32,12 +36,10 @@ export class Crud<T extends object> {
 		return this.repository.list();
 	}
 	get entityName() {
-		return (
-			(typeof this.schema.$ref === 'string' ? this.schema.$ref.replace('#/$defs/', '') : '') || ''
-		);
+		return this.repository.getEntityName();
 	}
 	get def() {
-		return this.schema.$defs?.[this.entityName as keyof typeof this.schema.$defs];
+		return this.schema.$defs?.[this.entityName];
 	}
 	get columns() {
 		return this.def &&
@@ -47,6 +49,8 @@ export class Crud<T extends object> {
 			? (Object.keys(this.def.properties as object) as string[]).filter((k) => k !== '__stepId')
 			: [];
 	}
+
+	// Create / Edit Form
 
 	#form = $derived.by(() =>
 		Form.make<T>({
@@ -73,10 +77,6 @@ export class Crud<T extends object> {
 	createCallback = $state<((value: T) => void) | null>(null);
 	isDeleteDialogOpen = $state(false);
 	recordToDelete = $state<T | null>(null);
-
-	getKey(record: T): string {
-		return this.repository.getKey?.(record) ?? (record as { id?: string }).id ?? '';
-	}
 
 	openCreate(initialValue?: Partial<T>) {
 		this.editingRecord = null;
@@ -106,7 +106,7 @@ export class Crud<T extends object> {
 
 	handleSubmit(value: T) {
 		if (this.editingRecord != null) {
-			const key = this.getKey(this.editingRecord);
+			const key = this.repository.getKey(this.editingRecord);
 			const result = this.repository.update(key, value);
 			if (result.isOk) {
 				toast.success('Record updated');
@@ -137,7 +137,7 @@ export class Crud<T extends object> {
 
 	confirmDelete() {
 		if (this.recordToDelete == null) return;
-		const key = this.getKey(this.recordToDelete);
+		const key = this.repository.getKey(this.recordToDelete);
 		const result = this.repository.delete(key);
 		if (result.isOk) {
 			toast.success('Record deleted');
