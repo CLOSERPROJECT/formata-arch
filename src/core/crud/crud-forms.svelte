@@ -1,4 +1,5 @@
 <script lang="ts" generics="T extends object">
+	import { SaveIcon, Trash2Icon, XIcon } from '@lucide/svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 
@@ -19,7 +20,9 @@
 
 	const formHeading = $derived(
 		formTitle
-			? (crud.editingRecord != null ? `Edit ${formTitle}` : `Create ${formTitle}`)
+			? crud.editingRecord != null
+				? `Edit ${formTitle}`
+				: `Create ${formTitle}`
 			: crud.editingRecord != null
 				? 'Edit'
 				: 'Create'
@@ -29,11 +32,33 @@
 {#if crud.isFormOpen}
 	<div class="flex flex-col gap-4">
 		<div class="flex items-center justify-between gap-2">
-			<h2 class="text-lg font-semibold">{formHeading}</h2>
-			<Button variant="outline" onclick={() => (crud.isFormOpen = false)}>Cancel</Button>
+			<div class="flex items-center gap-2">
+				<h2 class="text-lg font-semibold">{formHeading}</h2>
+				{#if crud.editingRecord}
+					<Button
+						variant="ghost"
+						size="icon-sm"
+						class="text-muted-foreground"
+						onclick={() => crud.openDelete(crud.editingRecord as T)}
+					>
+						<Trash2Icon />
+					</Button>
+				{/if}
+			</div>
+			<div>
+				<Button variant="outline" onclick={() => (crud.isFormOpen = false)}>
+					<XIcon />
+					Cancel
+				</Button>
+				<Button onclick={() => crud.submitForm()}>
+					<SaveIcon />
+					Save
+				</Button>
+			</div>
 		</div>
+
 		<div>
-			<svelte:component this={crud.Form} self={crud} {hideSubmitButton} />
+			<crud.Form self={crud} {hideSubmitButton} />
 		</div>
 	</div>
 {/if}

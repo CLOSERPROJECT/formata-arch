@@ -6,8 +6,7 @@
 		ChevronRight,
 		Folder,
 		FolderPlusIcon,
-		Plus,
-		Trash2
+		Plus
 	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { flip } from 'svelte/animate';
@@ -167,7 +166,7 @@
 					disabled={!canDown}
 				/>
 
-				<TreeButton onclick={() => self.handleDelete(path)} icon={Trash2} aria-label="Delete" />
+				<!-- <TreeButton onclick={() => self.handleDelete(path)} icon={Trash2} aria-label="Delete" /> -->
 
 				{#if isBranch}
 					{#if showAddBranch}

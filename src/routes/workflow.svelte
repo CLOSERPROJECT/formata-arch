@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Structure } from '$core/tree/types.js';
 
-	import { SaveIcon } from '@lucide/svelte';
 	import { Crud, Tree } from '$core';
 	import {
 		StepRepository,
@@ -10,7 +9,6 @@
 		type SubstepWithStepId
 	} from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 
@@ -137,8 +135,7 @@
 	});
 
 	setTopbar({
-		title: 'Workflow',
-		right: topbarRight
+		title: 'Workflow'
 	});
 
 	const formMode = $derived.by(() => {
@@ -149,47 +146,39 @@
 	});
 </script>
 
-{#snippet topbarRight()}
-	<Button
-		onclick={() => {
-			if (stepCrud.isFormOpen) stepCrud.submitForm();
-			else if (substepCrud.isFormOpen) substepCrud.submitForm();
-		}}
-	>
-		<SaveIcon />
-		Save
-	</Button>
-{/snippet}
-
 <div class="flex grow justify-stretch">
 	<div class="w-[400px] overflow-auto border-r p-2">
 		<tree.Tree self={tree} />
 	</div>
 
 	<div class="min-w-0 grow p-4">
-		{#if formMode === 'step'}
-			<div transition:fade>
-				<stepCrud.Forms
-					self={stepCrud}
-					formTitle="step"
-					onConfirmDelete={() => tree.clearSelection()}
-				/>
-			</div>
-		{:else if formMode === 'substep'}
-			<div transition:fade>
-				<substepCrud.Forms
-					self={substepCrud}
-					formTitle="substep"
-					onConfirmDelete={() => tree.clearSelection()}
-				/>
-			</div>
-		{:else}
-			<div transition:fade>
-				<p class="flex items-center justify-center text-sm text-muted-foreground">
-					Select a step or substep in the tree, or use the add buttons to create one.
-				</p>
-			</div>
-		{/if}
+		{#key tree.selection}
+			{#if formMode === 'step'}
+				<div transition:fade>
+					<stepCrud.Forms
+						self={stepCrud}
+						formTitle="step"
+						onConfirmDelete={() => tree.clearSelection()}
+						hideSubmitButton
+					/>
+				</div>
+			{:else if formMode === 'substep'}
+				<div transition:fade>
+					<substepCrud.Forms
+						self={substepCrud}
+						formTitle="substep"
+						onConfirmDelete={() => tree.clearSelection()}
+						hideSubmitButton
+					/>
+				</div>
+			{:else}
+				<div transition:fade>
+					<p class="flex items-center justify-center text-sm text-muted-foreground">
+						Select a step or substep in the tree, or use the add buttons to create one.
+					</p>
+				</div>
+			{/if}
+		{/key}
 	</div>
 </div>
 
