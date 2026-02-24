@@ -1,5 +1,11 @@
 import type { Branch, Leaf, Node, Path, Structure } from './types.js';
 
+/** Expand key for a node at path (branch only). Used for expansion state. */
+export function getExpandKey(structure: Structure, path: Path): string | null {
+	const node = getNodeAt(structure, path);
+	return node?.type === 'branch' ? (node.key ?? path.join(',')) : null;
+}
+
 export function getNodeAt(structure: Structure, path: Path): Branch | Leaf | undefined {
 	if (path.length === 0) return undefined;
 	let current: Node[] = structure;

@@ -4,11 +4,9 @@
 		ArrowUp,
 		ChevronDown,
 		ChevronRight,
-		Folder,
 		FolderPlusIcon,
 		Plus
 	} from '@lucide/svelte';
-	import { Button } from '$lib/components/ui/button/index.js';
 	import { flip } from 'svelte/animate';
 
 	import type { Tree } from './tree.svelte.js';
@@ -22,8 +20,6 @@
 
 	let { self }: Props = $props();
 
-	let expanded = $state<Set<string>>(new Set());
-
 	function pathKey(path: Path): string {
 		return path.join(',');
 	}
@@ -34,14 +30,12 @@
 	}
 
 	function toggleExpanded(key: string) {
-		const next = new Set(expanded);
-		if (next.has(key)) next.delete(key);
-		else next.add(key);
-		expanded = next;
+		if (self.expanded.has(key)) self.expanded.delete(key);
+		else self.expanded.add(key);
 	}
 
 	function isExpandedByKey(key: string): boolean {
-		return expanded.has(key);
+		return self.expanded.has(key);
 	}
 
 	function pathEquals(a: Path, b: Path): boolean {
@@ -53,11 +47,6 @@
 		return s.state === 'selected' && pathEquals(s.path, path) && s.type === type;
 	}
 
-	function isAddingAt(path: Path): boolean {
-		const s = self.selection;
-		return s.state === 'adding' && pathEquals(s.path, path);
-	}
-
 	function renderRow(depth: number, path: Path, node: Node) {
 		const type = node.type;
 		const isBranch = type === 'branch';
@@ -65,7 +54,7 @@
 		const showAddBranch = isBranch && self.showAddBranchAtDepth(depth + 1);
 		const showAddLeaf = isBranch && self.showAddLeafAtDepth(depth + 1);
 		const selected = isSelected(path, type);
-		const adding = isAddingAt(path);
+		const adding = false;
 		const canUp = self.canMoveUp(path);
 		const canDown = self.canMoveDown(path);
 		return {
@@ -92,7 +81,7 @@
 				const path = [...pathPrefix, i];
 				const row = renderRow(depth, path, node);
 				out.push(row);
-				if (node.type === 'branch' && expanded.has(node.key ?? pathKey(path))) {
+				if (node.type === 'branch' && self.expanded.has(node.key ?? pathKey(path))) {
 					walk(node.children, depth + 1, path);
 				}
 			});
@@ -137,11 +126,12 @@
 			role="button"
 			tabindex="0"
 			class={[
-				'flex min-h-8 items-center gap-1 rounded-sm px-1 transition-colors',
+				'flex min-h-8 items-center gap-1 rounded-sm p-1 transition-colors',
 				'ring-primary',
 				!selected && !adding && 'hover:ring-1',
 				selected && 'ring-2',
-				adding && 'ring-2 ring-blue-600!'
+				adding && 'bg-blue-100',
+				'group'
 			]}
 			style="padding-left: {depth * 1.25 + 0.25}rem"
 			animate:flip={{ duration: 500 }}
@@ -169,18 +159,22 @@
 
 			<!-- Actions: move, delete, add (branch only for add) -->
 			<div class="flex shrink-0 items-center gap-0.5">
-				<TreeButton
-					onclick={() => self.handleMoveUp(path)}
-					icon={ArrowUp}
-					aria-label="Move up"
-					disabled={!canUp}
-				/>
-				<TreeButton
-					onclick={() => self.handleMoveDown(path)}
-					aria-label="Move down"
-					icon={ArrowDown}
-					disabled={!canDown}
-				/>
+				{#if canUp}
+					<TreeButton
+						onclick={() => self.handleMoveUp(path)}
+						icon={ArrowUp}
+						aria-label="Move up"
+						class="invisible group-hover:visible"
+					/>
+				{/if}
+				{#if canDown}
+					<TreeButton
+						onclick={() => self.handleMoveDown(path)}
+						aria-label="Move down"
+						icon={ArrowDown}
+						class="invisible group-hover:visible"
+					/>
+				{/if}
 
 				<!-- <TreeButton onclick={() => self.handleDelete(path)} icon={Trash2} aria-label="Delete" /> -->
 
@@ -190,6 +184,7 @@
 							onclick={() => self.handleAddBranch(path)}
 							icon={FolderPlusIcon}
 							aria-label="Add step"
+							class="text-blue-600 hover:bg-blue-50"
 						/>
 					{/if}
 					{#if showAddLeaf}
@@ -197,6 +192,7 @@
 							onclick={() => self.handleAddLeaf(path)}
 							icon={Plus}
 							aria-label="Add substep"
+							class="text-blue-600 hover:bg-blue-50"
 						/>
 					{/if}
 				{/if}
@@ -209,19 +205,19 @@
 		{#if self.selection.state == 'adding' && pathEquals(self.selection.path, [-1])}
 			ciao
 		{:else}
-			<div class="flex min-h-8 items-center rounded-sm px-1" style="padding-left: 0.25rem">
-				<span class="w-5 shrink-0" aria-hidden="true"></span>
-				<Button
-					variant="ghost"
-					size="sm"
-					class="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
-					onclick={() => self.handleAddBranch(self.structure.length > 0 ? [-1] : [])}
-				>
-					<Folder class="size-4" />
+			<button
+				tabindex="0"
+				class={[
+					'flex min-h-8 items-center gap-1 rounded-sm p-1 transition-colors',
+					'text-blue-600 hover:bg-blue-50'
+				]}
+				onclick={() => self.handleAddBranch(self.structure.length > 0 ? [-1] : [])}
+			>
+				<div class="flex size-[28px] items-center justify-center">
 					<Plus class="size-3.5" />
-					Add step
-				</Button>
-			</div>
+				</div>
+				Add step
+			</button>
 		{/if}
 	{/if}
 </div>

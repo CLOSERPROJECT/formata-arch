@@ -16,8 +16,8 @@
 <Button
 	variant="ghost"
 	size="icon-sm"
-	class="h-7 w-7"
 	{...props}
+	class={[props.class, 'size-6 rounded-sm p-0']}
 	onclick={(e) => {
 		e.stopPropagation();
 		onclick?.(e as MouseEvent & { currentTarget: EventTarget & HTMLButtonElement });

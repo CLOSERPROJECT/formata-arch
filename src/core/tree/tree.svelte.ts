@@ -1,5 +1,11 @@
+import { SvelteSet } from 'svelte/reactivity';
 import type { Path, Structure, TreeOptions, TreeState } from './types.js';
-import { canMoveDown as pathCanMoveDown, canMoveUp as pathCanMoveUp, getNodeAt } from './path.js';
+import {
+	canMoveDown as pathCanMoveDown,
+	canMoveUp as pathCanMoveUp,
+	getExpandKey,
+	getNodeAt
+} from './path.js';
 import TreeComponent from './tree.svelte';
 
 export type { Branch, Leaf, Node, Path, Structure, TreeState, TreeOptions, AddTypesByDepth } from './types.js';
@@ -19,7 +25,16 @@ export class Tree {
 
 	selection = $state<TreeState>({ state: 'idle' });
 
+	/** Set of expand keys for branch nodes. */
+	expanded = new SvelteSet<string>();
+
 	structure = $derived.by(() => this.getStructure());
+
+	/** Expand the branch node at the given path (no-op if path is a leaf or invalid). */
+	expand(path: Path): void {
+		const key = getExpandKey(this.structure, path);
+		if (key) this.expanded.add(key);
+	}
 
 	canMoveUp(path: Path): boolean {
 		return pathCanMoveUp(this.structure, path);
