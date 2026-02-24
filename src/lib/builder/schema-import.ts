@@ -77,6 +77,16 @@ function inferWidgetFromUiSchema(
 	return defaultWidget;
 }
 
+/** True when uiSchema indicates a QR code field (stringField -> formataQrField). */
+function isQrCodeFromUiSchema(uiSchema: UiSchema | undefined): boolean {
+	const components = uiSchema?.['ui:components'];
+	return (
+		typeof components === 'object' &&
+		components !== null &&
+		(components as Record<string, unknown>)['stringField'] === 'formataQrField'
+	);
+}
+
 function applyCommonOptions(
 	node: CustomizableNode,
 	schema: Schema,
@@ -310,6 +320,21 @@ function parseSchemaValue(
 				'fileWidget'
 			) as never;
 			return fileNode;
+		}
+		if (isQrCodeFromUiSchema(uiSchema)) {
+			const qrNode = createNode(NodeType.QrCode);
+			applyCommonOptions(qrNode, schema, uiSchema, titleFallback);
+			if (opts.default !== undefined) qrNode.options.default = String(opts.default);
+			qrNode.options.widget = inferWidgetFromUiSchema(
+				uiSchema,
+				NodeType.QrCode,
+				'textWidget'
+			) as never;
+			if (uiSchema?.['ui:options'] && typeof uiSchema['ui:options'] === 'object') {
+				const uio = uiSchema['ui:options'] as Record<string, unknown>;
+				if (typeof uio.placeholder === 'string') qrNode.options.placeholder = uio.placeholder;
+			}
+			return qrNode;
 		}
 		const stringNode = createNode(NodeType.String);
 		applyCommonOptions(stringNode, schema, uiSchema, titleFallback);
