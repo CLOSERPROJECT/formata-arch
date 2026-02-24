@@ -137,7 +137,7 @@ export const DEFAULT_COMPONENTS: Record<
 		}),
 		[NodeType.QrCode]: constant({
 			stringField: 'formataQrField'
-		})
+		} as unknown as UiSchema['ui:components'])
 	},
 	[Resolver.Compat]: {
 		[NodeType.Enum]: constant(undefined),
@@ -165,7 +165,7 @@ export const DEFAULT_COMPONENTS: Record<
 		}),
 		[NodeType.QrCode]: constant({
 			stringField: 'formataQrField'
-		})
+		} as unknown as UiSchema['ui:components'])
 	}
 };
 
