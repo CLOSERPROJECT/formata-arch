@@ -14,9 +14,16 @@
 		formTitle?: string;
 		/** Called after delete is confirmed (after confirmDelete()). */
 		onConfirmDelete?: () => void;
+		onCancel?: () => void;
 	}
 
-	let { self: crud, hideSubmitButton = false, formTitle, onConfirmDelete }: Props = $props();
+	let {
+		self: crud,
+		hideSubmitButton = false,
+		formTitle,
+		onConfirmDelete,
+		onCancel
+	}: Props = $props();
 
 	const formHeading = $derived(
 		formTitle
@@ -46,7 +53,13 @@
 				{/if}
 			</div>
 			<div>
-				<Button variant="outline" onclick={() => (crud.isFormOpen = false)}>
+				<Button
+					variant="outline"
+					onclick={() => {
+						crud.isFormOpen = false;
+						onCancel?.();
+					}}
+				>
 					<XIcon />
 					Cancel
 				</Button>

@@ -96,6 +96,22 @@
 					walk(node.children, depth + 1, path);
 				}
 			});
+			if (self.selection.state === 'adding' && pathEquals(self.selection.path, pathPrefix)) {
+				out.push({
+					depth,
+					path: pathPrefix,
+					node: { type: 'leaf', label: 'New step', key: crypto.randomUUID() },
+					rowKey: pathKey(pathPrefix) + crypto.randomUUID(),
+					expandKey: null,
+					isBranch: false,
+					showAddBranch: false,
+					showAddLeaf: false,
+					selected: false,
+					adding: true,
+					canUp: false,
+					canDown: false
+				});
+			}
 		}
 		walk(structure, 0, []);
 		return out;
@@ -190,18 +206,22 @@
 
 	<!-- Add branch at root (depth 0) -->
 	{#if self.showAddBranchAtDepth(0)}
-		<div class="flex min-h-8 items-center rounded-sm px-1" style="padding-left: 0.25rem">
-			<span class="w-5 shrink-0" aria-hidden="true"></span>
-			<Button
-				variant="ghost"
-				size="sm"
-				class="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
-				onclick={() => self.handleAddBranch(self.structure.length > 0 ? [-1] : [])}
-			>
-				<Folder class="size-4" />
-				<Plus class="size-3.5" />
-				Add step
-			</Button>
-		</div>
+		{#if self.selection.state == 'adding' && pathEquals(self.selection.path, [-1])}
+			ciao
+		{:else}
+			<div class="flex min-h-8 items-center rounded-sm px-1" style="padding-left: 0.25rem">
+				<span class="w-5 shrink-0" aria-hidden="true"></span>
+				<Button
+					variant="ghost"
+					size="sm"
+					class="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
+					onclick={() => self.handleAddBranch(self.structure.length > 0 ? [-1] : [])}
+				>
+					<Folder class="size-4" />
+					<Plus class="size-3.5" />
+					Add step
+				</Button>
+			</div>
+		{/if}
 	{/if}
 </div>

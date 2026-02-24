@@ -147,7 +147,7 @@
 </script>
 
 <div class="flex grow justify-stretch">
-	<div class="w-[400px] overflow-auto border-r p-2">
+	<div class="w-[400px] shrink-0 overflow-auto border-r p-2">
 		<tree.Tree self={tree} />
 	</div>
 
@@ -159,6 +159,9 @@
 						self={stepCrud}
 						formTitle="step"
 						onConfirmDelete={() => tree.clearSelection()}
+						onCancel={() => {
+							tree.clearSelection();
+						}}
 						hideSubmitButton
 					/>
 				</div>
@@ -168,6 +171,9 @@
 						self={substepCrud}
 						formTitle="substep"
 						onConfirmDelete={() => tree.clearSelection()}
+						onCancel={() => {
+							tree.clearSelection();
+						}}
 						hideSubmitButton
 					/>
 				</div>
