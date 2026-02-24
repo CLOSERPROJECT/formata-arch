@@ -1,9 +1,9 @@
 <script module lang="ts">
-	import type { AttestaConfig } from '$core/schema.js';
+	import type { Config } from '$core';
 
 	declare module '@sjsf/form' {
 		interface UiOptions {
-			attestaConfig?: AttestaConfig;
+			attestaConfig?: Config.Config;
 		}
 	}
 </script>

@@ -1,19 +1,23 @@
+import type { DeepPartial } from '@sjsf/form/lib/types';
+
 import {
 	createForm,
 	ON_CHANGE,
 	ON_INPUT,
 	setFormContext,
 	type FormState,
+	type FormValidator,
 	type Schema,
-	type UiSchema
+	type UiSchema,
+	type ValidationResult
 } from '@sjsf/form';
 import { overrideByRecord } from '@sjsf/form/lib/resolver';
 import { omitExtraData } from '@sjsf/form/omit-extra-data';
 import * as defaults from '$builder/editor/node-settings.js';
 import { onDestroy, untrack } from 'svelte';
 
+import AnimatedArray from './animated-array.svelte';
 import { resolver } from './form.resolver.js';
-import AnimatedArray from './form/animated-array.svelte';
 
 //
 
@@ -28,7 +32,7 @@ interface Props<T> {
 	onSubmit?: (value: T) => void;
 }
 
-export function makeForm<T>(props: Props<T>): FormState<T> {
+export function make<T>(props: Props<T>): FormState<T> {
 	const { schema, uiSchema, initialValue, onSubmit } = props;
 
 	const form = createForm({
@@ -37,16 +41,17 @@ export function makeForm<T>(props: Props<T>): FormState<T> {
 		theme,
 		validator: (options) => {
 			const v = defaults.validator(options);
-			return {
+			const validator: FormValidator<Partial<T>> = {
 				...v,
 				validateFormValue(rootSchema, formValue) {
 					const cleanData = omitExtraData(v, options.merger(), options.schema, formValue);
-					return v.validateFormValue(rootSchema, cleanData);
+					return v.validateFormValue(rootSchema, cleanData) as ValidationResult<Partial<T>>;
 				}
 			};
+			return validator;
 		},
 		get initialValue() {
-			return untrack(() => $state.snapshot(initialValue));
+			return untrack(() => $state.snapshot(initialValue) as DeepPartial<Partial<T>>);
 		},
 		get schema() {
 			return schema;

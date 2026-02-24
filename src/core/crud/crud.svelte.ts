@@ -1,10 +1,10 @@
-import { toast } from 'svelte-sonner';
+import type { Repository } from '$core/repositories/index.js';
 
-import type { Repository } from './repositories/index.js';
+import { Form } from '$core';
+import { toast } from 'svelte-sonner';
 
 import CrudForm from './crud-form.svelte';
 import CrudComponent from './crud.svelte';
-import { makeForm } from './form.svelte.js';
 
 //
 
@@ -45,7 +45,7 @@ export class Crud<T extends object> {
 	}
 
 	#form = $derived.by(() =>
-		makeForm<T>({
+		Form.make<T>({
 			schema: this.schema,
 			uiSchema: this.uiSchema,
 			initialValue: this.editingRecord ?? undefined,

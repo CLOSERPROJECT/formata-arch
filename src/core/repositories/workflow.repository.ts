@@ -1,12 +1,13 @@
 import type { Schema, UiSchema } from '@sjsf/form';
 
 import { Config } from '$core';
-import FormataConfigField from '$core/form/formata-config-field.svelte';
 import HiddenObjectField from '$core/form/hidden-object-field.svelte';
-import SelectDepartment from '$core/form/select-department.svelte';
 import Result from 'true-myth/result';
 
 import type { Repository } from './_types.js';
+
+import FormataConfigField from './components/formata-config-field.svelte';
+import SelectDepartment from './components/select-department.svelte';
 
 //
 

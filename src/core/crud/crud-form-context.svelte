@@ -1,9 +1,9 @@
 <script lang="ts" generics="T extends object">
 	import type { Snippet } from 'svelte';
 
-	import type { Crud } from './crud.svelte.js';
+	import { Form } from '$core';
 
-	import { setComponentContext } from './form.svelte.js';
+	import type { Crud } from './crud.svelte.js';
 
 	//
 
@@ -15,7 +15,7 @@
 	let { crud, children }: Props = $props();
 
 	// svelte-ignore state_referenced_locally
-	setComponentContext(crud.form);
+	Form.setComponentContext(crud.form);
 </script>
 
 {@render children()}
