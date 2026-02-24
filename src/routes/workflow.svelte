@@ -4,7 +4,8 @@
 	import { WorkflowRepository } from '$core/repositories/workflow.repository.js';
 	import { config } from '$core/state.svelte.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { setTopbar } from '$lib/layout.js';
+
+	import { setTopbar } from './_layout.svelte';
 
 	//
 

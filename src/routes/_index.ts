@@ -1,5 +1,8 @@
-import layout from '$core/layout.svelte';
 import { createRouter } from 'sv-router';
+
+import layout from './_layout.svelte';
+
+//
 
 export const { p, navigate, isActive, route } = createRouter({
 	layout,

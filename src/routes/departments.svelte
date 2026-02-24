@@ -3,7 +3,8 @@
 	import { DepartmentRepository } from '$core/repositories/department.repository.js';
 	import { config } from '$core/state.svelte.js';
 	import NewButton from '$lib/components/new-button.svelte';
-	import { setTopbar } from '$lib/layout.js';
+
+	import { setTopbar } from './_layout.svelte';
 
 	//
 

@@ -16,7 +16,7 @@
 
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 
-	import AppSidebar from './sidebar.svelte';
+	import AppSidebar from './_sidebar.svelte';
 
 	//
 

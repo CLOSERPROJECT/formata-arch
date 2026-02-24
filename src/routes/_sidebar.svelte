@@ -4,7 +4,7 @@
 	import { BuildingIcon, IdCardIcon, UserIcon, WaypointsIcon } from '@lucide/svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 
-	import { isActive, p } from '../routes/_index.js';
+	import { isActive, p } from './_index.js';
 
 	//
 
