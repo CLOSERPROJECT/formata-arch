@@ -87,7 +87,8 @@ function applyCommonOptions(
 	if (opts.title !== undefined) node.options.title = String(opts.title);
 	else node.options.title = titleFallback;
 	if (opts.description !== undefined) node.options.description = String(opts.description);
-	if (opts.required !== undefined) node.options.required = Boolean(opts.required);
+	const schemaRequired = (schema as Schema & { required?: boolean }).required;
+	if (typeof schemaRequired === 'boolean') node.options.required = schemaRequired;
 
 	if (uiSchema?.['ui:options'] && typeof uiSchema['ui:options'] === 'object') {
 		const uio = uiSchema['ui:options'] as Record<string, unknown>;
@@ -101,9 +102,15 @@ function isRangeSchema(schema: Schema): boolean {
 	if (keys.length !== 2 || !keys.includes('start') || !keys.includes('end')) return false;
 	const startSchema = schema.properties['start'];
 	const endSchema = schema.properties['end'];
-	if (!startSchema || !endSchema) return false;
-	const startType = startSchema.type;
-	const endType = endSchema.type;
+	if (
+		!startSchema ||
+		!endSchema ||
+		typeof startSchema !== 'object' ||
+		typeof endSchema !== 'object'
+	)
+		return false;
+	const startType = (startSchema as Schema).type;
+	const endType = (endSchema as Schema).type;
 	if (startType === 'string' && endType === 'string') return true;
 	if (
 		(startType === 'number' || startType === 'integer') &&
@@ -115,7 +122,8 @@ function isRangeSchema(schema: Schema): boolean {
 
 function getRangeValueType(schema: Schema): RangeValueType {
 	const startSchema = schema.properties?.['start'];
-	const t = startSchema?.type;
+	if (typeof startSchema !== 'object' || startSchema === null) return RangeValueType.String;
+	const t = (startSchema as Schema).type;
 	if (t === 'number' || t === 'integer') return RangeValueType.Number;
 	return RangeValueType.String;
 }
@@ -177,8 +185,8 @@ function parseObject(
 		const propUiSchema = uiSchema?.[key] as UiSchema | undefined;
 		const child = parseSchemaValue(propSchema, propUiSchema, _ctx, key);
 		const propNode = createObjectProperty(child);
-		propNode.property.options.required = requiredSet.has(key);
-		propNode.property.options.title = key;
+		(child as CustomizableNode).options.required = requiredSet.has(key);
+		(child as CustomizableNode).options.title = key;
 		obj.properties.push(propNode);
 	}
 	return obj;
@@ -196,14 +204,15 @@ function parseSchemaValue(
 	if (schema.enum !== undefined && (schema.type === undefined || schema.type === 'string')) {
 		const enumNode = createNode(NodeType.Enum) as import('./node.js').EnumNode;
 		enumNode.valueType = EnumValueType.String;
-		const enumNames = schema.enumNames as string[] | undefined;
+		const schemaWithNames = schema as Schema & { enumNames?: string[] };
+		const enumNames = schemaWithNames.enumNames;
 		enumNode.items = (schema.enum as unknown[]).map((value, i) => {
 			const label = enumNames?.[i] ?? String(value);
 			const val = typeof value === 'string' ? value : JSON.stringify(value);
 			return createEnumItemNode(label, val);
 		});
 		enumNode.options.title = (opts.title as string) ?? titleFallback;
-		enumNode.options.required = opts.required !== false;
+		enumNode.options.required = true;
 		if (opts.default !== undefined) enumNode.options.defaultValue = JSON.stringify(opts.default);
 		enumNode.options.widget = inferWidgetFromUiSchema(
 			uiSchema,
@@ -221,8 +230,9 @@ function parseSchemaValue(
 	if (schema.type === 'array') {
 		const items = schema.items;
 		if (items && typeof items === 'object' && !Array.isArray(items)) {
+			const itemsSchema = items as Schema;
 			// File (multiple): array of data-url
-			if (items.type === 'string' && items.format === 'data-url') {
+			if (itemsSchema.type === 'string' && itemsSchema.format === 'data-url') {
 				const fileNode = createNode(NodeType.File);
 				applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
 				fileNode.options.multiple = true;
@@ -235,11 +245,12 @@ function parseSchemaValue(
 				return fileNode;
 			}
 			// MultiEnum: items.enum + uniqueItems
-			if (items.enum !== undefined && schema.uniqueItems === true) {
+			if (itemsSchema.enum !== undefined && schema.uniqueItems === true) {
 				const multiNode = createNode(NodeType.MultiEnum) as import('./node.js').MultiEnumNode;
 				multiNode.valueType = EnumValueType.String;
-				const enumNames = (items as Schema).enumNames as string[] | undefined;
-				multiNode.items = ((items as Schema).enum as unknown[]).map((value, i) => {
+				const itemsWithNames = itemsSchema as Schema & { enumNames?: string[] };
+				const enumNames = itemsWithNames.enumNames;
+				multiNode.items = (itemsSchema.enum as unknown[]).map((value, i) => {
 					const label = enumNames?.[i] ?? String(value);
 					const val = typeof value === 'string' ? value : JSON.stringify(value);
 					return createEnumItemNode(label, val);
@@ -261,7 +272,7 @@ function parseSchemaValue(
 				return multiNode;
 			}
 			// Tags: items.type string + uniqueItems
-			if (items.type === 'string' && schema.uniqueItems === true) {
+			if (itemsSchema.type === 'string' && schema.uniqueItems === true) {
 				const tagsNode = createNode(NodeType.Tags);
 				applyCommonOptions(tagsNode, schema, uiSchema, titleFallback);
 				tagsNode.options.widget = inferWidgetFromUiSchema(
@@ -277,10 +288,10 @@ function parseSchemaValue(
 		applyCommonOptions(arrayNode, schema, uiSchema, titleFallback);
 		if (opts.default !== undefined)
 			arrayNode.options.defaultValue = defaultArrayValueFromSchema(schema);
-		const itemSchema =
+		const itemSchema: Schema =
 			items && typeof items === 'object' && !Array.isArray(items)
 				? (items as Schema)
-				: { type: 'string' as const };
+				: { type: 'string' };
 		const itemUi = uiSchema?.items as UiSchema | undefined;
 		arrayNode.item = parseSchemaValue(itemSchema, itemUi, ctx, 'Item');
 		return arrayNode;
@@ -291,8 +302,8 @@ function parseSchemaValue(
 		if (schema.format === 'data-url') {
 			const fileNode = createNode(NodeType.File);
 			applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
-			fileNode.options.multiple = false;
-			fileNode.options.native = false;
+			(fileNode.options as { multiple: boolean; native: boolean }).multiple = false;
+			(fileNode.options as { multiple: boolean; native: boolean }).native = false;
 			fileNode.options.widget = inferWidgetFromUiSchema(
 				uiSchema,
 				NodeType.File,
@@ -364,6 +375,6 @@ function parseSchemaValue(
 	// Fallback: string
 	const stringNode = createNode(NodeType.String);
 	applyCommonOptions(stringNode, schema, uiSchema, titleFallback);
-	stringNode.options.title = (opts.title as string) ?? titleFallback;
+	stringNode.options.title = ((opts.title as string) ?? titleFallback) || 'Field';
 	return stringNode;
 }
