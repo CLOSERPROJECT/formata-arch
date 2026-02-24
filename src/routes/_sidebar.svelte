@@ -1,12 +1,19 @@
 <script lang="ts">
 	import type { Icon } from '$lib/types.js';
 
-	import { BuildingIcon, DownloadIcon, IdCardIcon, UploadIcon, UserIcon, WaypointsIcon } from '@lucide/svelte';
+	import {
+		BuildingIcon,
+		DownloadIcon,
+		IdCardIcon,
+		UploadIcon,
+		UserIcon,
+		WaypointsIcon
+	} from '@lucide/svelte';
+	import { Config } from '$core';
+	import { config } from '$core/state.svelte.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { toast } from 'svelte-sonner';
 
-	import { Config } from '$core';
-	import { config } from '$core/state.svelte.js';
 	import { isActive, p } from './_index.js';
 
 	//
@@ -14,7 +21,7 @@
 	type NavLink = { label: string; href: ReturnType<typeof p>; icon: Icon };
 
 	const main: NavLink[] = [
-		{ label: 'Workflow', href: p('/workflow'), icon: WaypointsIcon },
+		{ label: 'Stream / Workflow', href: p('/'), icon: WaypointsIcon },
 		{ label: 'DPP', href: p('/dpp'), icon: IdCardIcon }
 	];
 

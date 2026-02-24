@@ -139,7 +139,7 @@
 	});
 
 	setTopbar({
-		title: 'Workflow'
+		title: 'Stream / Workflow'
 	});
 
 	const formMode = $derived.by(() => {
