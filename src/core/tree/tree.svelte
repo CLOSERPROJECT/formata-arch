@@ -59,8 +59,9 @@
 	function renderRow(depth: number, path: Path, node: Node) {
 		const type = node.type;
 		const isBranch = type === 'branch';
+		// Add branch = sibling at same depth; add leaf = child at depth+1
 		const showAddBranch = isBranch && self.showAddBranchAtDepth(depth);
-		const showAddLeaf = isBranch && self.showAddLeafAtDepth(depth);
+		const showAddLeaf = isBranch && self.showAddLeafAtDepth(depth + 1);
 		const selected = isSelected(path, type);
 		const adding = isAddingAt(path);
 		const canUp = self.canMoveUp(path);
