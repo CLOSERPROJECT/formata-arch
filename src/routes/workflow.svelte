@@ -87,7 +87,12 @@
 			}
 		} else if (sel.state === 'adding') {
 			if (sel.type === 'branch') {
-				const insertIndex = sel.path.length > 0 ? sel.path[0] + 1 : 0;
+				const insertIndex =
+					sel.path.length === 1 && sel.path[0] === -1
+						? steps.length
+						: sel.path.length > 0
+							? sel.path[0] + 1
+							: 0;
 				const draft: Step = {
 					id: crypto.randomUUID(),
 					title: 'New step',
@@ -164,14 +169,12 @@
 		{#if formMode === 'step'}
 			<stepCrud.Forms
 				self={stepCrud}
-				hideSubmitButton
 				formTitle="step"
 				onConfirmDelete={() => tree.clearSelection()}
 			/>
 		{:else if formMode === 'substep'}
 			<substepCrud.Forms
 				self={substepCrud}
-				hideSubmitButton
 				formTitle="substep"
 				onConfirmDelete={() => tree.clearSelection()}
 			/>

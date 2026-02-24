@@ -4,7 +4,6 @@
 		ArrowUp,
 		ChevronDown,
 		ChevronRight,
-		File,
 		Folder,
 		Plus,
 		Trash2
@@ -27,16 +26,20 @@
 		return path.join(',');
 	}
 
-	function toggleExpanded(path: Path) {
-		const key = pathKey(path);
+	/** Expansion key stable across moves (node identity, not position). */
+	function expandKey(path: Path, node: Node): string | null {
+		return node.type === 'branch' ? (node.key ?? pathKey(path)) : null;
+	}
+
+	function toggleExpanded(key: string) {
 		const next = new Set(expanded);
 		if (next.has(key)) next.delete(key);
 		else next.add(key);
 		expanded = next;
 	}
 
-	function isExpanded(path: Path): boolean {
-		return expanded.has(pathKey(path));
+	function isExpandedByKey(key: string): boolean {
+		return expanded.has(key);
 	}
 
 	function pathEquals(a: Path, b: Path): boolean {
@@ -67,6 +70,7 @@
 			path,
 			node,
 			rowKey: node.key ?? pathKey(path),
+			expandKey: expandKey(path, node),
 			isBranch,
 			showAddBranch,
 			showAddLeaf,
@@ -85,7 +89,7 @@
 				const path = [...pathPrefix, i];
 				const row = renderRow(depth, path, node);
 				out.push(row);
-				if (node.type === 'branch' && expanded.has(pathKey(path))) {
+				if (node.type === 'branch' && expanded.has(node.key ?? pathKey(path))) {
 					walk(node.children, depth + 1, path);
 				}
 			});
@@ -107,7 +111,8 @@
 			selected,
 			adding,
 			canUp,
-			canDown
+			canDown,
+			expandKey
 		} = row}
 		<div
 			role="button"
@@ -125,24 +130,24 @@
 			onkeydown={(e) => e.key === 'Enter' && self.select(path, node.type)}
 		>
 			<!-- Chevron (branch only) -->
-			{#if isBranch}
+			{#if isBranch && expandKey}
 				<button
 					type="button"
 					class="flex shrink-0 items-center justify-center rounded p-0.5 hover:bg-accent/50"
 					onclick={(e) => {
 						e.stopPropagation();
-						toggleExpanded(path);
+						toggleExpanded(expandKey);
 					}}
-					aria-label={isExpanded(path) ? 'Collapse' : 'Expand'}
+					aria-label={isExpandedByKey(expandKey) ? 'Collapse' : 'Expand'}
 				>
-					{#if isExpanded(path)}
+					{#if isExpandedByKey(expandKey)}
 						<ChevronDown class="size-4" />
 					{:else}
 						<ChevronRight class="size-4" />
 					{/if}
 				</button>
 			{:else}
-				<span class="w-5 shrink-0" aria-hidden="true" />
+				<span class="w-5 shrink-0" aria-hidden="true"></span>
 			{/if}
 
 			<!-- Icon + label -->
@@ -151,7 +156,7 @@
 			</span>
 
 			<!-- Spacer -->
-			<span class="min-w-2 flex-1" />
+			<span class="min-w-2 flex-1"></span>
 
 			<!-- Actions: move, delete, add (branch only for add) -->
 			<div class="flex shrink-0 items-center gap-0.5">
@@ -193,8 +198,9 @@
 				>
 					<Trash2 class="size-3.5" />
 				</Button>
+
 				{#if isBranch}
-					{#if showAddBranch}
+					<!-- {#if showAddBranch}
 						<Button
 							variant="ghost"
 							size="icon-sm"
@@ -208,7 +214,7 @@
 							<Folder class="size-3.5" />
 							<Plus class="ml-0.5 size-3" />
 						</Button>
-					{/if}
+					{/if} -->
 					{#if showAddLeaf}
 						<Button
 							variant="ghost"
@@ -220,7 +226,6 @@
 								self.handleAddLeaf(path);
 							}}
 						>
-							<File class="size-3.5" />
 							<Plus class="ml-0.5 size-3" />
 						</Button>
 					{/if}
@@ -228,4 +233,21 @@
 			</div>
 		</div>
 	{/each}
+
+	<!-- Add branch at root (depth 0) -->
+	{#if self.showAddBranchAtDepth(0)}
+		<div class="flex min-h-8 items-center rounded-sm px-1" style="padding-left: 0.25rem">
+			<span class="w-5 shrink-0" aria-hidden="true"></span>
+			<Button
+				variant="ghost"
+				size="sm"
+				class="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
+				onclick={() => self.handleAddBranch(self.structure.length > 0 ? [-1] : [])}
+			>
+				<Folder class="size-4" />
+				<Plus class="size-3.5" />
+				Add step
+			</Button>
+		</div>
+	{/if}
 </div>
