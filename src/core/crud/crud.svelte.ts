@@ -48,7 +48,7 @@ export class Crud<T extends object> {
 		Form.make<T>({
 			schema: this.schema,
 			uiSchema: this.uiSchema,
-			initialValue: this.editingRecord ?? undefined,
+			initialValue: this.editingRecord ?? this.createInitialValue ?? undefined,
 			onSubmit: (value) => this.handleSubmit(value)
 		})
 	);
@@ -64,6 +64,9 @@ export class Crud<T extends object> {
 
 	sheetOpen = $state(false);
 	editingRecord = $state<T | null>(null);
+	createInitialValue = $state<Partial<T> | null>(null);
+	/** When set, handleSubmit (create path) will call this instead of repository.create, then clear it. */
+	createCallback = $state<((value: T) => void) | null>(null);
 	deleteDialogOpen = $state(false);
 	recordToDelete = $state<T | null>(null);
 
@@ -71,13 +74,24 @@ export class Crud<T extends object> {
 		return this.repository.getKey?.(record) ?? (record as { id?: string }).id ?? '';
 	}
 
-	openCreate() {
+	openCreate(initialValue?: Partial<T>) {
 		this.editingRecord = null;
+		this.createInitialValue = initialValue ?? null;
+		this.createCallback = null;
+		this.sheetOpen = true;
+	}
+
+	openCreateWithCallback(initialValue: Partial<T>, onCreate: (value: T) => void) {
+		this.editingRecord = null;
+		this.createInitialValue = initialValue ?? null;
+		this.createCallback = onCreate;
 		this.sheetOpen = true;
 	}
 
 	openEdit(record: T) {
 		this.editingRecord = record;
+		this.createInitialValue = null;
+		this.createCallback = null;
 		this.sheetOpen = true;
 	}
 
@@ -97,12 +111,22 @@ export class Crud<T extends object> {
 				toast.error(result.error.message);
 			}
 		} else {
-			const result = this.repository.create(value);
-			if (result.isOk) {
-				toast.success('Record created');
+			const callback = this.createCallback;
+			if (callback) {
+				callback(value);
+				this.createCallback = null;
+				this.createInitialValue = null;
 				this.sheetOpen = false;
+				toast.success('Record created');
 			} else {
-				toast.error(result.error.message);
+				const result = this.repository.create(value);
+				if (result.isOk) {
+					toast.success('Record created');
+					this.sheetOpen = false;
+					this.createInitialValue = null;
+				} else {
+					toast.error(result.error.message);
+				}
 			}
 		}
 	}

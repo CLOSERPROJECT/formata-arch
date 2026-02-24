@@ -1,17 +1,135 @@
 <script lang="ts">
 	import { SaveIcon } from '@lucide/svelte';
-	import { Crud } from '$core';
-	import { WorkflowRepository } from '$core/repositories/index.js';
+	import { Crud, Tree } from '$core';
+	import type { Structure } from '$core/tree/types.js';
+	import {
+		StepRepository,
+		SubstepRepository,
+		type Step,
+		type SubstepWithStepId
+	} from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import { toast } from 'svelte-sonner';
 
 	import { setTopbar } from './_layout.svelte';
 
 	//
 
-	const repository = new WorkflowRepository(config);
-	const crud = new Crud(repository);
-	crud.editingRecord = repository.list()[0];
+	function configToTree(c: typeof config): Structure {
+		return c.workflow.steps.map((step) => ({
+			type: 'branch' as const,
+			label: step.title,
+			key: step.id,
+			children: step.substeps.map((sub) => ({
+				type: 'leaf' as const,
+				label: sub.title,
+				key: `${step.id}-${sub.id}`
+			}))
+		}));
+	}
+
+	const stepRepo = new StepRepository(config);
+	const substepRepo = new SubstepRepository(config);
+	const stepCrud = new Crud<Step>(stepRepo);
+	const substepCrud = new Crud<SubstepWithStepId>(substepRepo);
+
+	const tree = new Tree(() => configToTree(config), {
+		maxBranchDepth: 1,
+		addTypesByDepth: { 0: ['branch'], 1: ['leaf'] },
+		onMoveUp(path) {
+			if (path.length === 1) {
+				stepRepo.moveUp(path[0]);
+			} else if (path.length === 2) {
+				const step = config.workflow.steps[path[0]];
+				if (step) substepRepo.moveUp(step.id, path[1]);
+			}
+		},
+		onMoveDown(path) {
+			if (path.length === 1) {
+				stepRepo.moveDown(path[0]);
+			} else if (path.length === 2) {
+				const step = config.workflow.steps[path[0]];
+				if (step) substepRepo.moveDown(step.id, path[1]);
+			}
+		},
+		onDelete(path) {
+			if (path.length === 1) {
+				const step = config.workflow.steps[path[0]];
+				if (step) stepCrud.openDelete(step);
+			} else if (path.length === 2) {
+				const step = config.workflow.steps[path[0]];
+				const substep = step?.substeps[path[1]];
+				if (step && substep) {
+					substepCrud.openDelete({ ...substep, __stepId: step.id });
+				}
+			}
+		},
+		onAddBranch() {},
+		onAddLeaf() {}
+	});
+
+	$effect(() => {
+		const sel = tree.selection;
+		const steps = config.workflow.steps;
+
+		if (sel.state === 'selected') {
+			if (sel.path.length === 1) {
+				const step = steps[sel.path[0]];
+				if (step) stepCrud.openEdit(step);
+			} else if (sel.path.length === 2) {
+				const step = steps[sel.path[0]];
+				const substep = step?.substeps[sel.path[1]];
+				if (step && substep) {
+					substepCrud.openEdit({ ...substep, __stepId: step.id });
+				}
+			}
+		} else if (sel.state === 'adding') {
+			if (sel.type === 'branch') {
+				const insertIndex = sel.path.length > 0 ? sel.path[0] + 1 : 0;
+				const draft: Step = {
+					id: crypto.randomUUID(),
+					title: 'New step',
+					order: insertIndex,
+					substeps: []
+				};
+				stepCrud.openCreateWithCallback(draft, (value) => {
+					const result = stepRepo.createAt(value, insertIndex);
+					if (result.isOk) {
+						toast.success('Record created');
+						stepCrud.sheetOpen = false;
+						tree.clearSelection();
+					} else {
+						toast.error(result.error.message);
+					}
+				});
+			} else {
+				const step = steps[sel.path[0]];
+				if (!step) return;
+				const draft: SubstepWithStepId = {
+					__stepId: step.id,
+					id: crypto.randomUUID(),
+					title: 'New substep',
+					order: step.substeps.length,
+					role: '',
+					inputKey: '',
+					inputType: 'string'
+				};
+				substepCrud.openCreateWithCallback(draft, (value) => {
+					const result = substepRepo.create(value);
+					if (result.isOk) {
+						toast.success('Record created');
+						substepCrud.sheetOpen = false;
+						tree.clearSelection();
+					} else {
+						toast.error(result.error.message);
+					}
+				});
+			}
+		}
+	});
 
 	setTopbar({
 		title: 'Workflow',
@@ -20,13 +138,93 @@
 </script>
 
 {#snippet topbarRight()}
-	<Button onclick={() => crud.submitForm()}>
+	<Button
+		onclick={() => {
+			if (stepCrud.sheetOpen) stepCrud.submitForm();
+			else if (substepCrud.sheetOpen) substepCrud.submitForm();
+		}}
+	>
 		<SaveIcon />
 		Save
 	</Button>
 {/snippet}
 
-<crud.Form self={crud} hideSubmitButton />
+<div class="grid grid-cols-[280px_1fr] gap-6">
+	<div class="min-h-0 overflow-auto rounded-md border">
+		<tree.Tree self={tree} />
+	</div>
+	<div class="min-w-0 flex items-center justify-center text-muted-foreground text-sm">
+		<p>Select a step or substep in the tree, or use the add buttons to create one.</p>
+	</div>
+</div>
+
+<Sheet.Root bind:open={stepCrud.sheetOpen}>
+	<Sheet.Content class="overflow-y-auto">
+		<Sheet.Header>
+			<Sheet.Title>{stepCrud.editingRecord != null ? 'Edit step' : 'Create step'}</Sheet.Title>
+		</Sheet.Header>
+		<div class="p-4">
+			<stepCrud.Form self={stepCrud} hideSubmitButton />
+		</div>
+		<Sheet.Footer>
+			<Button variant="outline" onclick={() => (stepCrud.sheetOpen = false)}>Cancel</Button>
+		</Sheet.Footer>
+	</Sheet.Content>
+</Sheet.Root>
+
+<Sheet.Root bind:open={substepCrud.sheetOpen}>
+	<Sheet.Content class="overflow-y-auto">
+		<Sheet.Header>
+			<Sheet.Title>{substepCrud.editingRecord != null ? 'Edit substep' : 'Create substep'}</Sheet.Title>
+		</Sheet.Header>
+		<div class="p-4">
+			<substepCrud.Form self={substepCrud} hideSubmitButton />
+		</div>
+		<Sheet.Footer>
+			<Button variant="outline" onclick={() => (substepCrud.sheetOpen = false)}>Cancel</Button>
+		</Sheet.Footer>
+	</Sheet.Content>
+</Sheet.Root>
+
+<AlertDialog.Root bind:open={stepCrud.deleteDialogOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Delete step</AlertDialog.Title>
+			<AlertDialog.Description>This action cannot be undone. All substeps in this step will be removed.</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action
+				onclick={() => {
+					stepCrud.confirmDelete();
+					tree.clearSelection();
+				}}
+			>
+				Delete
+			</AlertDialog.Action>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root bind:open={substepCrud.deleteDialogOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Delete substep</AlertDialog.Title>
+			<AlertDialog.Description>This action cannot be undone.</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action
+				onclick={() => {
+					substepCrud.confirmDelete();
+					tree.clearSelection();
+				}}
+			>
+				Delete
+			</AlertDialog.Action>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
 
 <style lang="postcss">
 	@reference "../app.css";

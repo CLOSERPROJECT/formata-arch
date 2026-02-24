@@ -95,4 +95,37 @@ export class SubstepRepository implements Repository<SubstepWithStepId> {
 		step.substeps = step.substeps.filter((s) => s.id !== substepId);
 		return Result.ok(undefined);
 	}
+
+	moveUp(stepId: string, substepIndex: number): Result<void, Error> {
+		if (substepIndex <= 0) return Result.ok(undefined);
+		const step = this.config.workflow.steps.find((s) => s.id === stepId);
+		if (!step) return Result.err(new Error(`Step not found: ${stepId}`));
+		const subs = step.substeps;
+		if (substepIndex >= subs.length) return Result.ok(undefined);
+		const a = subs[substepIndex];
+		const b = subs[substepIndex - 1];
+		if (!a || !b) return Result.ok(undefined);
+		step.substeps = subs.map((s, i) => {
+			if (i === substepIndex) return { ...b, order: substepIndex };
+			if (i === substepIndex - 1) return { ...a, order: substepIndex - 1 };
+			return s;
+		});
+		return Result.ok(undefined);
+	}
+
+	moveDown(stepId: string, substepIndex: number): Result<void, Error> {
+		const step = this.config.workflow.steps.find((s) => s.id === stepId);
+		if (!step) return Result.err(new Error(`Step not found: ${stepId}`));
+		const subs = step.substeps;
+		if (substepIndex >= subs.length - 1) return Result.ok(undefined);
+		const a = subs[substepIndex];
+		const b = subs[substepIndex + 1];
+		if (!a || !b) return Result.ok(undefined);
+		step.substeps = subs.map((s, i) => {
+			if (i === substepIndex) return { ...b, order: substepIndex };
+			if (i === substepIndex + 1) return { ...a, order: substepIndex + 1 };
+			return s;
+		});
+		return Result.ok(undefined);
+	}
 }
