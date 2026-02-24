@@ -51,7 +51,7 @@
 	</div>
 </div>
 
-<Sheet.Root bind:open={crud.sheetOpen}>
+<Sheet.Root bind:open={crud.isFormOpen}>
 	<Sheet.Content class="overflow-y-auto">
 		<Sheet.Header>
 			<Sheet.Title>{crud.editingRecord != null ? 'Edit' : 'Create'}</Sheet.Title>
@@ -60,12 +60,12 @@
 			<BasicForm form={crud.form} />
 		</div>
 		<Sheet.Footer>
-			<Button variant="outline" onclick={() => (crud.sheetOpen = false)}>Cancel</Button>
+			<Button variant="outline" onclick={() => (crud.isFormOpen = false)}>Cancel</Button>
 		</Sheet.Footer>
 	</Sheet.Content>
 </Sheet.Root>
 
-<AlertDialog.Root bind:open={crud.deleteDialogOpen}>
+<AlertDialog.Root bind:open={crud.isDeleteDialogOpen}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
 			<AlertDialog.Title>Delete record</AlertDialog.Title>

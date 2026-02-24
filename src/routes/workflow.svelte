@@ -9,9 +9,7 @@
 		type SubstepWithStepId
 	} from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { toast } from 'svelte-sonner';
 
 	import { setTopbar } from './_layout.svelte';
@@ -99,7 +97,7 @@
 					const result = stepRepo.createAt(value, insertIndex);
 					if (result.isOk) {
 						toast.success('Record created');
-						stepCrud.sheetOpen = false;
+						stepCrud.isFormOpen = false;
 						tree.clearSelection();
 					} else {
 						toast.error(result.error.message);
@@ -121,7 +119,7 @@
 					const result = substepRepo.create(value);
 					if (result.isOk) {
 						toast.success('Record created');
-						substepCrud.sheetOpen = false;
+						substepCrud.isFormOpen = false;
 						tree.clearSelection();
 					} else {
 						toast.error(result.error.message);
@@ -135,13 +133,20 @@
 		title: 'Workflow',
 		right: topbarRight
 	});
+
+	const formMode = $derived.by(() => {
+		const sel = tree.selection;
+		if (sel.state === 'idle') return null;
+		if (sel.state === 'selected') return sel.path.length === 1 ? 'step' : 'substep';
+		return sel.type === 'branch' ? 'step' : 'substep';
+	});
 </script>
 
 {#snippet topbarRight()}
 	<Button
 		onclick={() => {
-			if (stepCrud.sheetOpen) stepCrud.submitForm();
-			else if (substepCrud.sheetOpen) substepCrud.submitForm();
+			if (stepCrud.isFormOpen) stepCrud.submitForm();
+			else if (substepCrud.isFormOpen) substepCrud.submitForm();
 		}}
 	>
 		<SaveIcon />
@@ -153,78 +158,28 @@
 	<div class="min-h-0 overflow-auto rounded-md border">
 		<tree.Tree self={tree} />
 	</div>
-	<div class="min-w-0 flex items-center justify-center text-muted-foreground text-sm">
-		<p>Select a step or substep in the tree, or use the add buttons to create one.</p>
+	<div class="min-w-0">
+		{#if formMode === 'step'}
+			<stepCrud.Forms
+				self={stepCrud}
+				hideSubmitButton
+				formTitle="step"
+				onConfirmDelete={() => tree.clearSelection()}
+			/>
+		{:else if formMode === 'substep'}
+			<substepCrud.Forms
+				self={substepCrud}
+				hideSubmitButton
+				formTitle="substep"
+				onConfirmDelete={() => tree.clearSelection()}
+			/>
+		{:else}
+			<p class="flex items-center justify-center text-muted-foreground text-sm">
+				Select a step or substep in the tree, or use the add buttons to create one.
+			</p>
+		{/if}
 	</div>
 </div>
-
-<Sheet.Root bind:open={stepCrud.sheetOpen}>
-	<Sheet.Content class="overflow-y-auto">
-		<Sheet.Header>
-			<Sheet.Title>{stepCrud.editingRecord != null ? 'Edit step' : 'Create step'}</Sheet.Title>
-		</Sheet.Header>
-		<div class="p-4">
-			<stepCrud.Form self={stepCrud} hideSubmitButton />
-		</div>
-		<Sheet.Footer>
-			<Button variant="outline" onclick={() => (stepCrud.sheetOpen = false)}>Cancel</Button>
-		</Sheet.Footer>
-	</Sheet.Content>
-</Sheet.Root>
-
-<Sheet.Root bind:open={substepCrud.sheetOpen}>
-	<Sheet.Content class="overflow-y-auto">
-		<Sheet.Header>
-			<Sheet.Title>{substepCrud.editingRecord != null ? 'Edit substep' : 'Create substep'}</Sheet.Title>
-		</Sheet.Header>
-		<div class="p-4">
-			<substepCrud.Form self={substepCrud} hideSubmitButton />
-		</div>
-		<Sheet.Footer>
-			<Button variant="outline" onclick={() => (substepCrud.sheetOpen = false)}>Cancel</Button>
-		</Sheet.Footer>
-	</Sheet.Content>
-</Sheet.Root>
-
-<AlertDialog.Root bind:open={stepCrud.deleteDialogOpen}>
-	<AlertDialog.Content>
-		<AlertDialog.Header>
-			<AlertDialog.Title>Delete step</AlertDialog.Title>
-			<AlertDialog.Description>This action cannot be undone. All substeps in this step will be removed.</AlertDialog.Description>
-		</AlertDialog.Header>
-		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action
-				onclick={() => {
-					stepCrud.confirmDelete();
-					tree.clearSelection();
-				}}
-			>
-				Delete
-			</AlertDialog.Action>
-		</AlertDialog.Footer>
-	</AlertDialog.Content>
-</AlertDialog.Root>
-
-<AlertDialog.Root bind:open={substepCrud.deleteDialogOpen}>
-	<AlertDialog.Content>
-		<AlertDialog.Header>
-			<AlertDialog.Title>Delete substep</AlertDialog.Title>
-			<AlertDialog.Description>This action cannot be undone.</AlertDialog.Description>
-		</AlertDialog.Header>
-		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action
-				onclick={() => {
-					substepCrud.confirmDelete();
-					tree.clearSelection();
-				}}
-			>
-				Delete
-			</AlertDialog.Action>
-		</AlertDialog.Footer>
-	</AlertDialog.Content>
-</AlertDialog.Root>
 
 <style lang="postcss">
 	@reference "../app.css";

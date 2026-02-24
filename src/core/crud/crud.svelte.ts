@@ -4,7 +4,8 @@ import { Form } from '$core';
 import { toast } from 'svelte-sonner';
 
 import CrudForm from './crud-form.svelte';
-import CrudComponent from './crud.svelte';
+import CrudFormsComponent from './crud-forms.svelte';
+import CrudTableComponent from './crud-table.svelte';
 
 //
 
@@ -12,10 +13,13 @@ export class Crud<T extends object> {
 	constructor(private repository: Repository<T>) {}
 
 	get Table() {
-		return CrudComponent;
+		return CrudTableComponent;
 	}
 	get Form() {
 		return CrudForm;
+	}
+	get Forms() {
+		return CrudFormsComponent;
 	}
 
 	get schema() {
@@ -62,12 +66,12 @@ export class Crud<T extends object> {
 		this.formElement?.requestSubmit();
 	}
 
-	sheetOpen = $state(false);
+	isFormOpen = $state(false);
 	editingRecord = $state<T | null>(null);
 	createInitialValue = $state<Partial<T> | null>(null);
 	/** When set, handleSubmit (create path) will call this instead of repository.create, then clear it. */
 	createCallback = $state<((value: T) => void) | null>(null);
-	deleteDialogOpen = $state(false);
+	isDeleteDialogOpen = $state(false);
 	recordToDelete = $state<T | null>(null);
 
 	getKey(record: T): string {
@@ -78,26 +82,26 @@ export class Crud<T extends object> {
 		this.editingRecord = null;
 		this.createInitialValue = initialValue ?? null;
 		this.createCallback = null;
-		this.sheetOpen = true;
+		this.isFormOpen = true;
 	}
 
 	openCreateWithCallback(initialValue: Partial<T>, onCreate: (value: T) => void) {
 		this.editingRecord = null;
 		this.createInitialValue = initialValue ?? null;
 		this.createCallback = onCreate;
-		this.sheetOpen = true;
+		this.isFormOpen = true;
 	}
 
 	openEdit(record: T) {
 		this.editingRecord = record;
 		this.createInitialValue = null;
 		this.createCallback = null;
-		this.sheetOpen = true;
+		this.isFormOpen = true;
 	}
 
 	openDelete(record: T) {
 		this.recordToDelete = record;
-		this.deleteDialogOpen = true;
+		this.isDeleteDialogOpen = true;
 	}
 
 	handleSubmit(value: T) {
@@ -106,7 +110,7 @@ export class Crud<T extends object> {
 			const result = this.repository.update(key, value);
 			if (result.isOk) {
 				toast.success('Record updated');
-				this.sheetOpen = false;
+				this.isFormOpen = false;
 			} else {
 				toast.error(result.error.message);
 			}
@@ -116,13 +120,13 @@ export class Crud<T extends object> {
 				callback(value);
 				this.createCallback = null;
 				this.createInitialValue = null;
-				this.sheetOpen = false;
+				this.isFormOpen = false;
 				toast.success('Record created');
 			} else {
 				const result = this.repository.create(value);
 				if (result.isOk) {
 					toast.success('Record created');
-					this.sheetOpen = false;
+					this.isFormOpen = false;
 					this.createInitialValue = null;
 				} else {
 					toast.error(result.error.message);
@@ -137,7 +141,7 @@ export class Crud<T extends object> {
 		const result = this.repository.delete(key);
 		if (result.isOk) {
 			toast.success('Record deleted');
-			this.deleteDialogOpen = false;
+			this.isDeleteDialogOpen = false;
 			this.recordToDelete = null;
 		} else {
 			toast.error(result.error.message);
