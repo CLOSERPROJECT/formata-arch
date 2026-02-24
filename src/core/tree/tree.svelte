@@ -5,6 +5,7 @@
 		ChevronDown,
 		ChevronRight,
 		Folder,
+		FolderPlusIcon,
 		Plus,
 		Trash2
 	} from '@lucide/svelte';
@@ -13,6 +14,8 @@
 
 	import type { Tree } from './tree.svelte.js';
 	import type { Node, Path } from './types.js';
+
+	import TreeButton from './tree-button.svelte';
 
 	interface Props {
 		self: Tree;
@@ -132,21 +135,11 @@
 		>
 			<!-- Chevron (branch only) -->
 			{#if isBranch && expandKey}
-				<button
-					type="button"
-					class="flex shrink-0 items-center justify-center rounded p-0.5 hover:bg-accent/50"
-					onclick={(e) => {
-						e.stopPropagation();
-						toggleExpanded(expandKey);
-					}}
+				<TreeButton
+					onclick={() => toggleExpanded(expandKey)}
+					icon={isExpandedByKey(expandKey) ? ChevronDown : ChevronRight}
 					aria-label={isExpandedByKey(expandKey) ? 'Collapse' : 'Expand'}
-				>
-					{#if isExpandedByKey(expandKey)}
-						<ChevronDown class="size-4" />
-					{:else}
-						<ChevronRight class="size-4" />
-					{/if}
-				</button>
+				/>
 			{:else}
 				<span class="w-5 shrink-0" aria-hidden="true"></span>
 			{/if}
@@ -161,74 +154,35 @@
 
 			<!-- Actions: move, delete, add (branch only for add) -->
 			<div class="flex shrink-0 items-center gap-0.5">
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					class="h-7 w-7"
-					disabled={!canUp}
+				<TreeButton
+					onclick={() => self.handleMoveUp(path)}
+					icon={ArrowUp}
 					aria-label="Move up"
-					onclick={(e) => {
-						e.stopPropagation();
-						self.handleMoveUp(path);
-					}}
-				>
-					<ArrowUp class="size-3.5" />
-				</Button>
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					class="h-7 w-7"
-					disabled={!canDown}
+					disabled={!canUp}
+				/>
+				<TreeButton
+					onclick={() => self.handleMoveDown(path)}
 					aria-label="Move down"
-					onclick={(e) => {
-						e.stopPropagation();
-						self.handleMoveDown(path);
-					}}
-				>
-					<ArrowDown class="size-3.5" />
-				</Button>
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					class="h-7 w-7 text-muted-foreground hover:text-destructive"
-					aria-label="Delete"
-					onclick={(e) => {
-						e.stopPropagation();
-						self.handleDelete(path);
-					}}
-				>
-					<Trash2 class="size-3.5" />
-				</Button>
+					icon={ArrowDown}
+					disabled={!canDown}
+				/>
+
+				<TreeButton onclick={() => self.handleDelete(path)} icon={Trash2} aria-label="Delete" />
 
 				{#if isBranch}
-					<!-- {#if showAddBranch}
-						<Button
-							variant="ghost"
-							size="icon-sm"
-							class="h-7 w-7"
-							aria-label="Add folder"
-							onclick={(e) => {
-								e.stopPropagation();
-								self.handleAddBranch(path);
-							}}
-						>
-							<Folder class="size-3.5" />
-							<Plus class="ml-0.5 size-3" />
-						</Button>
-					{/if} -->
+					{#if showAddBranch}
+						<TreeButton
+							onclick={() => self.handleAddBranch(path)}
+							icon={FolderPlusIcon}
+							aria-label="Add step"
+						/>
+					{/if}
 					{#if showAddLeaf}
-						<Button
-							variant="ghost"
-							size="icon-sm"
-							class="h-7 w-7"
-							aria-label="Add file"
-							onclick={(e) => {
-								e.stopPropagation();
-								self.handleAddLeaf(path);
-							}}
-						>
-							<Plus class="ml-0.5 size-3" />
-						</Button>
+						<TreeButton
+							onclick={() => self.handleAddLeaf(path)}
+							icon={Plus}
+							aria-label="Add substep"
+						/>
 					{/if}
 				{/if}
 			</div>

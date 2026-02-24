@@ -12,6 +12,7 @@
 	import { config } from '$core/state.svelte.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { toast } from 'svelte-sonner';
+	import { fade } from 'svelte/transition';
 
 	import { setTopbar } from './_layout.svelte';
 
@@ -167,21 +168,27 @@
 
 	<div class="min-w-0 grow p-4">
 		{#if formMode === 'step'}
-			<stepCrud.Forms
-				self={stepCrud}
-				formTitle="step"
-				onConfirmDelete={() => tree.clearSelection()}
-			/>
+			<div transition:fade>
+				<stepCrud.Forms
+					self={stepCrud}
+					formTitle="step"
+					onConfirmDelete={() => tree.clearSelection()}
+				/>
+			</div>
 		{:else if formMode === 'substep'}
-			<substepCrud.Forms
-				self={substepCrud}
-				formTitle="substep"
-				onConfirmDelete={() => tree.clearSelection()}
-			/>
+			<div transition:fade>
+				<substepCrud.Forms
+					self={substepCrud}
+					formTitle="substep"
+					onConfirmDelete={() => tree.clearSelection()}
+				/>
+			</div>
 		{:else}
-			<p class="flex items-center justify-center text-sm text-muted-foreground">
-				Select a step or substep in the tree, or use the add buttons to create one.
-			</p>
+			<div transition:fade>
+				<p class="flex items-center justify-center text-sm text-muted-foreground">
+					Select a step or substep in the tree, or use the add buttons to create one.
+				</p>
+			</div>
 		{/if}
 	</div>
 </div>
