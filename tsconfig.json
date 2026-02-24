@@ -1,32 +1,22 @@
 {
-  "extends": "@total-typescript/tsconfig/bundler/dom/app",
-  "compilerOptions": {
-    "target": "esnext",
-    "lib": [
-      "ESNext"
-    ],
-    "noUncheckedIndexedAccess": false,
-    "moduleResolution": "nodenext",
-    "module": "nodenext",
-    "types": [
-      "vite/client",
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "$lib": [
-        "./src/lib"
-      ],
-      "$lib/*": [
-        "./src/lib/*"
-      ],
-      "$apps/*": [
-        "../*"
-      ]
-    }
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.js",
-    "src/**/*.svelte"
-  ],
+	"extends": "@total-typescript/tsconfig/bundler/dom/app",
+	"compilerOptions": {
+		"target": "esnext",
+		"lib": ["ESNext"],
+		"noUncheckedIndexedAccess": false,
+		"moduleResolution": "nodenext",
+		"module": "nodenext",
+		"types": ["vite/client", "bun-types"],
+		"baseUrl": ".",
+		"paths": {
+			"$lib": ["./src/lib"],
+			"$lib/*": ["./src/lib/*"],
+			"$apps/*": ["../*"],
+			"$core": ["./src/core/index.ts"],
+			"$core/*": ["./src/core/*"],
+			"$builder": ["./src/builder"],
+			"$builder/*": ["./src/builder/*"]
+		}
+	},
+	"include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]
 }

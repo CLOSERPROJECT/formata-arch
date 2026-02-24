@@ -1,7 +1,7 @@
 <script lang="ts" module>
-	import { noop } from '@sjsf/form/lib/function';
-
 	import type { ButtonVariant } from '$lib/components/ui/button/index.js';
+
+	import { noop } from '@sjsf/form/lib/function';
 
 	export interface ConfirmationDialogOptions {
 		open?: boolean;

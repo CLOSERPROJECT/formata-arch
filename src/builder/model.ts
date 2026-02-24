@@ -1,8 +1,6 @@
-import { pickSchemaType, typeOfValue } from '@sjsf/form/core';
 import type { UiOptions, UiSchema } from '@sjsf/form';
 
-import { constant } from '$lib/function.js';
-import { Resolver } from '$lib/sjsf/resolver.js';
+import { pickSchemaType, typeOfValue } from '@sjsf/form/core';
 import {
 	BOOLEAN_NODE_OPTIONS_SCHEMA,
 	buildEnumValues,
@@ -18,12 +16,9 @@ import {
 	type WidgetNode,
 	type WidgetNodeType
 } from '$lib/builder/index.js';
-import {
-	ActualTheme,
-	type Theme,
-	type FieldType,
-	type WidgetType
-} from '$lib/sjsf/theme.js';
+import { constant } from '$lib/function.js';
+import { Resolver } from '$lib/sjsf/resolver.js';
+import { ActualTheme, type FieldType, type Theme, type WidgetType } from '$lib/sjsf/theme.js';
 
 import type { BuilderDraggable } from './context.svelte.js';
 
@@ -61,12 +56,10 @@ function basicTextOptions(params: TextWidgetParams): UiOptions {
 }
 
 export const TEXT_WIDGET_OPTIONS: Record<Theme, (params: TextWidgetParams) => UiOptions> = {
-	[ActualTheme.Shadcn4]: (params) => ({ shadcn4Text: { ...params } }),
-
+	[ActualTheme.Shadcn4]: (params) => ({ shadcn4Text: { ...params } })
 };
 
 export const CHECKBOXES_WIDGET_OPTIONS: Record<Theme, (inline: boolean) => UiOptions> = {
-	
 	[ActualTheme.Shadcn4]: (inline) =>
 		inline
 			? {
@@ -76,8 +69,7 @@ export const CHECKBOXES_WIDGET_OPTIONS: Record<Theme, (inline: boolean) => UiOpt
 						}
 					}
 				}
-			: {},
-
+			: {}
 };
 
 export const RADIO_WIDGET_OPTIONS: Record<Theme, (inline: boolean) => UiOptions> = {
@@ -89,8 +81,7 @@ export const RADIO_WIDGET_OPTIONS: Record<Theme, (inline: boolean) => UiOptions>
 						style: 'grid-auto-flow: column; grid-auto-columns: max-content;'
 					}
 				}
-			: {},
-
+			: {}
 };
 
 export const DEFAULT_COMPONENTS: Record<
@@ -137,7 +128,7 @@ export const DEFAULT_COMPONENTS: Record<
 		}),
 		[NodeType.QrCode]: constant({
 			stringField: 'formataQrField'
-		})
+		} as unknown as UiSchema['ui:components'])
 	},
 	[Resolver.Compat]: {
 		[NodeType.Enum]: constant(undefined),
@@ -165,7 +156,7 @@ export const DEFAULT_COMPONENTS: Record<
 		}),
 		[NodeType.QrCode]: constant({
 			stringField: 'formataQrField'
-		})
+		} as unknown as UiSchema['ui:components'])
 	}
 };
 

@@ -1,6 +1,4 @@
 import { isSchemaValueDeepEqual, type SchemaValue } from '@sjsf/form/core';
-import { toast } from 'svelte-sonner';
-
 import {
 	blobOpen,
 	blobSave,
@@ -10,17 +8,19 @@ import {
 	parseJSONBlob
 } from '$lib/file.js';
 import { decodeJson } from '$lib/url.js';
+import { toast } from 'svelte-sonner';
 
 import type { BuilderContext, BuilderState } from '../builder/context.svelte.js';
-import { type CreateProject, type Project, type ProjectId, type ProjectMeta } from './model.js';
-import {
-	DEFAULT_GENERIC_PROJECT_DIALOG_OPTIONS,
-	type GenericProjectDialogOptions
-} from './generic-project-dialog.svelte';
+
 import {
 	DEFAULT_CONFIRMATION_DIALOG_OPTIONS,
 	type ConfirmationDialogOptions
 } from './confirmation-dialog.svelte';
+import {
+	DEFAULT_GENERIC_PROJECT_DIALOG_OPTIONS,
+	type GenericProjectDialogOptions
+} from './generic-project-dialog.svelte';
+import { type CreateProject, type Project, type ProjectId, type ProjectMeta } from './model.js';
 
 export interface ProjectsRepository<S> {
 	validateProjectName(title: string): Promise<boolean>;
@@ -138,7 +138,7 @@ export class ProjectsContext {
 			this.#confirmationDialogOptions = {
 				title: 'Open Project Without Saving',
 				description: 'You have an unsaved state. Are you sure you want to continue?',
-				variant: 'warn',
+				variant: 'destructive',
 				onConfirm: openProject
 			};
 			return;
@@ -198,7 +198,7 @@ export class ProjectsContext {
 				title: 'Confirm Fork Without Saving',
 				description:
 					'You have unsaved changes. If you continue, your current progress will be lost. Do you want to proceed with forking this project anyway?',
-				variant: 'warn',
+				variant: 'destructive',
 				onConfirm: forkProject
 			};
 			return;
@@ -214,7 +214,7 @@ export class ProjectsContext {
 					`${p.title}.${JSON_FILE_EXTENSION}`,
 					createJSONBlob(JSON.stringify(loaded.state))
 				);
-			} catch (err) {
+			} catch {
 				toast.error(`Failed to export "${p.title}" project`);
 			}
 		};
@@ -260,7 +260,7 @@ export class ProjectsContext {
 			title: 'Restore Last Saved State',
 			description:
 				'This will replace your current progress with the last saved version. Unsaved changes will be lost. Do you want to continue?',
-			variant: 'warn',
+			variant: 'destructive',
 			onConfirm: () => {
 				// WARN: Snapshot is required
 				this.importState($state.snapshot(project.state));
@@ -324,7 +324,7 @@ export class ProjectsContext {
 				title: 'Confirm Import Without Saving',
 				description:
 					'You have unsaved changes. If you continue, your current progress will be lost. Do you want to proceed import anyway?',
-				variant: 'warn',
+				variant: 'destructive',
 				onConfirm: importProject
 			};
 			return;
@@ -338,6 +338,7 @@ export class ProjectsContext {
 				for (let i = 0; i < this.#recentProjects.length; i++) {
 					const p = this.#recentProjects[i];
 					if (p.id === saved.id) {
+						// eslint-disable-next-line @typescript-eslint/no-unused-vars
 						const { state: _, ...meta } = saved;
 						this.#recentProjects[i] = meta;
 						break;

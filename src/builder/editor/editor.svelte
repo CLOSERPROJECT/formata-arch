@@ -3,10 +3,9 @@
 
 	import { getBuilderContext } from '../context.svelte.js';
 	import Form from '../preview/form.svelte';
-
 	import Content from './content.svelte';
-	import Settings from './settings.svelte';
 	import Controls from './controls.svelte';
+	import Settings from './settings.svelte';
 
 	const ctx = getBuilderContext();
 
@@ -49,7 +48,7 @@
 		<Settings />
 	</div>
 
-	<div class="overflow-x-hidden pb-4 pr-8">
+	<div class="overflow-x-hidden pr-8 pb-4">
 		<Form />
 	</div>
 </div>
