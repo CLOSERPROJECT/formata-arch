@@ -15,6 +15,7 @@ import {
 	NODE_OPTIONS_UI_SCHEMAS,
 	type NodeId,
 	type OperatorNode,
+	parseSchemaToRootNode,
 	summarizeOperator,
 	OK_STATUS,
 	ERROR_STATUS,
@@ -366,6 +367,17 @@ export class BuilderContext {
 		if (this.route.name === RouteName.Preview) {
 			this.build();
 		}
+	}
+
+	loadFromSchema(schema: Schema, uiSchema?: UiSchema): void {
+		const rootNode = parseSchemaToRootNode(schema, uiSchema);
+		this.importState({
+			rootNode,
+			ignoreWarnings: this.ignoreWarnings,
+			html5Validation: this.html5Validation,
+			route: this.route,
+			livePreview: this.livePreview
+		});
 	}
 
 	exportState(): State {

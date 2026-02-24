@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Schema, UiSchema } from '@sjsf/form';
 	import type { BuilderContext } from '$builder/context.svelte.js';
 
 	import { getFormContext, getValueSnapshot, type ComponentProps } from '@sjsf/form';
@@ -16,28 +17,37 @@
 
 	let builder: BuilderContext | undefined;
 
+	function getInitialState(): { schema?: Schema; uiSchema?: UiSchema } {
+		const formData = getValueSnapshot(ctx);
+		const fieldValue = get(formData, config.path);
+		if (fieldValue == null) return {};
+		if (
+			typeof fieldValue === 'object' &&
+			'schema' in fieldValue &&
+			fieldValue.schema != null &&
+			typeof fieldValue.schema === 'object'
+		) {
+			return {
+				schema: fieldValue.schema as Schema,
+				uiSchema: (fieldValue as { uiSchema?: UiSchema }).uiSchema
+			};
+		}
+		if (typeof fieldValue === 'object' && 'type' in fieldValue) {
+			return { schema: fieldValue as Schema };
+		}
+		return {};
+	}
+
 	function handleSave() {
 		if (!builder) return;
 		if (!builder.validate()) return;
-		console.log(builder.uiSchema, builder.schema);
-		// @ts-expect-error - Slight type mismatch
+		// @ts-expect-error - Slight type mismatch between builder.schema and form value
 		value = builder.schema;
 		open = false;
 	}
 
 	function handleBuilderInit(b: BuilderContext) {
 		builder = b;
-		const formData = getValueSnapshot(ctx);
-		const fieldValue = get(formData, config.path);
-		// if (fieldValue) {
-		//     builder.schema = fieldValue;
-		// }
-		console.log(fieldValue);
-		// console.log(config.path);
-		// if (builder.schema) {
-		// 	// // @ts-expect-error - Slight type mismatch
-		// 	// value = builder.schema;
-		// }
 	}
 </script>
 
@@ -67,7 +77,12 @@
 			<Dialog.Title>Formata Config</Dialog.Title>
 		</Dialog.Header>
 
-		<BuilderStandalone onInit={handleBuilderInit} />
+		{@const initial = getInitialState()}
+		<BuilderStandalone
+			initialSchema={initial.schema}
+			initialUiSchema={initial.uiSchema}
+			onInit={handleBuilderInit}
+		/>
 
 		<div
 			class="absolute bottom-0 flex w-full justify-end border-t bg-background/40 p-2 backdrop-blur-xl"

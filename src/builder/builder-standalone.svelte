@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { Schema, UiSchema } from '@sjsf/form';
+
 	import { TooltipProvider } from '$lib/components/ui/tooltip/index.js';
 	import { highlighterPromise } from '$lib/shiki.js';
 
@@ -8,9 +10,11 @@
 	//
 
 	type Props = {
+		initialSchema?: Schema;
+		initialUiSchema?: UiSchema;
 		onInit?: (ctx: BuilderContext) => void;
 	};
-	const { onInit }: Props = $props();
+	const { initialSchema, initialUiSchema, onInit }: Props = $props();
 
 	const promises = Promise.all([highlighterPromise]);
 </script>
@@ -21,7 +25,12 @@
 			<p>Loading...</p>
 		{:then [highlighter]}
 			{@const builder = new BuilderContext(highlighter)}
-			<BuilderStandaloneContent ctx={builder} {onInit} />
+			<BuilderStandaloneContent
+				ctx={builder}
+				{initialSchema}
+				{initialUiSchema}
+				{onInit}
+			/>
 		{/await}
 	</div>
 </TooltipProvider>

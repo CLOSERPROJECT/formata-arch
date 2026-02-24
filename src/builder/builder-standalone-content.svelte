@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { Schema, UiSchema } from '@sjsf/form';
+
 	import { on } from 'svelte/events';
 
 	import { BuilderContext, setBuilderContext } from './context.svelte.js';
@@ -9,14 +11,23 @@
 
 	type Props = {
 		ctx: BuilderContext;
+		initialSchema?: Schema;
+		initialUiSchema?: UiSchema;
 		onInit?: (ctx: BuilderContext) => void;
 	};
-	const { ctx, onInit }: Props = $props();
+	const { ctx, initialSchema, initialUiSchema, onInit }: Props = $props();
 
 	setBuilderContext(ctx);
-	$effect(() => {
-		onInit?.(ctx);
-	});
+
+	let initialLoadDone = false;
+	function applyInitialState(builder: BuilderContext) {
+		if (initialSchema !== undefined && !initialLoadDone) {
+			initialLoadDone = true;
+			builder.loadFromSchema(initialSchema, initialUiSchema);
+		}
+		onInit?.(builder);
+	}
+	$effect(() => applyInitialState(ctx));
 
 	let rootElements = $state(new Array<HTMLDivElement | null>(3));
 	$effect(() =>
