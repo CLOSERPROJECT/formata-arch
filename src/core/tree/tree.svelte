@@ -1,10 +1,19 @@
 <script lang="ts">
-	import { ChevronDown, ChevronRight, File, Folder, ArrowUp, ArrowDown, Plus, Trash2 } from '@lucide/svelte';
-	import { flip } from 'svelte/animate';
+	import {
+		ArrowDown,
+		ArrowUp,
+		ChevronDown,
+		ChevronRight,
+		File,
+		Folder,
+		Plus,
+		Trash2
+	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { cn } from '$lib/utils.js';
-	import type { Node, Path } from './types.js';
+	import { flip } from 'svelte/animate';
+
 	import type { Tree } from './tree.svelte.js';
+	import type { Node, Path } from './types.js';
 
 	interface Props {
 		self: Tree;
@@ -86,17 +95,30 @@
 	});
 </script>
 
-<div class="flex flex-col rounded-md border text-sm">
+<div class="flex grow flex-col gap-1 text-sm">
 	{#each rows as row (row.rowKey)}
-		{@const { depth, path, node, isBranch, showAddBranch, showAddLeaf, selected, adding, canUp, canDown } = row}
+		{@const {
+			depth,
+			path,
+			node,
+			isBranch,
+			showAddBranch,
+			showAddLeaf,
+			selected,
+			adding,
+			canUp,
+			canDown
+		} = row}
 		<div
 			role="button"
 			tabindex="0"
-			class={cn(
+			class={[
 				'flex min-h-8 items-center gap-1 rounded-sm px-1 transition-colors',
-				selected && 'bg-accent text-accent-foreground',
-				adding && 'ring-1 ring-primary'
-			)}
+				'ring-primary',
+				!selected && !adding && 'hover:ring-1',
+				selected && 'ring-2',
+				adding && 'ring-2 ring-blue-600!'
+			]}
 			style="padding-left: {depth * 1.25 + 0.25}rem"
 			animate:flip={{ duration: 500 }}
 			onclick={() => self.select(path, node.type)}
@@ -106,8 +128,11 @@
 			{#if isBranch}
 				<button
 					type="button"
-					class="flex shrink-0 items-center justify-center p-0.5 hover:bg-accent/50 rounded"
-					onclick={(e) => { e.stopPropagation(); toggleExpanded(path); }}
+					class="flex shrink-0 items-center justify-center rounded p-0.5 hover:bg-accent/50"
+					onclick={(e) => {
+						e.stopPropagation();
+						toggleExpanded(path);
+					}}
 					aria-label={isExpanded(path) ? 'Collapse' : 'Expand'}
 				>
 					{#if isExpanded(path)}
@@ -122,13 +147,7 @@
 
 			<!-- Icon + label -->
 			<span class="flex shrink-0 items-center gap-1.5">
-				{#if isBranch}
-					<Folder class="size-4 text-muted-foreground" />
-					<span>{node.label}</span>
-				{:else}
-					<File class="size-4 text-muted-foreground" />
-					<span>{node.label}</span>
-				{/if}
+				<span>{node.label}</span>
 			</span>
 
 			<!-- Spacer -->
@@ -142,7 +161,10 @@
 					class="h-7 w-7"
 					disabled={!canUp}
 					aria-label="Move up"
-					onclick={(e) => { e.stopPropagation(); self.handleMoveUp(path); }}
+					onclick={(e) => {
+						e.stopPropagation();
+						self.handleMoveUp(path);
+					}}
 				>
 					<ArrowUp class="size-3.5" />
 				</Button>
@@ -152,7 +174,10 @@
 					class="h-7 w-7"
 					disabled={!canDown}
 					aria-label="Move down"
-					onclick={(e) => { e.stopPropagation(); self.handleMoveDown(path); }}
+					onclick={(e) => {
+						e.stopPropagation();
+						self.handleMoveDown(path);
+					}}
 				>
 					<ArrowDown class="size-3.5" />
 				</Button>
@@ -161,7 +186,10 @@
 					size="icon-sm"
 					class="h-7 w-7 text-muted-foreground hover:text-destructive"
 					aria-label="Delete"
-					onclick={(e) => { e.stopPropagation(); self.handleDelete(path); }}
+					onclick={(e) => {
+						e.stopPropagation();
+						self.handleDelete(path);
+					}}
 				>
 					<Trash2 class="size-3.5" />
 				</Button>
@@ -172,10 +200,13 @@
 							size="icon-sm"
 							class="h-7 w-7"
 							aria-label="Add folder"
-							onclick={(e) => { e.stopPropagation(); self.handleAddBranch(path); }}
+							onclick={(e) => {
+								e.stopPropagation();
+								self.handleAddBranch(path);
+							}}
 						>
 							<Folder class="size-3.5" />
-							<Plus class="size-3 ml-0.5" />
+							<Plus class="ml-0.5 size-3" />
 						</Button>
 					{/if}
 					{#if showAddLeaf}
@@ -184,10 +215,13 @@
 							size="icon-sm"
 							class="h-7 w-7"
 							aria-label="Add file"
-							onclick={(e) => { e.stopPropagation(); self.handleAddLeaf(path); }}
+							onclick={(e) => {
+								e.stopPropagation();
+								self.handleAddLeaf(path);
+							}}
 						>
 							<File class="size-3.5" />
-							<Plus class="size-3 ml-0.5" />
+							<Plus class="ml-0.5 size-3" />
 						</Button>
 					{/if}
 				{/if}

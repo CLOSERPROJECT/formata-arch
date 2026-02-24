@@ -29,7 +29,7 @@
 
 <Sidebar.Provider>
 	<AppSidebar />
-	<main class="grow">
+	<main class="flex grow flex-col">
 		<div
 			class="sticky top-0 z-10 flex h-[53px] items-center justify-between border-b bg-background p-2 pr-4"
 		>
@@ -43,7 +43,7 @@
 				{@render navbarState.right()}
 			{/if}
 		</div>
-		<div class="p-4">
+		<div class="flex grow flex-col">
 			{@render children()}
 		</div>
 	</main>

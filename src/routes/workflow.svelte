@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type { Structure } from '$core/tree/types.js';
+
 	import { SaveIcon } from '@lucide/svelte';
 	import { Crud, Tree } from '$core';
-	import type { Structure } from '$core/tree/types.js';
 	import {
 		StepRepository,
 		SubstepRepository,
@@ -154,10 +155,11 @@
 	</Button>
 {/snippet}
 
-<div class="grid grid-cols-[280px_1fr] gap-6">
-	<div class="min-h-0 overflow-auto rounded-md border">
+<div class="flex grow justify-stretch">
+	<div class="w-[400px] overflow-auto border-r p-2">
 		<tree.Tree self={tree} />
 	</div>
+
 	<div class="min-w-0">
 		{#if formMode === 'step'}
 			<stepCrud.Forms
@@ -174,7 +176,7 @@
 				onConfirmDelete={() => tree.clearSelection()}
 			/>
 		{:else}
-			<p class="flex items-center justify-center text-muted-foreground text-sm">
+			<p class="flex items-center justify-center text-sm text-muted-foreground">
 				Select a step or substep in the tree, or use the add buttons to create one.
 			</p>
 		{/if}
