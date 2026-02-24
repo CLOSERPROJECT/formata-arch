@@ -10,11 +10,13 @@
 	//
 
 	type Props = {
-		initialSchema?: Schema;
-		initialUiSchema?: UiSchema;
+		initialData?: {
+			schema: Schema;
+			uiSchema?: UiSchema;
+		};
 		onInit?: (ctx: BuilderContext) => void;
 	};
-	const { initialSchema, initialUiSchema, onInit }: Props = $props();
+	const { initialData, onInit }: Props = $props();
 
 	const promises = Promise.all([highlighterPromise]);
 </script>
@@ -27,8 +29,8 @@
 			{@const builder = new BuilderContext(highlighter)}
 			<BuilderStandaloneContent
 				ctx={builder}
-				{initialSchema}
-				{initialUiSchema}
+				initialSchema={initialData?.schema}
+				initialUiSchema={initialData?.uiSchema}
 				{onInit}
 			/>
 		{/await}

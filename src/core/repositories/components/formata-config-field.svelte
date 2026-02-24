@@ -2,7 +2,7 @@
 	import type { Schema, UiSchema } from '@sjsf/form';
 	import type { BuilderContext } from '$builder/context.svelte.js';
 
-	import { getFormContext, getValueSnapshot, type ComponentProps } from '@sjsf/form';
+	import { getFormContext, getValueSnapshot, setValue, type ComponentProps } from '@sjsf/form';
 	import BuilderStandalone from '$builder/builder-standalone.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
@@ -17,25 +17,18 @@
 
 	let builder: BuilderContext | undefined;
 
-	function getInitialState(): { schema?: Schema; uiSchema?: UiSchema } {
+	const schemaPath = $derived(config.path);
+	const uiSchemaPath = $derived(config.path.toSpliced(-1, 1, 'uiSchema'));
+
+	function getInitialState(): { schema: Schema; uiSchema?: UiSchema } | undefined {
 		const formData = getValueSnapshot(ctx);
-		const fieldValue = get(formData, config.path);
-		if (fieldValue == null) return {};
-		if (
-			typeof fieldValue === 'object' &&
-			'schema' in fieldValue &&
-			fieldValue.schema != null &&
-			typeof fieldValue.schema === 'object'
-		) {
-			return {
-				schema: fieldValue.schema as Schema,
-				uiSchema: (fieldValue as { uiSchema?: UiSchema }).uiSchema
-			};
+		const schemaValue = get(formData, schemaPath);
+		const uiSchemaValue = get(formData, uiSchemaPath);
+		if (!schemaValue || typeof schemaValue !== 'object' || !('type' in schemaValue)) {
+			return undefined;
+		} else {
+			return { schema: schemaValue as Schema, uiSchema: uiSchemaValue as UiSchema | undefined };
 		}
-		if (typeof fieldValue === 'object' && 'type' in fieldValue) {
-			return { schema: fieldValue as Schema };
-		}
-		return {};
 	}
 
 	function handleSave() {
@@ -43,7 +36,12 @@
 		if (!builder.validate()) return;
 		// @ts-expect-error - Slight type mismatch between builder.schema and form value
 		value = builder.schema;
+		if (builder.uiSchema) {
+			console.log(builder.uiSchema);
+			setValue(ctx, { ...getValueSnapshot(ctx), uiSchema: builder.uiSchema });
+		}
 		open = false;
+		console.log(getValueSnapshot(ctx));
 	}
 
 	function handleBuilderInit(b: BuilderContext) {
@@ -52,7 +50,7 @@
 </script>
 
 <pre>
-    {JSON.stringify(value, null, 2)}
+    {JSON.stringify(getInitialState(), null, 2)}
 </pre>
 
 <Dialog.Root bind:open>
@@ -77,12 +75,7 @@
 			<Dialog.Title>Formata Config</Dialog.Title>
 		</Dialog.Header>
 
-		{@const initial = getInitialState()}
-		<BuilderStandalone
-			initialSchema={initial.schema}
-			initialUiSchema={initial.uiSchema}
-			onInit={handleBuilderInit}
-		/>
+		<BuilderStandalone initialData={getInitialState()} onInit={handleBuilderInit} />
 
 		<div
 			class="absolute bottom-0 flex w-full justify-end border-t bg-background/40 p-2 backdrop-blur-xl"

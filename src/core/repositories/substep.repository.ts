@@ -1,10 +1,14 @@
-import type { Schema } from '@sjsf/form';
+import type { Schema, UiSchema } from '@sjsf/form';
 
 import { Config } from '$core';
+import HiddenFieldTemplate from '$core/form/hidden-field-template.svelte';
 import Result from 'true-myth/result';
 
 import type { Repository } from './_types.js';
 import type { Step } from './step.repository.js';
+
+import FormataConfigField from './components/formata-config-field.svelte';
+import SelectDepartment from './components/select-department.svelte';
 
 //
 
@@ -34,6 +38,29 @@ export class SubstepRepository implements Repository<SubstepWithStepId> {
 
 	getSchema(): Schema {
 		return Config.getEntitySchema('Substep');
+	}
+
+	getUiSchema(): UiSchema {
+		return {
+			role: {
+				'ui:components': {
+					textWidget: SelectDepartment
+				},
+				'ui:options': {
+					attestaConfig: this.config
+				}
+			},
+			uiSchema: {
+				'ui:components': {
+					objectTemplate: HiddenFieldTemplate
+				}
+			},
+			schema: {
+				'ui:components': {
+					objectField: FormataConfigField
+				}
+			}
+		};
 	}
 
 	list(): SubstepWithStepId[] {
