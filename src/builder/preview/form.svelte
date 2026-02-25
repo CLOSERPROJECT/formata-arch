@@ -2,8 +2,8 @@
 	import type { Schema, UiSchema } from '@sjsf/form';
 
 	import { isRecordEmpty } from '@sjsf/form/lib/object';
+	import { mode } from 'mode-watcher';
 
-	import { themeManager } from '../../theme.svelte.js';
 	import { getBuilderContext } from '../context.svelte.js';
 
 	//
@@ -56,7 +56,7 @@
 		if (!formataEl) return;
 		formataEl.schema = schema;
 		formataEl.uiSchema = hasUiSchema ? uiSchema : undefined;
-		formataEl.darkMode = themeManager.isDark;
+		formataEl.darkMode = mode.current === 'dark';
 		formataEl.preventPageReload = false;
 	});
 

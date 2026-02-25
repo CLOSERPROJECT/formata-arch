@@ -84,7 +84,7 @@
 	{uiOption}
 >
 	<div class="flex gap-2">
-		<div class="grow rounded-md border bg-gray-100 p-2 text-sm">
+		<div class="grow rounded-md border bg-gray-100 p-2 text-sm dark:bg-input/30">
 			{#if fieldValue?.schema && hasProperties}
 				<Form
 					useBuilderContext={false}
@@ -124,7 +124,7 @@
 		</Dialog.Trigger>
 		<Dialog.Content
 			class="h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-none! p-4!"
-			style="--header-height: 7rem"
+			style="--header-height: 10rem"
 		>
 			<Dialog.Header class="border-b pb-2">
 				<Dialog.Title>Formata Config</Dialog.Title>
