@@ -53,7 +53,7 @@
 		{:then highlighter}
 			{@const yamlString = serialized.value}
 			{@const highlighted = highlight(highlighter, 'yaml', yamlString)}
-			<div class="min-h-0 flex-1 overflow-auto rounded-lg">
+			<div class="dark min-h-0 flex-1 overflow-auto rounded-lg bg-slate-900" data-code-overflow>
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 				{@html highlighted}
 			</div>
