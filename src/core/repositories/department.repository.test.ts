@@ -118,6 +118,27 @@ describe('DepartmentRepository', () => {
 			}
 		});
 
+		it('returns Err when updating department id to an id that already exists', () => {
+			const config = createTestConfig([
+				{ id: 'd1', name: 'Dept 1', color: '#000', border: '#000' },
+				{ id: 'd2', name: 'Dept 2', color: '#111', border: '#111' }
+			]);
+			const repo = new DepartmentRepository(config);
+			const result = repo.update('d1', {
+				id: 'd2',
+				name: 'Dept 1 Renamed',
+				color: '#222',
+				border: '#222'
+			});
+			expect(result.isErr).toBe(true);
+			if (result.isErr) {
+				expect(result.error.message).toBe('Department already exists: d2');
+			}
+			expect(config.departments).toHaveLength(2);
+			expect(config.departments[0].id).toBe('d1');
+			expect(config.departments[1].id).toBe('d2');
+		});
+
 		it('updates users and workflow substep roles when department id changes', () => {
 			const config = Config.createTestSample();
 			config.departments = [

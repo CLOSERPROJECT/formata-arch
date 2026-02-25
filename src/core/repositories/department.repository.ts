@@ -51,6 +51,9 @@ export class DepartmentRepository implements Repository<Department> {
 		}
 		const newId = data.id;
 		if (key !== newId) {
+			if (this.config.departments.some((d) => d.id === newId)) {
+				return Result.err(new Error(`Department already exists: ${newId}`));
+			}
 			// Update all dependents before changing the department id
 			this.config.users = this.config.users.map((u) =>
 				u.departmentId === key ? { ...u, departmentId: newId } : u
