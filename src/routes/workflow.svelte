@@ -30,9 +30,14 @@
 	}
 
 	const stepRepo = new StepRepository(config);
+	const stepCrud = new Crud(stepRepo, {
+		form: { hide: { id: true, order: true, substeps: true } }
+	});
+
 	const substepRepo = new SubstepRepository(config);
-	const stepCrud = new Crud<Step>(stepRepo);
-	const substepCrud = new Crud<SubstepWithStepId>(substepRepo);
+	const substepCrud = new Crud(substepRepo, {
+		form: { hide: { id: true, order: true, inputType: true } }
+	});
 
 	const tree = new Tree(() => configToTree(config), {
 		maxBranchDepth: 1,

@@ -1,99 +1,107 @@
 workflow:
-  name: "Gallium shipment audit"
+  name: 'Gallium shipment audit'
   steps:
-    - id: "1"
-      title: "Shipment intake"
+    - id: '1'
+      title: 'Shipment intake'
       order: 1
       substeps:
-        - id: "1.1"
-          title: "Record shipment weight (kg)"
+        - id: '1.1'
+          title: 'Record shipment weight (kg)'
           order: 1
-          role: "dep1"
-          inputKey: "shipmentKg"
-          inputType: "number"
-        - id: "1.2"
-          title: "Attach shipment reference"
+          role: 'dep1'
+          inputKey: 'shipmentKg'
+          inputType: 'number'
+          schema:
+            type: 'object'
+        - id: '1.2'
+          title: 'Attach shipment reference'
           order: 2
-          role: "dep1"
-          inputKey: "shipmentRef"
-          inputType: "string"
-    - id: "2"
-      title: "Inspection"
+          role: 'dep1'
+          inputKey: 'shipmentRef'
+          inputType: 'string'
+          schema:
+            type: 'object'
+    - id: '2'
+      title: 'Inspection'
       order: 2
       substeps:
-        - id: "2.1"
-          title: "Upload inspection report"
+        - id: '2.1'
+          title: 'Upload inspection report'
           order: 1
-          role: "dep2"
-          inputKey: "report"
-          inputType: "file"
-        - id: "2.2"
-          title: "Record inspection outcome"
-          order: 2
-          role: "dep2"
-          inputKey: "inspectionOutcome"
-          inputType: "formata"
+          role: 'dep2'
+          inputKey: 'report'
+          inputType: 'file'
           schema:
-            type: "object"
-            required: ["outcome", "inspector"]
+            type: 'object'
+        - id: '2.2'
+          title: 'Record inspection outcome'
+          order: 2
+          role: 'dep2'
+          inputKey: 'inspectionOutcome'
+          inputType: 'formata'
+          schema:
+            type: 'object'
+            required: ['outcome', 'inspector']
             properties:
               outcome:
-                type: "string"
-                title: "Outcome"
-                enum: ["accepted", "rejected", "needs_review"]
+                type: 'string'
+                title: 'Outcome'
+                enum: ['accepted', 'rejected', 'needs_review']
               inspector:
-                type: "string"
-                title: "Inspector"
+                type: 'string'
+                title: 'Inspector'
               comments:
-                type: "string"
-                title: "Comments"
+                type: 'string'
+                title: 'Comments'
           uiSchema:
             comments:
-              "ui:components":
-                textWidget: "textareaWidget"
-    - id: "3"
-      title: "Approval"
+              'ui:components':
+                textWidget: 'textareaWidget'
+    - id: '3'
+      title: 'Approval'
       order: 3
       substeps:
-        - id: "3.1"
-          title: "Approve shipment"
+        - id: '3.1'
+          title: 'Approve shipment'
           order: 1
-          role: "dep3"
-          inputKey: "approval"
-          inputType: "string"
+          role: 'dep3'
+          inputKey: 'approval'
+          inputType: 'string'
+          schema:
+            type: 'object'
 
 departments:
-  - id: "dep1"
-    name: "Company 1"
-    color: "#d7e9f2"
-    border: "#6e99b2"
-  - id: "dep2"
-    name: "Department 2"
-    color: "#e0f1d9"
-    border: "#7da36c"
-  - id: "dep3"
-    name: "Department 3"
-    color: "#f5e3c9"
-    border: "#c2945a"
+  - id: 'dep1'
+    name: 'Company 1'
+    color: '#d7e9f2'
+    border: '#6e99b2'
+  - id: 'dep2'
+    name: 'Department 2'
+    color: '#e0f1d9'
+    border: '#7da36c'
+  - id: 'dep3'
+    name: 'Department 3'
+    color: '#f5e3c9'
+    border: '#c2945a'
 
 users:
-  - id: "u4"
-    name: "User 4"
-    departmentId: "dep1"
-  - id: "u5"
-    name: "User 5"
-    departmentId: "dep2"
-  - id: "u6"
-    name: "User 6"
-    departmentId: "dep3"
+  - id: 'u4'
+    name: 'User 4'
+    departmentId: 'dep1'
+  - id: 'u5'
+    name: 'User 5'
+    departmentId: 'dep2'
+  - id: 'u6'
+    name: 'User 6'
+    departmentId: 'dep3'
 
 dpp:
   enabled: true
-  gtin: "09506000134352"
-  lotInputKey: "shipmentRef"
-  lotDefault: ""
-  serialInputKey: ""
-  serialStrategy: "process_id_hex"
-  productName: "Gallium shipment audit"
-  productDescription: "Shipment intake, inspection, and approval with traceable checkpoints."
-  ownerName: "Attesta Demo Operator"
+  gtin: '09506000134352'
+  lotInputKey: 'shipmentRef'
+  lotDefault: ''
+  serialInputKey: ''
+  serialStrategy: 'process_id_hex'
+  productName: 'Gallium shipment audit'
+  productDescription: 'Shipment intake, inspection, and approval with traceable checkpoints.'
+  ownerName: 'Attesta Demo Operator'

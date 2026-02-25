@@ -12,7 +12,7 @@ import CrudTableComponent from './crud-table.svelte';
 //
 
 type FormOptions<T extends object> = {
-	hide?: Record<keyof T, boolean>;
+	hide?: Partial<Record<keyof T, boolean>>;
 };
 
 type Options<T extends object> = Partial<{
@@ -43,7 +43,7 @@ export class Crud<T extends object> {
 		return this.repository.getSchema();
 	}
 	get uiSchema() {
-		return this.repository.getUiSchema?.();
+		return merge(formOptionsToUiSchema(this.options.form ?? {}), this.repository.getUiSchema?.());
 	}
 	get records() {
 		return this.repository.list();
@@ -68,7 +68,7 @@ export class Crud<T extends object> {
 	#form = $derived.by(() =>
 		Form.make<T>({
 			schema: this.schema,
-			uiSchema: merge(formOptionsToUiSchema(this.options.form ?? {}), this.uiSchema),
+			uiSchema: this.uiSchema,
 			initialValue: this.editingRecord ?? this.createInitialValue ?? undefined,
 			onSubmit: (value) => this.handleSubmit(value)
 		})

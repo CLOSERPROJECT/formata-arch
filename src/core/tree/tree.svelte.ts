@@ -1,15 +1,26 @@
 import { SvelteSet } from 'svelte/reactivity';
+
 import type { Path, Structure, TreeOptions, TreeState } from './types.js';
+
 import {
-	canMoveDown as pathCanMoveDown,
-	canMoveUp as pathCanMoveUp,
 	getExpandKey,
-	getNodeAt
+	getNodeAt,
+	canMoveDown as pathCanMoveDown,
+	canMoveUp as pathCanMoveUp
 } from './path.js';
 import TreeComponent from './tree.svelte';
 
-export type { Branch, Leaf, Node, Path, Structure, TreeState, TreeOptions, AddTypesByDepth } from './types.js';
 export { getNodeAt } from './path.js';
+export type {
+	AddTypesByDepth,
+	Branch,
+	Leaf,
+	Node,
+	Path,
+	Structure,
+	TreeOptions,
+	TreeState
+} from './types.js';
 
 //
 
@@ -46,6 +57,7 @@ export class Tree {
 
 	select(path: Path, type: 'branch' | 'leaf') {
 		this.selection = { state: 'selected', path, type };
+		if (type === 'branch') this.expand(path);
 	}
 
 	setAdding(path: Path, type: 'branch' | 'leaf') {

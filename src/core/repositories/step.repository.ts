@@ -1,7 +1,6 @@
-import type { Schema, UiSchema } from '@sjsf/form';
+import type { Schema } from '@sjsf/form';
 
 import { Config } from '$core';
-import HiddenFieldTemplate from '$core/form/hidden-field-template.svelte';
 import Result from 'true-myth/result';
 
 import type { Repository } from './_types.js';
@@ -23,16 +22,6 @@ export class StepRepository implements Repository<Step> {
 
 	getSchema(): Schema {
 		return Config.getEntitySchema('Step');
-	}
-
-	getUiSchema(): UiSchema {
-		return {
-			substeps: {
-				'ui:components': {
-					arrayTemplate: HiddenFieldTemplate
-				}
-			}
-		};
 	}
 
 	list(): Step[] {

@@ -131,7 +131,7 @@
 				!selected && !adding && 'hover:ring-1',
 				selected && 'ring-2',
 				adding && 'bg-blue-100',
-				'group'
+				'group hover:cursor-pointer'
 			]}
 			style="padding-left: {depth * 1.25 + 0.25}rem"
 			animate:flip={{ duration: 500 }}
