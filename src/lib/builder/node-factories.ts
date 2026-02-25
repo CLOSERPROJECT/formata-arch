@@ -114,7 +114,8 @@ const NODE_FACTORIES: {
 		options: {
 			title: 'File field',
 			required: true,
-			widget: FILE_NODE_OPTIONS_SCHEMA.properties.widget.default
+			widget: FILE_NODE_OPTIONS_SCHEMA.properties.widget.default,
+			native: true
 		}
 	}),
 	[NodeType.Tags]: (id) => ({

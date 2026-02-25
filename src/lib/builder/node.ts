@@ -365,7 +365,8 @@ export const FILE_NODE_OPTIONS_SCHEMA = {
 		},
 		native: {
 			title: 'Native',
-			type: 'boolean'
+			type: 'boolean',
+			default: true
 		},
 		multiple: {
 			title: 'Multiple',
