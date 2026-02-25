@@ -8,5 +8,5 @@
 	},
 	"editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.eslint"],
 	"eslint.validate": ["javascript", "typescript", "svelte"],
-	"tailwindCSS.classAttributes": ["iconClass"]
+	"tailwindCSS.classAttributes": ["iconClass", "class", "className"]
 }
