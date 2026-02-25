@@ -99,7 +99,7 @@
 				out.push({
 					depth,
 					path: pathPrefix,
-					node: { type: 'leaf', label: 'New step', key: crypto.randomUUID() },
+					node: { type: 'leaf', label: 'New substep', key: crypto.randomUUID() },
 					rowKey: pathKey(pathPrefix) + crypto.randomUUID(),
 					expandKey: null,
 					isBranch: false,
@@ -227,7 +227,7 @@
 			<div
 				class={[
 					'flex min-h-8 items-center gap-1 rounded-sm p-1 transition-colors',
-					'bg-primary/10 text-primary'
+					'bg-primary/10 font-semibold text-primary'
 				]}
 			>
 				<div class="flex size-[24px] items-center justify-center">
