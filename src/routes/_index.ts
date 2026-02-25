@@ -9,5 +9,6 @@ export const { p, navigate, isActive, route } = createRouter({
 	'/departments': () => import('./departments.svelte'),
 	'/users': () => import('./users.svelte'),
 	'/dpp': () => import('./dpp.svelte'),
-	'/': () => import('./workflow.svelte')
+	'/': () => import('./workflow.svelte'),
+	'/export': () => import('./export.svelte')
 });

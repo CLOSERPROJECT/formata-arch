@@ -1,7 +1,7 @@
 // Follows the best practices established in https://shiki.matsu.io/guide/best-performance
-import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
-import { createHighlighterCore, type HighlighterCore } from 'shiki/core';
 import DOMPurify from 'dompurify';
+import { createHighlighterCore, type HighlighterCore } from 'shiki/core';
+import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 
 const bundledLanguages = {
 	json: () => import('@shikijs/langs/json'),

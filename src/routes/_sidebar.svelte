@@ -32,22 +32,6 @@
 
 	let importInput: HTMLInputElement | undefined = $state();
 
-	function exportConfig() {
-		const result = Config.serialize(config);
-		if (result.isErr) {
-			toast.error(result.error.message);
-			return;
-		}
-		const blob = new Blob([result.value], { type: 'application/yaml' });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'formata-config.yaml';
-		a.click();
-		URL.revokeObjectURL(url);
-		toast.success('Config exported');
-	}
-
 	function onImportChange(e: Event) {
 		const input = e.target as HTMLInputElement;
 		const file = input.files?.[0];
@@ -96,12 +80,7 @@
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Data</Sidebar.GroupLabel>
 			<Sidebar.Menu>
-				<Sidebar.MenuItem>
-					<Sidebar.MenuButton onclick={exportConfig}>
-						<DownloadIcon />
-						Export
-					</Sidebar.MenuButton>
-				</Sidebar.MenuItem>
+				{@render sidebarLinkButton({ label: 'Export', href: p('/export'), icon: DownloadIcon })}
 				<Sidebar.MenuItem>
 					<Sidebar.MenuButton onclick={triggerImport}>
 						<UploadIcon />
@@ -121,24 +100,28 @@
 		{/if}
 		<Sidebar.Menu>
 			{#each links as link, index (index)}
-				<Sidebar.MenuItem>
-					<Sidebar.MenuButton>
-						{#snippet child({ props })}
-							<a
-								href={link.href}
-								{...props}
-								class={[
-									props.class,
-									isActive(link.href as '/') && 'bg-sidebar-accent text-sidebar-accent-foreground'
-								]}
-							>
-								<link.icon />
-								{link.label}
-							</a>
-						{/snippet}
-					</Sidebar.MenuButton>
-				</Sidebar.MenuItem>
+				{@render sidebarLinkButton(link)}
 			{/each}
 		</Sidebar.Menu>
 	</Sidebar.Group>
+{/snippet}
+
+{#snippet sidebarLinkButton(link: NavLink)}
+	<Sidebar.MenuItem>
+		<Sidebar.MenuButton>
+			{#snippet child({ props })}
+				<a
+					href={link.href}
+					{...props}
+					class={[
+						props.class,
+						isActive(link.href as '/') && 'bg-sidebar-accent text-sidebar-accent-foreground'
+					]}
+				>
+					<link.icon />
+					{link.label}
+				</a>
+			{/snippet}
+		</Sidebar.MenuButton>
+	</Sidebar.MenuItem>
 {/snippet}
