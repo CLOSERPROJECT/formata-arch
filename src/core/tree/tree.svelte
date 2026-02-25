@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		ArrowDown,
+		ArrowRight,
 		ArrowUp,
 		ChevronDown,
 		ChevronRight,
@@ -134,7 +135,7 @@
 				'ring-primary',
 				!selected && !adding && 'hover:ring-1',
 				selected && 'ring-2',
-				adding && 'bg-blue-100',
+				adding && 'bg-blue-100 text-blue-600',
 				'group hover:cursor-pointer'
 			]}
 			style="padding-left: {depth * 1.25 + 0.25}rem"
@@ -151,6 +152,12 @@
 				/>
 			{:else}
 				<span class="w-5 shrink-0" aria-hidden="true"></span>
+			{/if}
+
+			{#if adding}
+				<div class="flex size-[24px] items-center justify-center">
+					<ArrowRight class="size-3.5" />
+				</div>
 			{/if}
 
 			<!-- Icon + label -->
@@ -207,7 +214,17 @@
 	<!-- Add branch at root (depth 0) -->
 	{#if self.showAddBranchAtDepth(0)}
 		{#if self.selection.state == 'adding' && pathEquals(self.selection.path, [-1])}
-			ciao
+			<div
+				class={[
+					'flex min-h-8 items-center gap-1 rounded-sm p-1 transition-colors',
+					'bg-blue-50 text-blue-600'
+				]}
+			>
+				<div class="flex size-[24px] items-center justify-center">
+					<ArrowRight class="size-3.5" />
+				</div>
+				New step
+			</div>
 		{:else}
 			<button
 				tabindex="0"
@@ -217,7 +234,7 @@
 				]}
 				onclick={() => self.handleAddBranch(self.structure.length > 0 ? [-1] : [])}
 			>
-				<div class="flex size-[28px] items-center justify-center">
+				<div class="flex size-[24px] items-center justify-center">
 					<Plus class="size-3.5" />
 				</div>
 				Add step
