@@ -87,6 +87,21 @@ function isQrCodeFromUiSchema(uiSchema: UiSchema | undefined): boolean {
 	);
 }
 
+/** File field kind from ui:components, or null if not a file field. */
+function getFileFieldFromUiSchema(uiSchema: UiSchema | undefined): {
+	multiple: boolean;
+	native: boolean;
+} | null {
+	const components = uiSchema?.['ui:components'];
+	if (typeof components !== 'object' || components === null) return null;
+	const c = components as Record<string, unknown>;
+	if (c['stringField'] === 'fileField') return { multiple: false, native: false };
+	if (c['unknownField'] === 'unknownNativeFileField') return { multiple: false, native: true };
+	if (c['arrayField'] === 'arrayFilesField') return { multiple: true, native: false };
+	if (c['arrayField'] === 'arrayNativeFilesField') return { multiple: true, native: true };
+	return null;
+}
+
 function applyCommonOptions(
 	node: CustomizableNode,
 	schema: Schema,
@@ -210,6 +225,26 @@ function parseSchemaValue(
 ): CustomizableNode {
 	const opts = pickSchemaOptions(schema);
 
+	// Native single file: schema is often {} (no type), uiSchema has unknownField: 'unknownNativeFileField'
+	const fileFromUi = getFileFieldFromUiSchema(uiSchema);
+	if (
+		fileFromUi &&
+		!fileFromUi.multiple &&
+		fileFromUi.native &&
+		(schema.type === undefined || schema.type === null)
+	) {
+		const fileNode = createNode(NodeType.File);
+		applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
+		(fileNode.options as { multiple: boolean; native: boolean }).multiple = false;
+		(fileNode.options as { multiple: boolean; native: boolean }).native = true;
+		fileNode.options.widget = inferWidgetFromUiSchema(
+			uiSchema,
+			NodeType.File,
+			'fileWidget'
+		) as never;
+		return fileNode;
+	}
+
 	// enum (no type or type string) -> EnumNode
 	if (schema.enum !== undefined && (schema.type === undefined || schema.type === 'string')) {
 		const enumNode = createNode(NodeType.Enum) as import('./node.js').EnumNode;
@@ -241,12 +276,43 @@ function parseSchemaValue(
 		const items = schema.items;
 		if (items && typeof items === 'object' && !Array.isArray(items)) {
 			const itemsSchema = items as Schema;
-			// File (multiple): array of data-url
+			// File (multiple): array of data-url, or file indicated by uiSchema (format may be stripped)
+			const arrayFileFromUi = fileFromUi?.multiple === true ? fileFromUi : null;
 			if (itemsSchema.type === 'string' && itemsSchema.format === 'data-url') {
 				const fileNode = createNode(NodeType.File);
 				applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
-				fileNode.options.multiple = true;
-				fileNode.options.native = false;
+				(fileNode.options as { multiple: boolean; native: boolean }).multiple = true;
+				(fileNode.options as { multiple: boolean; native: boolean }).native = false;
+				fileNode.options.widget = inferWidgetFromUiSchema(
+					uiSchema,
+					NodeType.File,
+					'fileWidget'
+				) as never;
+				return fileNode;
+			}
+			if (arrayFileFromUi?.native && (itemsSchema.type === undefined || itemsSchema.type === null)) {
+				// Native multiple file: items schema is {}
+				const fileNode = createNode(NodeType.File);
+				applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
+				(fileNode.options as { multiple: boolean; native: boolean }).multiple = true;
+				(fileNode.options as { multiple: boolean; native: boolean }).native = true;
+				fileNode.options.widget = inferWidgetFromUiSchema(
+					uiSchema,
+					NodeType.File,
+					'fileWidget'
+				) as never;
+				return fileNode;
+			}
+			if (
+				itemsSchema.type === 'string' &&
+				arrayFileFromUi &&
+				!arrayFileFromUi.native
+			) {
+				// Non-native multiple file (format may have been stripped on save)
+				const fileNode = createNode(NodeType.File);
+				applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
+				(fileNode.options as { multiple: boolean; native: boolean }).multiple = true;
+				(fileNode.options as { multiple: boolean; native: boolean }).native = false;
 				fileNode.options.widget = inferWidgetFromUiSchema(
 					uiSchema,
 					NodeType.File,
@@ -310,6 +376,19 @@ function parseSchemaValue(
 	// type: 'string'
 	if (schema.type === 'string') {
 		if (schema.format === 'data-url') {
+			const fileNode = createNode(NodeType.File);
+			applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
+			(fileNode.options as { multiple: boolean; native: boolean }).multiple = false;
+			(fileNode.options as { multiple: boolean; native: boolean }).native = false;
+			fileNode.options.widget = inferWidgetFromUiSchema(
+				uiSchema,
+				NodeType.File,
+				'fileWidget'
+			) as never;
+			return fileNode;
+		}
+		// File without format (e.g. format stripped on save); uiSchema has stringField: 'fileField'
+		if (fileFromUi && !fileFromUi.multiple && !fileFromUi.native) {
 			const fileNode = createNode(NodeType.File);
 			applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
 			(fileNode.options as { multiple: boolean; native: boolean }).multiple = false;
