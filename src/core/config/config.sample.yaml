@@ -72,7 +72,7 @@ workflow:
 
 departments:
   - id: 'dep1'
-    name: 'Company 1'
+    name: 'Department 1'
     color: '#d7e9f2'
     border: '#6e99b2'
   - id: 'dep2'
