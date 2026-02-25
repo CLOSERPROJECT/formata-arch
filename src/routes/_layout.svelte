@@ -32,12 +32,12 @@
 	<AppSidebar />
 	<main class="flex grow flex-col">
 		<div
-			class="sticky top-0 z-10 flex h-[53px] items-center justify-between border-b bg-background p-2 pr-4"
+			class="sticky top-0 z-10 flex h-[53px] items-center justify-between gap-4 border-b bg-background p-2 pr-4"
 		>
-			<div class="flex items-center gap-2">
+			<div class="flex grow items-center gap-2">
 				<Sidebar.Trigger />
 				{#if navbarState?.title}
-					<p class="font-medium">{navbarState.title}</p>
+					<p class="font-medium text-nowrap">{navbarState.title}</p>
 				{/if}
 				{#if navbarState?.left}
 					{@render navbarState.left()}

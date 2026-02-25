@@ -9,10 +9,10 @@
 		type Substep
 	} from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
+	import Input from '$lib/components/ui/input/input.svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 
-	import Input from '$lib/components/ui/input/input.svelte';
 	import { setTopbar } from './_layout.svelte';
 
 	//
@@ -173,7 +173,7 @@
 {#snippet navbarLeft()}
 	<Input
 		bind:value={config.workflow.name}
-		class="h-8 min-w-0 max-w-md grow font-medium md:text-sm"
+		class="h-8 max-w-md grow font-medium md:text-sm"
 		placeholder="Workflow name"
 	/>
 {/snippet}
