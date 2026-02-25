@@ -29,9 +29,13 @@
 		return node.type === 'branch' ? (node.key ?? pathKey(path)) : null;
 	}
 
-	function toggleExpanded(key: string) {
-		if (self.expanded.has(key)) self.expanded.delete(key);
-		else self.expanded.add(key);
+	function toggleExpanded(key: string, path: Path) {
+		if (self.expanded.has(key)) {
+			self.expanded.delete(key);
+		} else {
+			self.expanded.add(key);
+			self.select(path, 'branch');
+		}
 	}
 
 	function isExpandedByKey(key: string): boolean {
@@ -141,7 +145,7 @@
 			<!-- Chevron (branch only) -->
 			{#if isBranch && expandKey}
 				<TreeButton
-					onclick={() => toggleExpanded(expandKey)}
+					onclick={() => toggleExpanded(expandKey, path)}
 					icon={isExpandedByKey(expandKey) ? ChevronDown : ChevronRight}
 					aria-label={isExpandedByKey(expandKey) ? 'Collapse' : 'Expand'}
 				/>
