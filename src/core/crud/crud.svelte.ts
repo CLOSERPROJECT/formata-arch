@@ -1,16 +1,29 @@
+import type { UiSchema } from '@sjsf/form';
 import type { Repository } from '$core/repositories/index.js';
 
 import { Form } from '$core';
+import HiddenFieldTemplate from '$core/form/hidden-field-template.svelte';
+import { merge } from 'lodash';
 import { toast } from 'svelte-sonner';
 
 import CrudForm from './crud-form.svelte';
 import CrudFormsComponent from './crud-forms.svelte';
 import CrudTableComponent from './crud-table.svelte';
-
 //
 
+type FormOptions<T extends object> = {
+	hide?: Record<keyof T, boolean>;
+};
+
+type Options<T extends object> = Partial<{
+	form: FormOptions<T>;
+}>;
+
 export class Crud<T extends object> {
-	constructor(private repository: Repository<T>) {}
+	constructor(
+		private repository: Repository<T>,
+		private options: Options<T> = {}
+	) {}
 
 	// Components
 
@@ -55,7 +68,7 @@ export class Crud<T extends object> {
 	#form = $derived.by(() =>
 		Form.make<T>({
 			schema: this.schema,
-			uiSchema: this.uiSchema,
+			uiSchema: merge(formOptionsToUiSchema(this.options.form ?? {}), this.uiSchema),
 			initialValue: this.editingRecord ?? this.createInitialValue ?? undefined,
 			onSubmit: (value) => this.handleSubmit(value)
 		})
@@ -157,4 +170,24 @@ export class Crud<T extends object> {
 	getKey(record: T): string {
 		return this.repository.getKey(record);
 	}
+}
+
+//
+
+function formOptionsToUiSchema<T extends object>(options: FormOptions<T>): UiSchema {
+	const hiddenComponentsConfig: UiSchema['ui:components'] = {
+		arrayTemplate: HiddenFieldTemplate,
+		objectTemplate: HiddenFieldTemplate,
+		fieldTemplate: HiddenFieldTemplate,
+		arrayItemTemplate: HiddenFieldTemplate,
+		multiFieldTemplate: HiddenFieldTemplate,
+		objectPropertyTemplate: HiddenFieldTemplate
+	};
+	const uiSchema: UiSchema = {};
+	for (const key in options.hide) {
+		uiSchema[key] = {
+			'ui:components': hiddenComponentsConfig
+		};
+	}
+	return uiSchema;
 }

@@ -22,7 +22,8 @@ const step1 = {
 			order: 0,
 			role: 'r1',
 			inputKey: 'k1',
-			inputType: 'string' as const
+			inputType: 'string' as const,
+			schema: {}
 		}
 	]
 };

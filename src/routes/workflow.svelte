@@ -122,7 +122,8 @@
 					order: step.substeps.length,
 					role: '',
 					inputKey: '',
-					inputType: 'string'
+					inputType: 'formata',
+					schema: {}
 				};
 				substepCrud.openCreateWithCallback(draft, (value) => {
 					const result = substepRepo.create(value);

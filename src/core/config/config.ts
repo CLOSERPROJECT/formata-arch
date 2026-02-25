@@ -41,44 +41,41 @@ export const Schema = {
 			required: ['id', 'title', 'order', 'substeps'],
 			additionalProperties: false,
 			properties: {
-				id: { type: 'string' },
+				id: { type: 'string', default: 'id' },
 				title: { type: 'string' },
-				order: { type: 'integer' },
+				order: { type: 'integer', default: 0 },
 				substeps: {
 					type: 'array',
-					items: { $ref: '#/$defs/Substep' }
+					items: { $ref: '#/$defs/Substep' },
+					default: []
 				}
 			}
 		},
 		Substep: {
 			type: 'object',
-			required: ['id', 'title', 'order', 'role', 'inputKey', 'inputType'],
+			required: ['id', 'title', 'order', 'role', 'inputKey', 'inputType', 'schema'],
+			additionalProperties: false,
 			properties: {
-				id: { type: 'string' },
+				id: { type: 'string', default: 'id' },
+				order: { type: 'integer', default: 0 },
 				title: { type: 'string' },
-				order: { type: 'integer' },
+				inputKey: { type: 'string', title: 'Subtitle' },
 				role: { type: 'string' },
-				inputKey: { type: 'string' },
 				inputType: {
 					type: 'string',
-					enum: ['number', 'string', 'file', 'formata']
+					enum: ['number', 'string', 'file', 'formata'],
+					default: 'formata'
 				},
 				schema: {
 					type: 'object',
-					description: 'JSON Schema for formata inputType'
+					description: 'JSON Schema for formata inputType',
+					additionalProperties: true
 				},
 				uiSchema: {
 					type: 'object',
-					description: 'UI schema overrides'
+					description: 'UI schema overrides',
+					additionalProperties: true
 				}
-			},
-			if: {
-				properties: {
-					inputType: { const: 'formata' }
-				}
-			},
-			then: {
-				required: ['schema', 'uiSchema']
 			}
 		},
 		Department: {

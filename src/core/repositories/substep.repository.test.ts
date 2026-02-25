@@ -24,7 +24,8 @@ const substep1 = {
 	order: 0,
 	role: 'r1',
 	inputKey: 'k1',
-	inputType: 'string' as const
+	inputType: 'string' as const,
+	schema: {}
 };
 
 describe('SubstepRepository', () => {
@@ -83,7 +84,8 @@ describe('SubstepRepository', () => {
 				...substep1,
 				id: 'sub2',
 				title: 'Sub 2',
-				__stepId: 's1'
+				__stepId: 's1',
+				schema: {}
 			};
 			const result = repo.create(newSub);
 			expect(result.isOk).toBe(true);
@@ -94,7 +96,7 @@ describe('SubstepRepository', () => {
 		it('returns Err when substep id already exists in step', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
-			const result = repo.create({ ...substep1, __stepId: 's1' });
+			const result = repo.create({ ...substep1, __stepId: 's1', schema: {} });
 			expect(result.isErr).toBe(true);
 			if (result.isErr) {
 				expect(result.error.message).toBe('Substep already exists: sub1');
@@ -109,7 +111,8 @@ describe('SubstepRepository', () => {
 			const updated: SubstepWithStepId = {
 				...substep1,
 				title: 'Updated',
-				__stepId: 's1'
+				__stepId: 's1',
+				schema: {}
 			};
 			const result = repo.update('s1:sub1', updated);
 			expect(result.isOk).toBe(true);
@@ -119,7 +122,7 @@ describe('SubstepRepository', () => {
 		it('returns Err when key not found', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
-			const result = repo.update('s1:missing', { ...substep1, __stepId: 's1' });
+			const result = repo.update('s1:missing', { ...substep1, __stepId: 's1', schema: {} });
 			expect(result.isErr).toBe(true);
 		});
 	});
