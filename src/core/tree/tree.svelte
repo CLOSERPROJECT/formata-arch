@@ -17,9 +17,14 @@
 
 	interface Props {
 		self: Tree;
+		showIndices?: boolean;
 	}
 
-	let { self }: Props = $props();
+	let { self, showIndices = false }: Props = $props();
+
+	function pathIndexLabel(path: Path): string {
+		return path.map((i) => i + 1).join('.');
+	}
 
 	function pathKey(path: Path): string {
 		return path.join(',');
@@ -162,6 +167,9 @@
 
 			<!-- Icon + label -->
 			<span class="flex shrink-0 items-center gap-1.5">
+				{#if showIndices && !adding}
+					<span class="text-muted-foreground shrink-0 tabular-nums">{pathIndexLabel(path)}</span>
+				{/if}
 				<span>{node.label}</span>
 			</span>
 

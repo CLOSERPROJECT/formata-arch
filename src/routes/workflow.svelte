@@ -175,7 +175,7 @@
 		>
 			Steps
 		</p>
-		<tree.Tree self={tree} />
+		<tree.Tree self={tree} showIndices />
 	</div>
 
 	<div class="min-w-0 grow p-4">
