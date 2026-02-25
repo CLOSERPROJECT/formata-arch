@@ -1,6 +1,7 @@
 import { createRouter } from 'sv-router';
 
-import layout from './_layout.svelte';
+// Lazy layout import breaks circular dependency: _index → _layout → _sidebar → _index
+const layout = () => import('./_layout.svelte');
 
 //
 
