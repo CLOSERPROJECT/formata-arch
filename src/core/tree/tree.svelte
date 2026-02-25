@@ -168,7 +168,7 @@
 			<!-- Icon + label -->
 			<span class="flex shrink-0 items-center gap-1.5">
 				{#if showIndices && !adding}
-					<span class="text-muted-foreground shrink-0 tabular-nums">{pathIndexLabel(path)}</span>
+					<span class="shrink-0 text-muted-foreground tabular-nums">{pathIndexLabel(path)}</span>
 				{/if}
 				<span>{node.label}</span>
 			</span>
@@ -203,7 +203,8 @@
 							onclick={() => self.handleAddBranch(path)}
 							icon={FolderPlusIcon}
 							aria-label="Add step"
-							class="text-blue-600 hover:bg-blue-50"
+							class="font-semibold text-primary hover:bg-primary/10"
+							iconClass="stroke-3"
 						/>
 					{/if}
 					{#if showAddLeaf}
@@ -211,7 +212,8 @@
 							onclick={() => self.handleAddLeaf(path)}
 							icon={Plus}
 							aria-label="Add substep"
-							class="text-blue-600 hover:bg-blue-50"
+							class="font-semibold text-primary hover:bg-primary/10"
+							iconClass="stroke-3"
 						/>
 					{/if}
 				{/if}
@@ -225,7 +227,7 @@
 			<div
 				class={[
 					'flex min-h-8 items-center gap-1 rounded-sm p-1 transition-colors',
-					'bg-blue-50 text-blue-600'
+					'bg-primary/10 text-primary'
 				]}
 			>
 				<div class="flex size-[24px] items-center justify-center">
@@ -238,12 +240,12 @@
 				tabindex="0"
 				class={[
 					'flex min-h-8 items-center gap-1 rounded-sm p-1 transition-colors',
-					'text-blue-600 hover:bg-blue-50'
+					'font-semibold text-primary hover:bg-primary/10'
 				]}
 				onclick={() => self.handleAddBranch(self.structure.length > 0 ? [-1] : [])}
 			>
 				<div class="flex size-[24px] items-center justify-center">
-					<Plus class="size-3.5" />
+					<Plus class="size-3.5" stroke-width={4} />
 				</div>
 				Add step
 			</button>

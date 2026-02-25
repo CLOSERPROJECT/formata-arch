@@ -72,7 +72,7 @@
 
 <Sidebar.Root>
 	<Sidebar.Header class="h-[53px] justify-center border-b px-4">
-		<p class="font-semibold tracking-tight">Attesta Composer</p>
+		<p class="font-semibold tracking-tight text-primary">Attesta Composer</p>
 	</Sidebar.Header>
 	<Sidebar.Content>
 		{@render group(main, 'Main')}
