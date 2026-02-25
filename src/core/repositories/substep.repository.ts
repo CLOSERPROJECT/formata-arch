@@ -14,9 +14,10 @@ import SelectDepartment from './components/select-department.svelte';
 
 export type Substep = Step['substeps'][number];
 
-/** Listed substeps include stepId for composite key (stepId:substepId) */
-export type SubstepWithStepId = Substep & { __stepId: string };
-
+/**
+ * In this repository, record.id is the composite key "stepId:substepId".
+ * create() requires data.id in that format; stepId and substepId are parsed from it.
+ */
 function parseKey(key: string): { stepId: string; substepId: string } {
 	const idx = key.indexOf(':');
 	if (idx === -1) {
@@ -25,15 +26,15 @@ function parseKey(key: string): { stepId: string; substepId: string } {
 	return { stepId: key.slice(0, idx), substepId: key.slice(idx + 1) };
 }
 
-export class SubstepRepository implements Repository<SubstepWithStepId> {
+export class SubstepRepository implements Repository<Substep> {
 	constructor(private readonly config: Config.Config) {}
 
 	getEntityName(): string {
 		return 'Substep';
 	}
 
-	getKey(record: SubstepWithStepId): string {
-		return `${record.__stepId}:${record.id}`;
+	getKey(record: Substep): string {
+		return record.id;
 	}
 
 	getSchema(): Schema {
@@ -63,13 +64,13 @@ export class SubstepRepository implements Repository<SubstepWithStepId> {
 		};
 	}
 
-	list(): SubstepWithStepId[] {
+	list(): Substep[] {
 		return this.config.workflow.steps.flatMap((step) =>
-			step.substeps.map((sub) => ({ ...sub, __stepId: step.id }))
+			step.substeps.map((sub) => ({ ...sub, id: `${step.id}:${sub.id}` }))
 		);
 	}
 
-	getOne(key: string): Result<SubstepWithStepId, Error> {
+	getOne(key: string): Result<Substep, Error> {
 		const { stepId, substepId } = parseKey(key);
 		const step = this.config.workflow.steps.find((s) => s.id === stepId);
 		if (!step) {
@@ -79,25 +80,27 @@ export class SubstepRepository implements Repository<SubstepWithStepId> {
 		if (!substep) {
 			return Result.err(new Error(`Substep not found: ${key}`));
 		}
-		return Result.ok({ ...substep, __stepId: step.id });
+		return Result.ok({ ...substep, id: key });
 	}
 
-	create(data: SubstepWithStepId): Result<SubstepWithStepId, Error> {
-		const stepId = data.__stepId;
+	create(data: Substep): Result<Substep, Error> {
+		const { stepId, substepId } = parseKey(data.id);
+		if (!stepId || !substepId) {
+			return Result.err(new Error('Substep id must be in format stepId:substepId'));
+		}
 		const step = this.config.workflow.steps.find((s) => s.id === stepId);
 		if (!step) {
 			return Result.err(new Error(`Step not found: ${stepId}`));
 		}
-		if (step.substeps.some((s) => s.id === data.id)) {
+		if (step.substeps.some((s) => s.id === substepId)) {
 			return Result.err(new Error(`Substep already exists: ${data.id}`));
 		}
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { __stepId: _, ...substep } = data;
+		const substep = { ...data, id: substepId };
 		step.substeps = [...step.substeps, substep].sort((a, b) => a.order - b.order);
 		return Result.ok(data);
 	}
 
-	update(key: string, data: SubstepWithStepId): Result<SubstepWithStepId, Error> {
+	update(key: string, data: Substep): Result<Substep, Error> {
 		const { stepId, substepId } = parseKey(key);
 		const step = this.config.workflow.steps.find((s) => s.id === stepId);
 		if (!step) {
@@ -107,10 +110,9 @@ export class SubstepRepository implements Repository<SubstepWithStepId> {
 		if (index === -1) {
 			return Result.err(new Error(`Substep not found: ${key}`));
 		}
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { __stepId: _, ...substep } = data;
+		const substep = { ...data, id: substepId };
 		step.substeps = step.substeps.map((s) => (s.id === substepId ? substep : s));
-		return Result.ok(data);
+		return Result.ok({ ...data, id: key });
 	}
 
 	delete(key: string): Result<void, Error> {

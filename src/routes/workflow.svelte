@@ -6,7 +6,7 @@
 		StepRepository,
 		SubstepRepository,
 		type Step,
-		type SubstepWithStepId
+		type Substep
 	} from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
 	import { toast } from 'svelte-sonner';
@@ -66,7 +66,7 @@
 				const step = config.workflow.steps[path[0]];
 				const substep = step?.substeps[path[1]];
 				if (step && substep) {
-					substepCrud.openDelete({ ...substep, __stepId: step.id });
+					substepCrud.openDelete({ ...substep, id: `${step.id}:${substep.id}` });
 				}
 			}
 		},
@@ -90,7 +90,7 @@
 				const step = steps[sel.path[0]];
 				const substep = step?.substeps[sel.path[1]];
 				if (step && substep) {
-					substepCrud.openEdit({ ...substep, __stepId: step.id });
+					substepCrud.openEdit({ ...substep, id: `${step.id}:${substep.id}` });
 				}
 			}
 		} else if (sel.state === 'adding') {
@@ -120,9 +120,8 @@
 			} else {
 				const step = steps[sel.path[0]];
 				if (!step) return;
-				const draft: SubstepWithStepId = {
-					__stepId: step.id,
-					id: crypto.randomUUID(),
+				const draft: Substep = {
+					id: `${step.id}:${crypto.randomUUID()}`,
 					title: 'New substep',
 					order: step.substeps.length,
 					role: '',

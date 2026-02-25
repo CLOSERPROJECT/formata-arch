@@ -59,7 +59,7 @@ export class Crud<T extends object> {
 			typeof this.def === 'object' &&
 			'properties' in this.def &&
 			this.def.properties
-			? (Object.keys(this.def.properties as object) as string[]).filter((k) => k !== '__stepId')
+			? (Object.keys(this.def.properties as object) as string[])
 			: [];
 	}
 
