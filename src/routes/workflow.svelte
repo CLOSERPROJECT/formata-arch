@@ -39,12 +39,25 @@
 		form: { hide: { id: true, order: true, inputType: true } }
 	});
 
+	/** After reordering steps, step ids are renumbered so expanded keys no longer match. Remap the two swapped step ids so the same branches stay expanded. */
+	function remapExpandedAfterStepMove(moveUp: boolean, stepIndex: number) {
+		const idA = String(moveUp ? stepIndex : stepIndex + 1);
+		const idB = String(moveUp ? stepIndex + 1 : stepIndex + 2);
+		const hadA = tree.expanded.has(idA);
+		const hadB = tree.expanded.has(idB);
+		tree.expanded.delete(idA);
+		tree.expanded.delete(idB);
+		if (hadA) tree.expanded.add(idB); // content that had idA is now at idB
+		if (hadB) tree.expanded.add(idA); // content that had idB is now at idA
+	}
+
 	const tree = new Tree(() => configToTree(config), {
 		maxBranchDepth: 1,
 		addTypesByDepth: { 0: ['branch'], 1: ['leaf'] },
 		onMoveUp(path) {
 			if (path.length === 1) {
 				stepRepo.moveUp(path[0]);
+				remapExpandedAfterStepMove(true, path[0]);
 			} else if (path.length === 2) {
 				const step = config.workflow.steps[path[0]];
 				if (step) substepRepo.moveUp(step.id, path[1]);
@@ -53,6 +66,7 @@
 		onMoveDown(path) {
 			if (path.length === 1) {
 				stepRepo.moveDown(path[0]);
+				remapExpandedAfterStepMove(false, path[0]);
 			} else if (path.length === 2) {
 				const step = config.workflow.steps[path[0]];
 				if (step) substepRepo.moveDown(step.id, path[1]);
