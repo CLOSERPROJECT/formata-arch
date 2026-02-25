@@ -1,1 +1,0 @@
-import{B as n,e as s,a as l,f,n as i}from"./index-BuAdgX0P.js";import{P as m}from"./_layout-Cm-KocWj.js";var u=f("<!> New",1);function _(o,r){n(o,{get onclick(){return r.onClick},children:(a,c)=>{var t=u(),e=s(t);m(e,{}),i(),l(a,t)},$$slots:{default:!0}})}export{_ as N};

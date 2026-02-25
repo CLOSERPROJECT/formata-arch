@@ -1,0 +1,1 @@
+import{B as n,e as s,a as l,f,n as i}from"./index-D-ra1IDm.js";import{P as m}from"./_layout-C5dcYtvj.js";var u=f("<!> New",1);function _(o,r){n(o,{get onclick(){return r.onClick},children:(a,c)=>{var t=u(),e=s(t);m(e,{}),i(),l(a,t)},$$slots:{default:!0}})}export{_ as N};
