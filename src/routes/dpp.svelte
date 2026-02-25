@@ -26,4 +26,6 @@
 	</Button>
 {/snippet}
 
-<crud.Form self={crud} hideSubmitButton />
+<div class="p-4">
+	<crud.Form self={crud} hideSubmitButton />
+</div>

@@ -21,4 +21,6 @@
 	<NewButton onClick={() => crud.openCreate()} />
 {/snippet}
 
-<crud.Table self={crud} />
+<div class="p-4">
+	<crud.Table self={crud} />
+</div>
