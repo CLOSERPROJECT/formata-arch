@@ -49,6 +49,22 @@ export class DepartmentRepository implements Repository<Department> {
 		if (index === -1) {
 			return Result.err(new Error(`Department not found: ${key}`));
 		}
+		const newId = data.id;
+		if (key !== newId) {
+			// Update all dependents before changing the department id
+			this.config.users = this.config.users.map((u) =>
+				u.departmentId === key ? { ...u, departmentId: newId } : u
+			);
+			this.config.workflow = {
+				...this.config.workflow,
+				steps: this.config.workflow.steps.map((step) => ({
+					...step,
+					substeps: step.substeps.map((sub) =>
+						sub.role === key ? { ...sub, role: newId } : sub
+					)
+				}))
+			};
+		}
 		this.config.departments = this.config.departments.map((d) => (d.id === key ? data : d));
 		return Result.ok(data);
 	}

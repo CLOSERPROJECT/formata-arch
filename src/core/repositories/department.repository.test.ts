@@ -117,6 +117,57 @@ describe('DepartmentRepository', () => {
 				expect(result.error.message).toBe('Department not found: missing');
 			}
 		});
+
+		it('updates users and workflow substep roles when department id changes', () => {
+			const config = Config.createTestSample();
+			config.departments = [
+				{ id: 'd1', name: 'Dept 1', color: '#000', border: '#000' },
+				{ id: 'd2', name: 'Dept 2', color: '#111', border: '#111' }
+			];
+			config.users = [
+				{ id: 'u1', name: 'Alice', departmentId: 'd1' },
+				{ id: 'u2', name: 'Bob', departmentId: 'd2' }
+			];
+			config.workflow = {
+				name: 'Test',
+				steps: [
+					{
+						id: 's1',
+						title: 'Step 1',
+						order: 1,
+						substeps: [
+							{
+								id: 's1.1',
+								title: 'Sub 1',
+								order: 1,
+								role: 'd1',
+								inputKey: 'x',
+								inputType: 'string',
+								schema: { type: 'object' }
+							},
+							{
+								id: 's1.2',
+								title: 'Sub 2',
+								order: 2,
+								role: 'd2',
+								inputKey: 'y',
+								inputType: 'string',
+								schema: { type: 'object' }
+							}
+						]
+					}
+				]
+			};
+			const repo = new DepartmentRepository(config);
+			const updated = { id: 'd1-renamed', name: 'Dept 1 Renamed', color: '#222', border: '#222' };
+			const result = repo.update('d1', updated);
+			expect(result.isOk).toBe(true);
+			expect(config.departments.find((d) => d.id === 'd1-renamed')).toEqual(updated);
+			expect(config.users.find((u) => u.id === 'u1')?.departmentId).toBe('d1-renamed');
+			expect(config.users.find((u) => u.id === 'u2')?.departmentId).toBe('d2');
+			expect(config.workflow.steps[0].substeps[0].role).toBe('d1-renamed');
+			expect(config.workflow.steps[0].substeps[1].role).toBe('d2');
+		});
 	});
 
 	describe('delete', () => {
