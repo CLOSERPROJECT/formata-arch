@@ -12,6 +12,7 @@
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 
+	import Input from '$lib/components/ui/input/input.svelte';
 	import { setTopbar } from './_layout.svelte';
 
 	//
@@ -157,7 +158,8 @@
 	});
 
 	setTopbar({
-		title: 'Stream / Workflow'
+		title: 'Stream / Workflow',
+		left: navbarLeft
 	});
 
 	const formMode = $derived.by(() => {
@@ -167,6 +169,14 @@
 		return sel.type === 'branch' ? 'step' : 'substep';
 	});
 </script>
+
+{#snippet navbarLeft()}
+	<Input
+		bind:value={config.workflow.name}
+		class="h-8 min-w-0 max-w-md grow font-medium md:text-sm"
+		placeholder="Workflow name"
+	/>
+{/snippet}
 
 <div class="flex grow justify-stretch">
 	<div class="w-[400px] shrink-0 overflow-auto border-r p-2">

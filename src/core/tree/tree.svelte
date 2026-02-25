@@ -140,7 +140,7 @@
 				'ring-primary',
 				!selected && !adding && 'hover:ring-1',
 				selected && 'ring-2',
-				adding && 'bg-blue-100 text-blue-600',
+				adding && 'bg-primary/10 text-primary',
 				'group hover:cursor-pointer'
 			]}
 			style="padding-left: {depth * 1.25 + 0.25}rem"

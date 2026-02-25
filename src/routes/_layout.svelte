@@ -2,6 +2,7 @@
 	type TopbarState = {
 		title: string;
 		right?: Snippet;
+		left?: Snippet;
 	};
 
 	let navbarState = $state.raw<TopbarState>();
@@ -37,6 +38,9 @@
 				<Sidebar.Trigger />
 				{#if navbarState?.title}
 					<p class="font-medium">{navbarState.title}</p>
+				{/if}
+				{#if navbarState?.left}
+					{@render navbarState.left()}
 				{/if}
 			</div>
 			{#if navbarState?.right}

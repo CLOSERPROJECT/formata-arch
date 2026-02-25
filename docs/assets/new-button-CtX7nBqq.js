@@ -1,1 +1,0 @@
-import{B as s,h as e,P as l,n as f,b as i,f as u}from"./index-BUyUfC5g.js";var c=u("<!> New",1);function p(o,r){s(o,{get onclick(){return r.onClick},children:(a,d)=>{var t=c(),n=e(t);l(n,{}),f(),i(a,t)},$$slots:{default:!0}})}export{p as N};
