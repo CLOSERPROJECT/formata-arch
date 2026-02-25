@@ -11,6 +11,7 @@
 	} from '@lucide/svelte';
 	import { Config } from '$core';
 	import { config } from '$core/state.svelte.js';
+	import ThemeButton from '$lib/components/theme-button.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { toast } from 'svelte-sonner';
 
@@ -90,7 +91,9 @@
 			</Sidebar.Menu>
 		</Sidebar.Group>
 	</Sidebar.Content>
-	<Sidebar.Footer />
+	<Sidebar.Footer>
+		<ThemeButton />
+	</Sidebar.Footer>
 </Sidebar.Root>
 
 {#snippet group(links: NavLink[], title?: string)}
