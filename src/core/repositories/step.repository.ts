@@ -9,6 +9,29 @@ import type { Repository } from './_types.js';
 
 export type Step = Config.Config['workflow']['steps'][number];
 
+/** Return a new step with each substep's order (1-based) and id set to stepId.position. */
+export function renumberSubsteps(step: Step): Step {
+	return {
+		...step,
+		substeps: step.substeps.map((sub, j) => ({
+			...sub,
+			order: j + 1,
+			id: `${step.id}.${j + 1}`
+		}))
+	};
+}
+
+function renumberSteps(config: Config.Config): void {
+	config.workflow.steps = config.workflow.steps.map((step, i) => {
+		const renumbered: Step = {
+			...step,
+			order: i + 1,
+			id: String(i + 1)
+		};
+		return renumberSubsteps(renumbered);
+	});
+}
+
 export class StepRepository implements Repository<Step> {
 	constructor(private readonly config: Config.Config) {}
 
@@ -34,22 +57,19 @@ export class StepRepository implements Repository<Step> {
 	}
 
 	create(data: Step): Result<Step, Error> {
-		if (this.config.workflow.steps.some((s) => s.id === data.id)) {
-			return Result.err(new Error(`Step already exists: ${data.id}`));
-		}
 		this.config.workflow.steps = [...this.config.workflow.steps, data];
-		return Result.ok(data);
+		renumberSteps(this.config);
+		const added = this.config.workflow.steps[this.config.workflow.steps.length - 1];
+		return added !== undefined ? Result.ok(added) : Result.ok(data);
 	}
 
 	createAt(data: Step, index: number): Result<Step, Error> {
-		if (this.config.workflow.steps.some((s) => s.id === data.id)) {
-			return Result.err(new Error(`Step already exists: ${data.id}`));
-		}
 		const steps = [...this.config.workflow.steps];
-		const step = { ...data, order: index };
-		steps.splice(index, 0, step);
+		steps.splice(index, 0, data);
 		this.config.workflow.steps = steps;
-		return Result.ok(step);
+		renumberSteps(this.config);
+		const added = this.config.workflow.steps[index];
+		return added !== undefined ? Result.ok(added) : Result.ok(data);
 	}
 
 	moveUp(stepIndex: number): Result<void, Error> {
@@ -59,10 +79,11 @@ export class StepRepository implements Repository<Step> {
 		const b = steps[stepIndex - 1];
 		if (!a || !b) return Result.ok(undefined);
 		this.config.workflow.steps = steps.map((s, i) => {
-			if (i === stepIndex) return { ...b, order: stepIndex };
-			if (i === stepIndex - 1) return { ...a, order: stepIndex - 1 };
+			if (i === stepIndex) return b;
+			if (i === stepIndex - 1) return a;
 			return s;
 		});
+		renumberSteps(this.config);
 		return Result.ok(undefined);
 	}
 
@@ -73,10 +94,11 @@ export class StepRepository implements Repository<Step> {
 		const b = steps[stepIndex + 1];
 		if (!a || !b) return Result.ok(undefined);
 		this.config.workflow.steps = steps.map((s, i) => {
-			if (i === stepIndex) return { ...b, order: stepIndex };
-			if (i === stepIndex + 1) return { ...a, order: stepIndex + 1 };
+			if (i === stepIndex) return b;
+			if (i === stepIndex + 1) return a;
 			return s;
 		});
+		renumberSteps(this.config);
 		return Result.ok(undefined);
 	}
 
@@ -85,8 +107,15 @@ export class StepRepository implements Repository<Step> {
 		if (index === -1) {
 			return Result.err(new Error(`Step not found: ${key}`));
 		}
-		this.config.workflow.steps = this.config.workflow.steps.map((s) => (s.id === key ? data : s));
-		return Result.ok(data);
+		const normalized = renumberSubsteps({
+			...data,
+			id: String(index + 1),
+			order: index + 1
+		});
+		this.config.workflow.steps = this.config.workflow.steps.map((s) =>
+			s.id === key ? normalized : s
+		);
+		return Result.ok(normalized);
 	}
 
 	delete(key: string): Result<void, Error> {
@@ -95,6 +124,7 @@ export class StepRepository implements Repository<Step> {
 			return Result.err(new Error(`Step not found: ${key}`));
 		}
 		this.config.workflow.steps = this.config.workflow.steps.filter((s) => s.id !== key);
+		renumberSteps(this.config);
 		return Result.ok(undefined);
 	}
 }

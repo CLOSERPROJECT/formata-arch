@@ -76,37 +76,35 @@ describe('StepRepository', () => {
 	});
 
 	describe('create', () => {
-		it('adds step and returns Ok(data)', () => {
+		it('adds step and returns Ok(step) with id and order renumbered (1-based)', () => {
 			const config = createTestConfig();
 			const repo = new StepRepository(config);
 			const result = repo.create(step1);
 			expect(result.isOk).toBe(true);
 			if (result.isOk) {
-				expect(result.value).toEqual(step1);
+				expect(result.value.id).toBe('1');
+				expect(result.value.order).toBe(1);
+				expect(result.value.title).toBe('Step 1');
+				expect(result.value.substeps).toHaveLength(1);
+				expect(result.value.substeps[0]?.id).toBe('1.1');
+				expect(result.value.substeps[0]?.order).toBe(1);
 			}
 			expect(config.workflow.steps).toHaveLength(1);
-			expect(config.workflow.steps[0]).toEqual(step1);
-		});
-
-		it('returns Err when step id already exists', () => {
-			const config = createTestConfig([step1]);
-			const repo = new StepRepository(config);
-			const result = repo.create({ ...step1, title: 'Other' });
-			expect(result.isErr).toBe(true);
-			if (result.isErr) {
-				expect(result.error.message).toBe('Step already exists: s1');
-			}
+			expect(config.workflow.steps[0]?.id).toBe('1');
+			expect(config.workflow.steps[0]?.order).toBe(1);
 		});
 	});
 
 	describe('update', () => {
-		it('replaces step and returns Ok(data)', () => {
+		it('replaces step and normalizes id/order (1-based)', () => {
 			const config = createTestConfig([step1]);
 			const repo = new StepRepository(config);
 			const updated = { ...step1, title: 'Updated' };
 			const result = repo.update('s1', updated);
 			expect(result.isOk).toBe(true);
-			expect(config.workflow.steps[0].title).toBe('Updated');
+			expect(config.workflow.steps[0]?.title).toBe('Updated');
+			expect(config.workflow.steps[0]?.id).toBe('1');
+			expect(config.workflow.steps[0]?.order).toBe(1);
 		});
 
 		it('returns Err when step does not exist', () => {

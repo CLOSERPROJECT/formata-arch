@@ -5,7 +5,7 @@ import HiddenFieldTemplate from '$core/form/hidden-field-template.svelte';
 import Result from 'true-myth/result';
 
 import type { Repository } from './_types.js';
-import type { Step } from './step.repository.js';
+import { renumberSubsteps, type Step } from './step.repository.js';
 
 import FormataConfigField from './components/formata-config-field.svelte';
 import SelectDepartment from './components/select-department.svelte';
@@ -15,15 +15,15 @@ import SelectDepartment from './components/select-department.svelte';
 export type Substep = Step['substeps'][number];
 
 /**
- * In this repository, record.id is the composite key "stepId:substepId".
- * create() requires data.id in that format; stepId and substepId are parsed from it.
+ * Composite key is "stepId.substepId" (e.g. "1.1").
+ * For create, key can be step id only (e.g. "1") → substepId is "".
  */
 function parseKey(key: string): { stepId: string; substepId: string } {
-	const idx = key.indexOf(':');
+	const idx = key.indexOf('.');
 	if (idx === -1) {
-		return { stepId: '', substepId: key };
+		return { stepId: key, substepId: '' };
 	}
-	return { stepId: key.slice(0, idx), substepId: key.slice(idx + 1) };
+	return { stepId: key.slice(0, idx), substepId: key };
 }
 
 export class SubstepRepository implements Repository<Substep> {
@@ -66,7 +66,7 @@ export class SubstepRepository implements Repository<Substep> {
 
 	list(): Substep[] {
 		return this.config.workflow.steps.flatMap((step) =>
-			step.substeps.map((sub) => ({ ...sub, id: `${step.id}:${sub.id}` }))
+			step.substeps.map((sub) => ({ ...sub, id: sub.id }))
 		);
 	}
 
@@ -80,24 +80,22 @@ export class SubstepRepository implements Repository<Substep> {
 		if (!substep) {
 			return Result.err(new Error(`Substep not found: ${key}`));
 		}
-		return Result.ok({ ...substep, id: key });
+		return Result.ok({ ...substep, id: substepId || key });
 	}
 
 	create(data: Substep): Result<Substep, Error> {
-		const { stepId, substepId } = parseKey(data.id);
-		if (!stepId || !substepId) {
-			return Result.err(new Error('Substep id must be in format stepId:substepId'));
+		const { stepId } = parseKey(data.id);
+		if (!stepId) {
+			return Result.err(new Error('Substep id must be stepId or stepId.substepId'));
 		}
 		const step = this.config.workflow.steps.find((s) => s.id === stepId);
 		if (!step) {
 			return Result.err(new Error(`Step not found: ${stepId}`));
 		}
-		if (step.substeps.some((s) => s.id === substepId)) {
-			return Result.err(new Error(`Substep already exists: ${data.id}`));
-		}
-		const substep = { ...data, id: substepId };
-		step.substeps = [...step.substeps, substep].sort((a, b) => a.order - b.order);
-		return Result.ok(data);
+		const substep = { ...data, id: '', order: step.substeps.length + 1 };
+		step.substeps = renumberSubsteps({ ...step, substeps: [...step.substeps, substep] }).substeps;
+		const created = step.substeps[step.substeps.length - 1];
+		return created !== undefined ? Result.ok(created) : Result.ok(data);
 	}
 
 	update(key: string, data: Substep): Result<Substep, Error> {
@@ -111,8 +109,12 @@ export class SubstepRepository implements Repository<Substep> {
 			return Result.err(new Error(`Substep not found: ${key}`));
 		}
 		const substep = { ...data, id: substepId };
-		step.substeps = step.substeps.map((s) => (s.id === substepId ? substep : s));
-		return Result.ok({ ...data, id: key });
+		step.substeps = renumberSubsteps({
+			...step,
+			substeps: step.substeps.map((s) => (s.id === substepId ? substep : s))
+		}).substeps;
+		const updated = step.substeps[index];
+		return updated !== undefined ? Result.ok(updated) : Result.ok({ ...data, id: key });
 	}
 
 	delete(key: string): Result<void, Error> {
@@ -125,7 +127,10 @@ export class SubstepRepository implements Repository<Substep> {
 		if (index === -1) {
 			return Result.err(new Error(`Substep not found: ${key}`));
 		}
-		step.substeps = step.substeps.filter((s) => s.id !== substepId);
+		step.substeps = renumberSubsteps({
+			...step,
+			substeps: step.substeps.filter((s) => s.id !== substepId)
+		}).substeps;
 		return Result.ok(undefined);
 	}
 
@@ -138,11 +143,14 @@ export class SubstepRepository implements Repository<Substep> {
 		const a = subs[substepIndex];
 		const b = subs[substepIndex - 1];
 		if (!a || !b) return Result.ok(undefined);
-		step.substeps = subs.map((s, i) => {
-			if (i === substepIndex) return { ...b, order: substepIndex };
-			if (i === substepIndex - 1) return { ...a, order: substepIndex - 1 };
-			return s;
-		});
+		step.substeps = renumberSubsteps({
+			...step,
+			substeps: subs.map((s, i) => {
+				if (i === substepIndex) return b;
+				if (i === substepIndex - 1) return a;
+				return s;
+			})
+		}).substeps;
 		return Result.ok(undefined);
 	}
 
@@ -154,11 +162,14 @@ export class SubstepRepository implements Repository<Substep> {
 		const a = subs[substepIndex];
 		const b = subs[substepIndex + 1];
 		if (!a || !b) return Result.ok(undefined);
-		step.substeps = subs.map((s, i) => {
-			if (i === substepIndex) return { ...b, order: substepIndex };
-			if (i === substepIndex + 1) return { ...a, order: substepIndex + 1 };
-			return s;
-		});
+		step.substeps = renumberSubsteps({
+			...step,
+			substeps: subs.map((s, i) => {
+				if (i === substepIndex) return b;
+				if (i === substepIndex + 1) return a;
+				return s;
+			})
+		}).substeps;
 		return Result.ok(undefined);
 	}
 }

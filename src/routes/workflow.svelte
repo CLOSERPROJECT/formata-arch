@@ -24,7 +24,7 @@
 			children: step.substeps.map((sub) => ({
 				type: 'leaf' as const,
 				label: sub.title,
-				key: `${step.id}-${sub.id}`
+				key: sub.id
 			}))
 		}));
 	}
@@ -66,7 +66,7 @@
 				const step = config.workflow.steps[path[0]];
 				const substep = step?.substeps[path[1]];
 				if (step && substep) {
-					substepCrud.openDelete({ ...substep, id: `${step.id}:${substep.id}` });
+					substepCrud.openDelete(substep);
 				}
 			}
 		},
@@ -90,7 +90,7 @@
 				const step = steps[sel.path[0]];
 				const substep = step?.substeps[sel.path[1]];
 				if (step && substep) {
-					substepCrud.openEdit({ ...substep, id: `${step.id}:${substep.id}` });
+					substepCrud.openEdit(substep);
 				}
 			}
 		} else if (sel.state === 'adding') {
@@ -121,9 +121,9 @@
 				const step = steps[sel.path[0]];
 				if (!step) return;
 				const draft: Substep = {
-					id: `${step.id}:${crypto.randomUUID()}`,
+					id: step.id,
 					title: 'New substep',
-					order: step.substeps.length,
+					order: step.substeps.length + 1,
 					role: '',
 					inputKey: '',
 					inputType: 'formata',

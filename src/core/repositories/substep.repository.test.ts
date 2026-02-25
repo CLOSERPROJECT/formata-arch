@@ -9,9 +9,9 @@ function createTestConfig(): Config.Config {
 	const config = Config.createTestSample();
 	config.workflow.steps = [
 		{
-			id: 's1',
+			id: '1',
 			title: 'Step 1',
-			order: 0,
+			order: 1,
 			substeps: [substep1]
 		}
 	];
@@ -19,9 +19,9 @@ function createTestConfig(): Config.Config {
 }
 
 const substep1 = {
-	id: 'sub1',
+	id: '1.1',
 	title: 'Sub 1',
-	order: 0,
+	order: 1,
 	role: 'r1',
 	inputKey: 'k1',
 	inputType: 'string' as const,
@@ -39,12 +39,12 @@ describe('SubstepRepository', () => {
 	});
 
 	describe('list', () => {
-		it('returns all substeps with composite id (stepId:substepId)', () => {
+		it('returns all substeps with composite id (stepId.substepId)', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
 			const list = repo.list();
 			expect(list).toHaveLength(1);
-			expect(list[0]).toMatchObject({ ...substep1, id: 's1:sub1' });
+			expect(list[0]).toMatchObject({ ...substep1, id: '1.1' });
 		});
 
 		it('returns empty array when no substeps', () => {
@@ -56,80 +56,74 @@ describe('SubstepRepository', () => {
 	});
 
 	describe('getOne', () => {
-		it('returns Ok(substep) when key is stepId:substepId', () => {
+		it('returns Ok(substep) when key is stepId.substepId', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
-			const result = repo.getOne('s1:sub1');
+			const result = repo.getOne('1.1');
 			expect(result.isOk).toBe(true);
 			if (result.isOk) {
-				expect(result.value).toMatchObject({ ...substep1, id: 's1:sub1' });
+				expect(result.value).toMatchObject({ ...substep1, id: '1.1' });
 			}
 		});
 
 		it('returns Err when key not found', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
-			const result = repo.getOne('s1:missing');
+			const result = repo.getOne('1.2');
 			expect(result.isErr).toBe(true);
 		});
 	});
 
 	describe('create', () => {
-		it('adds substep to step when id is stepId:substepId and returns Ok(data)', () => {
+		it('adds substep to step when id is stepId and returns Ok(substep) with renumbered id/order', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
 			const newSub: Substep = {
 				...substep1,
-				id: 's1:sub2',
+				id: '1',
 				title: 'Sub 2',
 				schema: {}
 			};
 			const result = repo.create(newSub);
 			expect(result.isOk).toBe(true);
-			expect(config.workflow.steps[0].substeps).toHaveLength(2);
-			expect(config.workflow.steps[0].substeps.some((s) => s.id === 'sub2')).toBe(true);
-		});
-
-		it('returns Err when id is not stepId:substepId', () => {
-			const config = createTestConfig();
-			const repo = new SubstepRepository(config);
-			const result = repo.create({ ...substep1, id: 'sub2', schema: {} });
-			expect(result.isErr).toBe(true);
-			if (result.isErr) {
-				expect(result.error.message).toBe('Substep id must be in format stepId:substepId');
+			if (result.isOk) {
+				expect(result.value.id).toBe('1.2');
+				expect(result.value.order).toBe(2);
 			}
+			expect(config.workflow.steps[0]?.substeps).toHaveLength(2);
+			expect(config.workflow.steps[0]?.substeps.some((s) => s.id === '1.2')).toBe(true);
 		});
 
-		it('returns Err when substep id already exists in step', () => {
+		it('returns Err when stepId is empty', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
-			const result = repo.create({ ...substep1, id: 's1:sub1', schema: {} });
+			const result = repo.create({ ...substep1, id: '', schema: {} });
 			expect(result.isErr).toBe(true);
 			if (result.isErr) {
-				expect(result.error.message).toBe('Substep already exists: s1:sub1');
+				expect(result.error.message).toBe('Substep id must be stepId or stepId.substepId');
 			}
 		});
 	});
 
 	describe('update', () => {
-		it('updates substep when key is stepId:substepId', () => {
+		it('updates substep when key is stepId.substepId and renumbers', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
 			const updated: Substep = {
 				...substep1,
-				id: 's1:sub1',
+				id: '1.1',
 				title: 'Updated',
 				schema: {}
 			};
-			const result = repo.update('s1:sub1', updated);
+			const result = repo.update('1.1', updated);
 			expect(result.isOk).toBe(true);
-			expect(config.workflow.steps[0].substeps[0].title).toBe('Updated');
+			expect(config.workflow.steps[0]?.substeps[0]?.title).toBe('Updated');
 		});
 
 		it('returns Err when key not found', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
-			const result = repo.update('s1:missing', { ...substep1, id: 's1:sub1', schema: {} });
+			const result = repo.update('1.2', { ...substep1, id: '1.1', schema: {} });
 			expect(result.isErr).toBe(true);
 		});
 	});
@@ -138,15 +132,15 @@ describe('SubstepRepository', () => {
 		it('removes substep and returns Ok(undefined)', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
-			const result = repo.delete('s1:sub1');
+			const result = repo.delete('1.1');
 			expect(result.isOk).toBe(true);
-			expect(config.workflow.steps[0].substeps).toHaveLength(0);
+			expect(config.workflow.steps[0]?.substeps).toHaveLength(0);
 		});
 
 		it('returns Err when substep does not exist', () => {
 			const config = createTestConfig();
 			const repo = new SubstepRepository(config);
-			const result = repo.delete('s1:missing');
+			const result = repo.delete('1.2');
 			expect(result.isErr).toBe(true);
 		});
 	});
