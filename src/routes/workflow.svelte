@@ -134,14 +134,13 @@
 			} else {
 				const step = steps[sel.path[0]];
 				if (!step) return;
-				const draft: Substep = {
+				const draft: Partial<Substep> = {
 					id: step.id,
 					title: 'New substep',
 					order: step.substeps.length + 1,
 					role: '',
 					inputKey: '',
-					inputType: 'formata',
-					schema: {}
+					inputType: 'formata'
 				};
 				substepCrud.openCreateWithCallback(draft, (value) => {
 					const result = substepRepo.create(value);

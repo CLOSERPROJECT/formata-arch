@@ -68,8 +68,9 @@ export const Schema = {
 				},
 				schema: {
 					type: 'object',
-					description: 'JSON Schema for formata inputType',
-					additionalProperties: true
+					title: 'Data input form',
+					additionalProperties: true,
+					minProperties: 1
 				},
 				uiSchema: {
 					type: 'object',

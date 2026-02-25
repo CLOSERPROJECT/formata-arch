@@ -2,26 +2,36 @@
 	import type { Schema, UiSchema } from '@sjsf/form';
 	import type { BuilderContext } from '$builder/context.svelte.js';
 
-	import { getFormContext, getValueSnapshot, setValue, type ComponentProps } from '@sjsf/form';
+	import { PencilIcon, TriangleAlert } from '@lucide/svelte';
+	import {
+		getFieldErrors,
+		getFormContext,
+		getValueSnapshot,
+		setValue,
+		type ComponentProps
+	} from '@sjsf/form';
+	import Template from '@sjsf/form/templates/field.svelte';
 	import BuilderStandalone from '$builder/builder-standalone.svelte';
+	import Form from '$builder/preview/form.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { get } from 'lodash';
 
 	//
 
-	let { value = $bindable(), config }: ComponentProps['objectField'] = $props();
+	let { value = $bindable(), config, uiOption }: ComponentProps['objectField'] = $props();
+
 	const ctx = getFormContext();
-
-	let open = $state(false);
-
-	let builder: BuilderContext | undefined;
-
 	const schemaPath = $derived(config.path);
 	const uiSchemaPath = $derived(config.path.toSpliced(-1, 1, 'uiSchema'));
 
-	function getInitialState(): { schema: Schema; uiSchema?: UiSchema } | undefined {
+	//
+
+	type FieldValue = { schema: Schema; uiSchema?: UiSchema } | undefined;
+
+	const fieldValue: FieldValue = $derived.by(() => {
 		const formData = getValueSnapshot(ctx);
+		console.log(formData);
 		const schemaValue = get(formData, schemaPath);
 		const uiSchemaValue = get(formData, uiSchemaPath);
 		if (!schemaValue || typeof schemaValue !== 'object' || !('type' in schemaValue)) {
@@ -29,7 +39,13 @@
 		} else {
 			return { schema: schemaValue as Schema, uiSchema: uiSchemaValue as UiSchema | undefined };
 		}
-	}
+	});
+
+	//
+
+	let open = $state(false);
+
+	let builder: BuilderContext | undefined;
 
 	function handleSave() {
 		if (!builder) return;
@@ -49,40 +65,78 @@
 	function handleBuilderInit(b: BuilderContext) {
 		builder = b;
 	}
+
+	//
+
+	const errors = $derived(getFieldErrors(ctx, config.path));
+
+	const hasProperties = $derived(fieldValue?.schema && Object.keys(fieldValue.schema).length > 0);
 </script>
 
-<pre>
-    {JSON.stringify(getInitialState(), null, 2)}
-</pre>
-
-<Dialog.Root bind:open>
-	<Dialog.Trigger>
-		{#snippet child({ props })}
-			<Button
-				{...props}
-				onclick={(e) => {
-					e.preventDefault();
-					open = true;
-				}}
-			>
-				Open
-			</Button>
-		{/snippet}
-	</Dialog.Trigger>
-	<Dialog.Content
-		class="h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-none! p-4!"
-		style="--header-height: 7rem"
-	>
-		<Dialog.Header class="border-b pb-2">
-			<Dialog.Title>Formata Config</Dialog.Title>
-		</Dialog.Header>
-
-		<BuilderStandalone initialData={getInitialState()} onInit={handleBuilderInit} />
-
-		<div
-			class="absolute bottom-0 flex w-full justify-end border-t bg-background/40 p-2 backdrop-blur-xl"
-		>
-			<Button onclick={handleSave}>Save</Button>
+<Template
+	{errors}
+	showTitle
+	useLabel
+	widgetType="textWidget"
+	type="template"
+	{value}
+	{config}
+	{uiOption}
+>
+	<div class="flex gap-2">
+		<div class="grow rounded-md border bg-gray-100 p-2 text-sm">
+			{#if fieldValue?.schema && hasProperties}
+				<Form
+					useBuilderContext={false}
+					schema={fieldValue.schema}
+					uiSchema={fieldValue.uiSchema}
+					class="border-none! p-2!"
+				/>
+			{:else}
+				<div class="flex items-center gap-1 pl-1 text-sm text-muted-foreground">
+					<TriangleAlert size={14} />
+					<span> No properties </span>
+				</div>
+			{/if}
 		</div>
-	</Dialog.Content>
-</Dialog.Root>
+		<div>
+			{@render editDialog()}
+		</div>
+	</div>
+</Template>
+
+{#snippet editDialog()}
+	<Dialog.Root bind:open>
+		<Dialog.Trigger>
+			{#snippet child({ props })}
+				<Button
+					{...props}
+					variant="outline"
+					onclick={(e) => {
+						e.preventDefault();
+						open = true;
+					}}
+				>
+					<PencilIcon />
+					Edit
+				</Button>
+			{/snippet}
+		</Dialog.Trigger>
+		<Dialog.Content
+			class="h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-none! p-4!"
+			style="--header-height: 7rem"
+		>
+			<Dialog.Header class="border-b pb-2">
+				<Dialog.Title>Formata Config</Dialog.Title>
+			</Dialog.Header>
+
+			<BuilderStandalone initialData={fieldValue} onInit={handleBuilderInit} />
+
+			<div
+				class="absolute bottom-0 flex w-full justify-end border-t bg-background/40 p-2 backdrop-blur-xl"
+			>
+				<Button onclick={handleSave}>Save</Button>
+			</div>
+		</Dialog.Content>
+	</Dialog.Root>
+{/snippet}

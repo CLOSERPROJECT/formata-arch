@@ -5,10 +5,10 @@ import HiddenFieldTemplate from '$core/form/hidden-field-template.svelte';
 import Result from 'true-myth/result';
 
 import type { Repository } from './_types.js';
-import { renumberSubsteps, type Step } from './step.repository.js';
 
 import FormataConfigField from './components/formata-config-field.svelte';
 import SelectDepartment from './components/select-department.svelte';
+import { renumberSubsteps, type Step } from './step.repository.js';
 
 //
 
