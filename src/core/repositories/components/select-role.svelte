@@ -1,10 +1,12 @@
 <script module lang="ts">
 	import type { Config } from '$core';
 
+	import type { Step } from '../step.repository.js';
+
 	declare module '@sjsf/form' {
 		interface UiOptions {
 			attestaConfig?: Config.Config;
-			currentOrganization?: () => string | undefined;
+			currentStep?: () => Step | undefined;
 		}
 	}
 </script>
@@ -20,8 +22,8 @@
 	const attestaConfig = $derived(uiOption('attestaConfig'));
 
 	const currentOrganization = $derived.by(() => {
-		const currentOrganization = uiOption('currentOrganization')?.();
-		return attestaConfig?.organizations.find((org) => org.slug === currentOrganization);
+		const currentStep = uiOption('currentStep')?.();
+		return attestaConfig?.organizations.find((org) => org.slug === currentStep?.organization);
 	});
 
 	const roles = $derived.by(() => {
