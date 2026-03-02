@@ -28,7 +28,7 @@ export class RoleRepository implements Repository<Role> {
 
 	getUiSchema(): UiSchema {
 		return {
-			departmentId: {
+			orgSlug: {
 				'ui:components': {
 					textWidget: SelectDepartment
 				},

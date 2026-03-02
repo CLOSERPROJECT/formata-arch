@@ -56,7 +56,7 @@ export class DepartmentRepository implements Repository<Department> {
 			}
 			// Update all dependents before changing the department id
 			this.config.roles = this.config.roles.map((r) =>
-				r.departmentId === key ? { ...r, departmentId: newId } : r
+				r.orgSlug === key ? { ...r, orgSlug: newId } : r
 			);
 			this.config.workflow = {
 				...this.config.workflow,

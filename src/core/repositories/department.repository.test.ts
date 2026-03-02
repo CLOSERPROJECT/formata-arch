@@ -146,8 +146,8 @@ describe('DepartmentRepository', () => {
 				{ id: 'd2', name: 'Dept 2', color: '#111', border: '#111' }
 			];
 			config.roles = [
-				{ id: 'u1', name: 'Alice', departmentId: 'd1' },
-				{ id: 'u2', name: 'Bob', departmentId: 'd2' }
+				{ id: 'u1', name: 'Alice', slug: 'alice', orgSlug: 'd1', color: '', border: '' },
+				{ id: 'u2', name: 'Bob', slug: 'bob', orgSlug: 'd2', color: '', border: '' }
 			];
 			config.workflow = {
 				name: 'Test',
@@ -184,8 +184,8 @@ describe('DepartmentRepository', () => {
 			const result = repo.update('d1', updated);
 			expect(result.isOk).toBe(true);
 			expect(config.departments.find((d) => d.id === 'd1-renamed')).toEqual(updated);
-			expect(config.roles.find((r) => r.id === 'u1')?.departmentId).toBe('d1-renamed');
-			expect(config.roles.find((r) => r.id === 'u2')?.departmentId).toBe('d2');
+			expect(config.roles.find((r) => r.id === 'u1')?.orgSlug).toBe('d1-renamed');
+			expect(config.roles.find((r) => r.id === 'u2')?.orgSlug).toBe('d2');
 			expect(config.workflow.steps[0].substeps[0].role).toBe('d1-renamed');
 			expect(config.workflow.steps[0].substeps[1].role).toBe('d2');
 		});

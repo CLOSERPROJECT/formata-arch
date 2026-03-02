@@ -92,12 +92,15 @@ export const Schema = {
 		},
 		Role: {
 			type: 'object',
-			required: ['id', 'name', 'departmentId'],
+			required: ['id', 'name', 'slug', 'orgSlug', 'color', 'border'],
 			additionalProperties: false,
 			properties: {
 				id: { type: 'string' },
 				name: { type: 'string' },
-				departmentId: { type: 'string' }
+				slug: { type: 'string' },
+				orgSlug: { type: 'string' },
+				color: { type: 'string' },
+				border: { type: 'string' }
 			}
 		},
 		Dpp: {

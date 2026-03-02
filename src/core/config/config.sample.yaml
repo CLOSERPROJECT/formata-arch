@@ -87,13 +87,22 @@ departments:
 roles:
   - id: 'u4'
     name: 'Role 4'
-    departmentId: 'dep1'
+    slug: 'role-4'
+    orgSlug: 'dep1'
+    color: '#d7e9f2'
+    border: '#6e99b2'
   - id: 'u5'
     name: 'Role 5'
-    departmentId: 'dep2'
+    slug: 'role-5'
+    orgSlug: 'dep2'
+    color: '#e0f1d9'
+    border: '#7da36c'
   - id: 'u6'
     name: 'Role 6'
-    departmentId: 'dep3'
+    slug: 'role-6'
+    orgSlug: 'dep3'
+    color: '#f5e3c9'
+    border: '#c2945a'
 
 dpp:
   enabled: true
