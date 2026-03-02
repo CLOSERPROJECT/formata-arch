@@ -27,6 +27,8 @@ function parseKey(key: string): { stepId: string; substepId: string } {
 }
 
 export class SubstepRepository implements Repository<Substep> {
+	private currentStep = $state<Step>();
+
 	constructor(private readonly config: Config.Config) {}
 
 	getEntityName(): string {
@@ -48,7 +50,8 @@ export class SubstepRepository implements Repository<Substep> {
 					textWidget: SelectOrganization
 				},
 				'ui:options': {
-					attestaConfig: this.config
+					attestaConfig: this.config,
+					currentOrganization: () => this.currentStep?.organization
 				}
 			},
 			uiSchema: {
@@ -171,5 +174,9 @@ export class SubstepRepository implements Repository<Substep> {
 			})
 		}).substeps;
 		return Result.ok(undefined);
+	}
+
+	setCurrentStep(step: Step | undefined): void {
+		this.currentStep = step;
 	}
 }

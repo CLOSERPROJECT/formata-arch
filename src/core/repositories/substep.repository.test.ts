@@ -1,7 +1,7 @@
 import { Config } from '$core';
 import { describe, expect, it } from 'vitest';
 
-import { SubstepRepository, type Substep } from './substep.repository.js';
+import { SubstepRepository, type Substep } from './substep.repository.svelte.js';
 
 //
 
