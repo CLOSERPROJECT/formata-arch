@@ -119,6 +119,59 @@ describe('RoleRepository', () => {
 				expect(result.error.message).toBe('Role not found: missing');
 			}
 		});
+
+		it('updates workflow substep roles when role slug changes', () => {
+			const config = Config.createTestSample();
+			config.roles = [
+				{ id: 'u1', name: 'Alice', slug: 'alice', orgSlug: 'd1', color: '', border: '' },
+				{ id: 'u2', name: 'Bob', slug: 'bob', orgSlug: 'd1', color: '', border: '' }
+			];
+			config.workflow = {
+				name: 'Test',
+				steps: [
+					{
+						id: 's1',
+						title: 'Step 1',
+						order: 1,
+						organization: 'd1',
+						substeps: [
+							{
+								id: 's1.1',
+								title: 'Sub 1',
+								order: 1,
+								roles: ['alice'],
+								inputKey: 'x',
+								inputType: 'string',
+								schema: { type: 'object' }
+							},
+							{
+								id: 's1.2',
+								title: 'Sub 2',
+								order: 2,
+								roles: ['alice', 'bob'],
+								inputKey: 'y',
+								inputType: 'string',
+								schema: { type: 'object' }
+							}
+						]
+					}
+				]
+			};
+			const repo = new RoleRepository(config);
+			const updated = {
+				id: 'u1',
+				name: 'Alice Renamed',
+				slug: 'alice-reviewer',
+				orgSlug: 'd1',
+				color: '',
+				border: ''
+			};
+			const result = repo.update('u1', updated);
+			expect(result.isOk).toBe(true);
+			expect(config.roles.find((r) => r.id === 'u1')?.slug).toBe('alice-reviewer');
+			expect(config.workflow.steps[0].substeps[0].roles).toEqual(['alice-reviewer']);
+			expect(config.workflow.steps[0].substeps[1].roles).toEqual(['alice-reviewer', 'bob']);
+		});
 	});
 
 	describe('delete', () => {

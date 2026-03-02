@@ -142,7 +142,7 @@
 					id: step.id,
 					title: 'New substep',
 					order: step.substeps.length + 1,
-					role: '',
+					roles: [],
 					inputKey: '',
 					inputType: 'formata'
 				};

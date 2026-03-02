@@ -61,6 +61,21 @@ export class RoleRepository implements Repository<Role> {
 		if (index === -1) {
 			return Result.err(new Error(`Role not found: ${key}`));
 		}
+		const existing = this.config.roles[index];
+		if (existing && data.slug !== existing.slug) {
+			const oldSlug = existing.slug;
+			const newSlug = data.slug;
+			this.config.workflow = {
+				...this.config.workflow,
+				steps: this.config.workflow.steps.map((step) => ({
+					...step,
+					substeps: step.substeps.map((sub) => ({
+						...sub,
+						roles: sub.roles.map((r) => (r === oldSlug ? newSlug : r))
+					}))
+				}))
+			};
+		}
 		this.config.roles = this.config.roles.map((r) => (r.id === key ? data : r));
 		return Result.ok(data);
 	}

@@ -12,12 +12,13 @@
 </script>
 
 <script lang="ts">
-	import type { ComponentProps } from '@sjsf/form';
-
+	import { getFieldErrors, getFormContext, type ComponentProps } from '@sjsf/form';
+	import Template from '@sjsf/form/templates/field.svelte';
 	import * as Select from '$lib/components/ui/select/index.js';
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	let { value = $bindable(), config, handlers, uiOption }: ComponentProps['textWidget'] = $props();
+	//
+
+	let { value = $bindable(), uiOption, config }: ComponentProps['arrayField'] = $props();
 
 	const attestaConfig = $derived(uiOption('attestaConfig'));
 
@@ -30,18 +31,39 @@
 		return attestaConfig?.roles.filter((role) => role.orgSlug === currentOrganization?.slug) ?? [];
 	});
 
-	const selectedRole = $derived.by(() => {
-		return roles.find((role) => role.slug === value);
+	const selectedRoles = $derived.by(() => {
+		return roles.filter((role) => value?.includes(role.slug));
 	});
+
+	const triggerLabel = $derived(
+		selectedRoles.length === 0 ? 'Select roles' : selectedRoles.map((role) => role.name).join(', ')
+	);
+
+	const ctx = getFormContext();
+	const errors = $derived(getFieldErrors(ctx, config.path));
 </script>
 
-<Select.Root type="single" bind:value>
-	<Select.Trigger class="bg-background">
-		{selectedRole?.name ?? 'Select a role'}
-	</Select.Trigger>
-	<Select.Content>
-		{#each roles as role (role.slug)}
-			<Select.Item value={role.slug}>{role.name}</Select.Item>
-		{/each}
-	</Select.Content>
-</Select.Root>
+<Template
+	{errors}
+	showTitle
+	useLabel
+	widgetType="textWidget"
+	type="template"
+	{value}
+	{config}
+	{uiOption}
+>
+	<Select.Root
+		type="multiple"
+		bind:value={() => selectedRoles.map((role) => role.slug), (v) => (value = v)}
+	>
+		<Select.Trigger class="w-full bg-background">
+			{triggerLabel}
+		</Select.Trigger>
+		<Select.Content>
+			{#each roles as role (role.slug)}
+				<Select.Item value={role.slug}>{role.name}</Select.Item>
+			{/each}
+		</Select.Content>
+	</Select.Root>
+</Template>

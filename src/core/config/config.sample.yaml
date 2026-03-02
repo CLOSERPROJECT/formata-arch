@@ -9,7 +9,7 @@ workflow:
         - id: '1.1'
           title: 'Record shipment weight (kg)'
           order: 1
-          role: 'dep1'
+          roles: ['dep1']
           inputKey: 'shipmentKg'
           inputType: 'number'
           schema:
@@ -17,7 +17,7 @@ workflow:
         - id: '1.2'
           title: 'Attach shipment reference'
           order: 2
-          role: 'dep1'
+          roles: ['dep1']
           inputKey: 'shipmentRef'
           inputType: 'string'
           schema:
@@ -30,7 +30,7 @@ workflow:
         - id: '2.1'
           title: 'Upload inspection report'
           order: 1
-          role: 'dep2'
+          roles: ['dep2']
           inputKey: 'report'
           inputType: 'file'
           schema:
@@ -38,7 +38,7 @@ workflow:
         - id: '2.2'
           title: 'Record inspection outcome'
           order: 2
-          role: 'dep2'
+          roles: ['dep2']
           inputKey: 'inspectionOutcome'
           inputType: 'formata'
           schema:
@@ -67,7 +67,7 @@ workflow:
         - id: '3.1'
           title: 'Approve shipment'
           order: 1
-          role: 'dep3'
+          roles: ['dep3']
           inputKey: 'approval'
           inputType: 'string'
           schema:

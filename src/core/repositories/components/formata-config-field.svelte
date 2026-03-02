@@ -31,7 +31,6 @@
 
 	const fieldValue: FieldValue = $derived.by(() => {
 		const formData = getValueSnapshot(ctx);
-		console.log(formData);
 		const schemaValue = get(formData, schemaPath);
 		const uiSchemaValue = get(formData, uiSchemaPath);
 		if (!schemaValue || typeof schemaValue !== 'object' || !('type' in schemaValue)) {

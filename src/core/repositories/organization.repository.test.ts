@@ -162,7 +162,7 @@ describe('OrganizationRepository', () => {
 								id: 's1.1',
 								title: 'Sub 1',
 								order: 1,
-								role: 'd1',
+								roles: ['d1'],
 								inputKey: 'x',
 								inputType: 'string',
 								schema: { type: 'object' }
@@ -171,7 +171,7 @@ describe('OrganizationRepository', () => {
 								id: 's1.2',
 								title: 'Sub 2',
 								order: 2,
-								role: 'd2',
+								roles: ['d2'],
 								inputKey: 'y',
 								inputType: 'string',
 								schema: { type: 'object' }
@@ -193,8 +193,8 @@ describe('OrganizationRepository', () => {
 			expect(config.roles.find((r) => r.id === 'u1')?.orgSlug).toBe('d1-renamed');
 			expect(config.roles.find((r) => r.id === 'u2')?.orgSlug).toBe('d2');
 			expect(config.workflow.steps[0].organization).toBe('d1-renamed');
-			expect(config.workflow.steps[0].substeps[0].role).toBe('d1-renamed');
-			expect(config.workflow.steps[0].substeps[1].role).toBe('d2');
+			expect(config.workflow.steps[0].substeps[0].roles).toEqual(['d1-renamed']);
+			expect(config.workflow.steps[0].substeps[1].roles).toEqual(['d2']);
 		});
 	});
 

@@ -23,7 +23,7 @@ const substep1 = {
 	id: '1.1',
 	title: 'Sub 1',
 	order: 1,
-	role: 'r1',
+	roles: ['r1'],
 	inputKey: 'k1',
 	inputType: 'string' as const,
 	schema: {}

@@ -45,9 +45,9 @@ export class SubstepRepository implements Repository<Substep> {
 
 	getUiSchema(): UiSchema {
 		return {
-			role: {
+			roles: {
 				'ui:components': {
-					textWidget: SelectRole
+					arrayField: SelectRole
 				},
 				'ui:options': {
 					attestaConfig: this.config,

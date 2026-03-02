@@ -21,7 +21,7 @@ const step1 = {
 			id: 'sub1',
 			title: 'Sub 1',
 			order: 0,
-			role: 'r1',
+			roles: ['r1'],
 			inputKey: 'k1',
 			inputType: 'string' as const,
 			schema: {}
