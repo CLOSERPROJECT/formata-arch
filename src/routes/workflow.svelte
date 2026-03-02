@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Structure } from '$core/tree/types.js';
 
-	import { CheckIcon, TriangleAlert } from '@lucide/svelte';
+	import { CheckIcon, Pencil, TriangleAlert } from '@lucide/svelte';
 	import { Crud, Tree } from '$core';
 	import {
 		StepRepository,
@@ -13,6 +13,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 
@@ -177,14 +178,43 @@
 	});
 
 	const configErrors = $derived(getConfigErrors());
+
+	const descriptionBinding = {
+		get value() {
+			return config.workflow.description ?? '';
+		},
+		set value(v: string) {
+			config.workflow.description = v || undefined;
+		}
+	};
 </script>
 
 {#snippet navbarLeft()}
-	<Input
-		bind:value={config.workflow.name}
-		class="h-8 max-w-md grow font-medium md:text-sm"
-		placeholder="Workflow name"
-	/>
+	<div class="flex max-w-md grow items-center gap-1">
+		<Input
+			bind:value={config.workflow.name}
+			class="h-8 grow font-medium md:text-sm"
+			placeholder="Workflow name"
+		/>
+		<Popover.Root>
+			<Popover.Trigger>
+				{#snippet child({ props })}
+					<Button {...props} variant="ghost" size="sm" class="text-xs text-muted-foreground">
+						<Pencil size={12} />
+						<span>Edit description</span>
+					</Button>
+				{/snippet}
+			</Popover.Trigger>
+			<Popover.Content>
+				<p class="mb-2 text-sm font-medium">Description</p>
+				<Textarea
+					bind:value={descriptionBinding.value}
+					placeholder="Workflow description"
+					class="w-full"
+				/>
+			</Popover.Content>
+		</Popover.Root>
+	</div>
 {/snippet}
 
 {#snippet navbarRight()}

@@ -30,6 +30,7 @@ export const Schema = {
 			additionalProperties: false,
 			properties: {
 				name: { type: 'string' },
+				description: { type: 'string' },
 				steps: {
 					type: 'array',
 					items: { $ref: '#/$defs/Step' }
