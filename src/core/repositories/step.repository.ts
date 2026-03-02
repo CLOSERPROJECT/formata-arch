@@ -122,8 +122,16 @@ export class StepRepository implements Repository<Step> {
 		if (index === -1) {
 			return Result.err(new Error(`Step not found: ${key}`));
 		}
+		const existing = this.config.workflow.steps[index];
+		const organizationChanged = existing !== undefined && existing.organization !== data.organization;
+		const dataToSave = organizationChanged
+			? {
+					...data,
+					substeps: data.substeps.map((sub) => ({ ...sub, roles: [] as string[] }))
+				}
+			: data;
 		const normalized = renumberSubsteps({
-			...data,
+			...dataToSave,
 			id: String(index + 1),
 			order: index + 1
 		});
