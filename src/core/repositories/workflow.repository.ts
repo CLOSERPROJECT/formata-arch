@@ -7,7 +7,7 @@ import Result from 'true-myth/result';
 import type { Repository } from './_types.js';
 
 import FormataConfigField from './components/formata-config-field.svelte';
-import SelectDepartment from './components/select-department.svelte';
+import SelectOrganization from './components/select-organization.svelte';
 
 //
 
@@ -34,7 +34,7 @@ export class WorkflowRepository implements Repository<Workflow> {
 						items: {
 							role: {
 								'ui:components': {
-									textWidget: SelectDepartment
+									textWidget: SelectOrganization
 								},
 								'ui:options': {
 									attestaConfig: this.config

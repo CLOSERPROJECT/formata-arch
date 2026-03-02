@@ -70,16 +70,16 @@ workflow:
           schema:
             type: 'object'
 
-departments:
-  - id: 'dep1'
+organizations:
+  - slug: 'dep1'
     name: 'Department 1'
     color: '#d7e9f2'
     border: '#6e99b2'
-  - id: 'dep2'
+  - slug: 'dep2'
     name: 'Department 2'
     color: '#e0f1d9'
     border: '#7da36c'
-  - id: 'dep3'
+  - slug: 'dep3'
     name: 'Department 3'
     color: '#f5e3c9'
     border: '#c2945a'

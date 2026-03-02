@@ -22,7 +22,7 @@ export function getEntitySchema(entity: Entity): Schema {
 export function createTestSample(): Config.Config {
 	return {
 		workflow: { name: 'Test', steps: [] },
-		departments: [{ id: 'd1', name: 'Dept', color: '#000', border: '#000' }],
+		organizations: [{ slug: 'd1', name: 'Dept', color: '#000', border: '#000' }],
 		roles: [],
 		dpp: {
 			enabled: false,

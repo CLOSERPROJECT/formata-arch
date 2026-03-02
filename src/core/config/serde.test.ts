@@ -16,7 +16,7 @@ describe('serde', () => {
 		if (result.isOk) {
 			const config = result.value;
 			expect(config).toHaveProperty('workflow');
-			expect(config).toHaveProperty('departments');
+			expect(config).toHaveProperty('organizations');
 			expect(config).toHaveProperty('roles');
 			expect(config).toHaveProperty('dpp');
 		}

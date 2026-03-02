@@ -5,7 +5,7 @@ import Result from 'true-myth/result';
 
 import type { Repository } from './_types.js';
 
-import SelectDepartment from './components/select-department.svelte';
+import SelectOrganization from './components/select-organization.svelte';
 
 //
 
@@ -30,7 +30,7 @@ export class RoleRepository implements Repository<Role> {
 		return {
 			orgSlug: {
 				'ui:components': {
-					textWidget: SelectDepartment
+					textWidget: SelectOrganization
 				},
 				'ui:options': {
 					attestaConfig: this.config

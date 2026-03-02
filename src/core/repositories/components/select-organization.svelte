@@ -16,23 +16,23 @@
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { value = $bindable(), config, handlers, uiOption }: ComponentProps['textWidget'] = $props();
 
-	const departments = $derived.by(() => {
+	const organizations = $derived.by(() => {
 		const attestaConfig = uiOption('attestaConfig');
-		return attestaConfig?.departments ?? [];
+		return attestaConfig?.organizations ?? [];
 	});
 
-	const selectedDepartment = $derived.by(() => {
-		return departments.find((department) => department.id === value);
+	const selectedOrganization = $derived.by(() => {
+		return organizations.find((organization) => organization.slug === value);
 	});
 </script>
 
 <Select.Root type="single" bind:value>
 	<Select.Trigger class="bg-background">
-		{selectedDepartment?.name ?? 'Select a department'}
+		{selectedOrganization?.name ?? 'Select an organization'}
 	</Select.Trigger>
 	<Select.Content>
-		{#each departments as department (department.id)}
-			<Select.Item value={department.id}>{department.name}</Select.Item>
+		{#each organizations as organization (organization.slug)}
+			<Select.Item value={organization.slug}>{organization.name}</Select.Item>
 		{/each}
 	</Select.Content>
 </Select.Root>

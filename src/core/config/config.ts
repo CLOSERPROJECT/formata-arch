@@ -9,13 +9,13 @@ export const Schema = {
 	$defs: {
 		Config: {
 			type: 'object',
-			required: ['workflow', 'departments', 'roles', 'dpp'],
+			required: ['workflow', 'organizations', 'roles', 'dpp'],
 			additionalProperties: false,
 			properties: {
 				workflow: { $ref: '#/$defs/Workflow' },
-				departments: {
+				organizations: {
 					type: 'array',
-					items: { $ref: '#/$defs/Department' }
+					items: { $ref: '#/$defs/Organization' }
 				},
 				roles: {
 					type: 'array',
@@ -79,12 +79,12 @@ export const Schema = {
 				}
 			}
 		},
-		Department: {
+		Organization: {
 			type: 'object',
-			required: ['id', 'name', 'color', 'border'],
+			required: ['slug', 'name', 'color', 'border'],
 			additionalProperties: false,
 			properties: {
-				id: { type: 'string' },
+				slug: { type: 'string' },
 				name: { type: 'string' },
 				color: { type: 'string' },
 				border: { type: 'string' }

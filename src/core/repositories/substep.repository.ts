@@ -7,7 +7,7 @@ import Result from 'true-myth/result';
 import type { Repository } from './_types.js';
 
 import FormataConfigField from './components/formata-config-field.svelte';
-import SelectDepartment from './components/select-department.svelte';
+import SelectOrganization from './components/select-organization.svelte';
 import { renumberSubsteps, type Step } from './step.repository.js';
 
 //
@@ -45,7 +45,7 @@ export class SubstepRepository implements Repository<Substep> {
 		return {
 			role: {
 				'ui:components': {
-					textWidget: SelectDepartment
+					textWidget: SelectOrganization
 				},
 				'ui:options': {
 					attestaConfig: this.config

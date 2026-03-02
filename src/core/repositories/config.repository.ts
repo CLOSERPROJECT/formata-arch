@@ -38,7 +38,7 @@ export class ConfigRepository implements Repository<Config.Config> {
 
 	create(data: Config.Config): Result<Config.Config, Error> {
 		this.config.workflow = data.workflow;
-		this.config.departments = data.departments;
+		this.config.organizations = data.organizations;
 		this.config.roles = data.roles;
 		this.config.dpp = data.dpp;
 		return Result.ok(this.config);
@@ -49,7 +49,7 @@ export class ConfigRepository implements Repository<Config.Config> {
 			return Result.err(new Error(`Config not found: ${key}`));
 		}
 		this.config.workflow = data.workflow;
-		this.config.departments = data.departments;
+		this.config.organizations = data.organizations;
 		this.config.roles = data.roles;
 		this.config.dpp = data.dpp;
 		return Result.ok(this.config);

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Crud } from '$core';
-	import { DepartmentRepository } from '$core/repositories/department.repository.js';
+	import { OrganizationRepository } from '$core/repositories/organization.repository.js';
 	import { config } from '$core/state.svelte.js';
 	import NewButton from '$lib/components/new-button.svelte';
 
@@ -8,11 +8,11 @@
 
 	//
 
-	const repository = new DepartmentRepository(config);
+	const repository = new OrganizationRepository(config);
 	const crud = new Crud(repository);
 
 	setTopbar({
-		title: 'Departments',
+		title: 'Organizations',
 		right: topbarRight
 	});
 </script>

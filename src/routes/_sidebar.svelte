@@ -27,7 +27,7 @@
 	];
 
 	const accessControl: NavLink[] = [
-		{ label: 'Departments', href: p('/departments'), icon: BuildingIcon },
+		{ label: 'Organizations', href: p('/organizations'), icon: BuildingIcon },
 		{ label: 'Roles', href: p('/roles'), icon: UserIcon }
 	];
 
@@ -48,7 +48,7 @@
 			}
 			const data = result.value;
 			config.workflow = data.workflow;
-			config.departments = data.departments;
+			config.organizations = data.organizations;
 			config.roles = data.roles;
 			config.dpp = data.dpp;
 			toast.success('Config imported');
