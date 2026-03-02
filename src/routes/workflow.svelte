@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Structure } from '$core/tree/types.js';
 
+	import { CheckIcon, TriangleAlert } from '@lucide/svelte';
 	import { Crud, Tree } from '$core';
 	import {
 		StepRepository,
@@ -8,8 +9,10 @@
 		type Step,
 		type Substep
 	} from '$core/repositories/index.js';
-	import { config } from '$core/state.svelte.js';
+	import { config, getConfigErrors } from '$core/state.svelte.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
+	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 
@@ -162,7 +165,8 @@
 
 	setTopbar({
 		title: 'Stream / Workflow',
-		left: navbarLeft
+		left: navbarLeft,
+		right: navbarRight
 	});
 
 	const formMode = $derived.by(() => {
@@ -171,6 +175,8 @@
 		if (sel.state === 'selected') return sel.path.length === 1 ? 'step' : 'substep';
 		return sel.type === 'branch' ? 'step' : 'substep';
 	});
+
+	const configErrors = $derived(getConfigErrors(config));
 </script>
 
 {#snippet navbarLeft()}
@@ -179,6 +185,48 @@
 		class="h-8 max-w-md grow font-medium md:text-sm"
 		placeholder="Workflow name"
 	/>
+{/snippet}
+
+{#snippet navbarRight()}
+	<Popover.Root>
+		<Popover.Trigger>
+			{#snippet child({ props })}
+				<Button
+					{...props}
+					disabled={configErrors.length === 0}
+					variant="outline"
+					class={[
+						configErrors.length > 0 &&
+							'border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
+					]}
+				>
+					{#if configErrors.length > 0}
+						<TriangleAlert size={14} />
+						<span>{configErrors.length} errors</span>
+					{:else}
+						<CheckIcon size={14} />
+						<span>Config is valid</span>
+					{/if}
+				</Button>
+			{/snippet}
+		</Popover.Trigger>
+		<Popover.Content
+			class={configErrors.length > 0
+				? 'max-h-60 w-80 overflow-y-auto border-destructive text-destructive'
+				: ''}
+		>
+			{#if configErrors.length > 0}
+				<p class="mb-2 text-sm font-medium">Validation errors</p>
+				<ul class="list-inside list-disc space-y-1 text-sm">
+					{#each configErrors as err, i (i)}
+						<li>{err}</li>
+					{/each}
+				</ul>
+			{:else}
+				<p class="text-sm text-muted-foreground">Config is valid.</p>
+			{/if}
+		</Popover.Content>
+	</Popover.Root>
 {/snippet}
 
 <div class="flex grow justify-stretch">

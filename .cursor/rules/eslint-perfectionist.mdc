@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+- NEVER fix eslint warning relative to sort order, just notify the user
