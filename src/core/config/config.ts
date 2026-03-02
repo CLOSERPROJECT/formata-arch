@@ -38,12 +38,13 @@ export const Schema = {
 		},
 		Step: {
 			type: 'object',
-			required: ['id', 'title', 'order', 'substeps'],
+			required: ['id', 'title', 'order', 'organization', 'substeps'],
 			additionalProperties: false,
 			properties: {
 				id: { type: 'string', default: 'id' },
 				title: { type: 'string' },
 				order: { type: 'integer', default: 0 },
+				organization: { type: 'string' },
 				substeps: {
 					type: 'array',
 					items: { $ref: '#/$defs/Substep' },

@@ -120,6 +120,7 @@
 					id: crypto.randomUUID(),
 					title: 'New step',
 					order: insertIndex,
+					organization: config.organizations[0]?.slug ?? '',
 					substeps: []
 				};
 				stepCrud.openCreateWithCallback(draft, (value) => {

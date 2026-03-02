@@ -30,6 +30,14 @@ export class WorkflowRepository implements Repository<Workflow> {
 		return {
 			steps: {
 				items: {
+					organization: {
+						'ui:components': {
+							textWidget: SelectOrganization
+						},
+						'ui:options': {
+							attestaConfig: this.config
+						}
+					},
 					substeps: {
 						items: {
 							role: {

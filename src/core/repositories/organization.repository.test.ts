@@ -156,6 +156,7 @@ describe('OrganizationRepository', () => {
 						id: 's1',
 						title: 'Step 1',
 						order: 1,
+						organization: 'd1',
 						substeps: [
 							{
 								id: 's1.1',
@@ -191,6 +192,7 @@ describe('OrganizationRepository', () => {
 			expect(config.organizations.find((o) => o.slug === 'd1-renamed')).toEqual(updated);
 			expect(config.roles.find((r) => r.id === 'u1')?.orgSlug).toBe('d1-renamed');
 			expect(config.roles.find((r) => r.id === 'u2')?.orgSlug).toBe('d2');
+			expect(config.workflow.steps[0].organization).toBe('d1-renamed');
 			expect(config.workflow.steps[0].substeps[0].role).toBe('d1-renamed');
 			expect(config.workflow.steps[0].substeps[1].role).toBe('d2');
 		});

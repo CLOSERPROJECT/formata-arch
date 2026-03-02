@@ -15,6 +15,7 @@ const step1 = {
 	id: 's1',
 	title: 'Step 1',
 	order: 0,
+	organization: 'd1',
 	substeps: [
 		{
 			id: 'sub1',

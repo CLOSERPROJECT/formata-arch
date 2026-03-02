@@ -1,9 +1,11 @@
-import type { Schema } from '@sjsf/form';
+import type { Schema, UiSchema } from '@sjsf/form';
 
 import { Config } from '$core';
 import Result from 'true-myth/result';
 
 import type { Repository } from './_types.js';
+
+import SelectOrganization from './components/select-organization.svelte';
 
 //
 
@@ -45,6 +47,19 @@ export class StepRepository implements Repository<Step> {
 
 	getSchema(): Schema {
 		return Config.getEntitySchema('Step');
+	}
+
+	getUiSchema(): UiSchema {
+		return {
+			organization: {
+				'ui:components': {
+					textWidget: SelectOrganization
+				},
+				'ui:options': {
+					attestaConfig: this.config
+				}
+			}
+		};
 	}
 
 	list(): Step[] {

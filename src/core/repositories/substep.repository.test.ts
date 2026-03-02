@@ -12,6 +12,7 @@ function createTestConfig(): Config.Config {
 			id: '1',
 			title: 'Step 1',
 			order: 1,
+			organization: 'd1',
 			substeps: [substep1]
 		}
 	];
