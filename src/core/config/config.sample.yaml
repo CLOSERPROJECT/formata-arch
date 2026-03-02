@@ -75,15 +75,15 @@ workflow:
 
 organizations:
   - slug: 'dep1'
-    name: 'Department 1'
+    name: 'Acme Corp'
     color: '#d7e9f2'
     border: '#6e99b2'
   - slug: 'dep2'
-    name: 'Department 2'
+    name: 'Globex Inc'
     color: '#e0f1d9'
     border: '#7da36c'
   - slug: 'dep3'
-    name: 'Department 3'
+    name: 'Initech'
     color: '#f5e3c9'
     border: '#c2945a'
 
