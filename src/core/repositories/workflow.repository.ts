@@ -1,13 +1,9 @@
-import type { Schema, UiSchema } from '@sjsf/form';
+import type { Schema } from '@sjsf/form';
 
 import { Config } from '$core';
-import HiddenObjectField from '$core/form/hidden-object-field.svelte';
 import Result from 'true-myth/result';
 
 import type { Repository } from './_types.js';
-
-import FormataConfigField from './components/formata-config-field.svelte';
-import SelectOrganization from './components/select-organization.svelte';
 
 //
 
@@ -24,45 +20,6 @@ export class WorkflowRepository implements Repository<Workflow> {
 
 	getSchema(): Schema {
 		return Config.getEntitySchema('Workflow');
-	}
-
-	getUiSchema(): UiSchema {
-		return {
-			steps: {
-				items: {
-					organization: {
-						'ui:components': {
-							textWidget: SelectOrganization
-						},
-						'ui:options': {
-							attestaConfig: this.config
-						}
-					},
-					substeps: {
-						items: {
-							role: {
-								'ui:components': {
-									textWidget: SelectOrganization
-								},
-								'ui:options': {
-									attestaConfig: this.config
-								}
-							},
-							uiSchema: {
-								'ui:components': {
-									objectField: HiddenObjectField
-								}
-							},
-							schema: {
-								'ui:components': {
-									objectField: FormataConfigField
-								}
-							}
-						}
-					}
-				}
-			}
-		};
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

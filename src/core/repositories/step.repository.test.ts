@@ -21,7 +21,7 @@ const step1 = {
 			id: 'sub1',
 			title: 'Sub 1',
 			order: 0,
-			role: 'r1',
+			roles: ['r1'],
 			inputKey: 'k1',
 			inputType: 'string' as const,
 			schema: {}
@@ -113,6 +113,32 @@ describe('StepRepository', () => {
 			const repo = new StepRepository(config);
 			const result = repo.update('missing', step1);
 			expect(result.isErr).toBe(true);
+		});
+
+		it('clears substep roles when step organization changes', () => {
+			const stepWithRoles = {
+				...step1,
+				substeps: [
+					{ ...step1.substeps[0]!, roles: ['r1'] },
+					{
+						id: 'sub2',
+						title: 'Sub 2',
+						order: 1,
+						roles: ['r1', 'r2'],
+						inputKey: 'k2',
+						inputType: 'string' as const,
+						schema: {}
+					}
+				]
+			};
+			const config = createTestConfig([stepWithRoles]);
+			const repo = new StepRepository(config);
+			const updated = { ...stepWithRoles, organization: 'd2' };
+			const result = repo.update('s1', updated);
+			expect(result.isOk).toBe(true);
+			expect(config.workflow.steps[0]?.organization).toBe('d2');
+			expect(config.workflow.steps[0]?.substeps[0]?.roles).toEqual([]);
+			expect(config.workflow.steps[0]?.substeps[1]?.roles).toEqual([]);
 		});
 	});
 

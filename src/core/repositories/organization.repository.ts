@@ -63,9 +63,10 @@ export class OrganizationRepository implements Repository<Organization> {
 				steps: this.config.workflow.steps.map((step) => ({
 					...step,
 					organization: step.organization === key ? newSlug : step.organization,
-					substeps: step.substeps.map((sub) =>
-						sub.role === key ? { ...sub, role: newSlug } : sub
-					)
+					substeps: step.substeps.map((sub) => ({
+						...sub,
+						roles: sub.roles.map((r) => (r === key ? newSlug : r))
+					}))
 				}))
 			};
 		}

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { DownloadIcon } from '@lucide/svelte';
 	import { Config } from '$core';
-	import { config } from '$core/state.svelte.js';
+	import { config, getConfigErrors } from '$core/state.svelte.js';
+	import * as Alert from '$lib/components/ui/alert/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { highlight, highlighterPromise } from '$lib/shiki.js';
 	import { toast } from 'svelte-sonner';
@@ -10,17 +11,24 @@
 
 	//
 
+	const configErrors = $derived(getConfigErrors());
 	const serialized = $derived.by(() => Config.serialize(config));
 
+	const canExport = $derived(configErrors.length === 0 && !serialized.isErr);
+
 	$effect(() => {
-		if (serialized.isErr) {
-			setTopbar({ title: 'Export' });
-		} else {
+		if (canExport) {
 			setTopbar({ title: 'Export', right: topbarRight });
+		} else {
+			setTopbar({ title: 'Export' });
 		}
 	});
 
 	function downloadConfig() {
+		if (configErrors.length > 0) {
+			toast.error('Fix config validation errors before exporting.');
+			return;
+		}
 		const result = Config.serialize(config);
 		if (result.isErr) {
 			toast.error(result.error.message);
@@ -45,8 +53,23 @@
 {/snippet}
 
 <div class="flex min-h-0 grow flex-col gap-4 p-4">
-	{#if serialized.isErr}
-		<p class="text-destructive">{serialized.error.message}</p>
+	{#if configErrors.length > 0}
+		<Alert.Root variant="destructive">
+			<Alert.Title>Config validation failed.</Alert.Title>
+			<Alert.Description>
+				<p>Please fix the following validation errors before exporting:</p>
+				<ul class="mt-2 list-inside list-disc space-y-1">
+					{#each configErrors as err, i (i)}
+						<li>{err}</li>
+					{/each}
+				</ul>
+			</Alert.Description>
+		</Alert.Root>
+	{:else if serialized.isErr}
+		<Alert.Root variant="destructive">
+			<Alert.Title>Export failed</Alert.Title>
+			<Alert.Description>{serialized.error.message}</Alert.Description>
+		</Alert.Root>
 	{:else}
 		{#await highlighterPromise}
 			<p class="text-muted-foreground">Loading preview…</p>

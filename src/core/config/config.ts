@@ -54,14 +54,19 @@ export const Schema = {
 		},
 		Substep: {
 			type: 'object',
-			required: ['id', 'title', 'order', 'role', 'inputKey', 'inputType', 'schema'],
+			required: ['id', 'title', 'order', 'roles', 'inputKey', 'inputType', 'schema'],
 			additionalProperties: false,
 			properties: {
 				id: { type: 'string', default: 'id' },
 				order: { type: 'integer', default: 0 },
 				title: { type: 'string' },
 				inputKey: { type: 'string', title: 'Subtitle' },
-				role: { type: 'string' },
+				roles: {
+					type: 'array',
+					items: { type: 'string' },
+					default: [],
+					minItems: 1
+				},
 				inputType: {
 					type: 'string',
 					enum: ['number', 'string', 'file', 'formata'],

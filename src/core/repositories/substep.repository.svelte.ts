@@ -7,7 +7,7 @@ import Result from 'true-myth/result';
 import type { Repository } from './_types.js';
 
 import FormataConfigField from './components/formata-config-field.svelte';
-import SelectOrganization from './components/select-organization.svelte';
+import SelectRole from './components/select-role.svelte';
 import { renumberSubsteps, type Step } from './step.repository.js';
 
 //
@@ -27,6 +27,8 @@ function parseKey(key: string): { stepId: string; substepId: string } {
 }
 
 export class SubstepRepository implements Repository<Substep> {
+	private currentStep = $state<Step>();
+
 	constructor(private readonly config: Config.Config) {}
 
 	getEntityName(): string {
@@ -43,12 +45,13 @@ export class SubstepRepository implements Repository<Substep> {
 
 	getUiSchema(): UiSchema {
 		return {
-			role: {
+			roles: {
 				'ui:components': {
-					textWidget: SelectOrganization
+					arrayField: SelectRole
 				},
 				'ui:options': {
-					attestaConfig: this.config
+					attestaConfig: this.config,
+					currentStep: () => this.currentStep
 				}
 			},
 			uiSchema: {
@@ -171,5 +174,9 @@ export class SubstepRepository implements Repository<Substep> {
 			})
 		}).substeps;
 		return Result.ok(undefined);
+	}
+
+	setCurrentStep(step: Step | undefined): void {
+		this.currentStep = step;
 	}
 }
