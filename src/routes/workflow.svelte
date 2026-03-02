@@ -176,7 +176,7 @@
 		return sel.type === 'branch' ? 'step' : 'substep';
 	});
 
-	const configErrors = $derived(getConfigErrors(config));
+	const configErrors = $derived(getConfigErrors());
 </script>
 
 {#snippet navbarLeft()}

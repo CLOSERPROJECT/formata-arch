@@ -18,8 +18,8 @@ export const config = lsSync('formata-config', configResult.value);
 const ajv = new Ajv({ allErrors: true });
 ajv.addSchema(Config.Schema);
 
-export function getConfigErrors(configValue: typeof config): string[] {
-	const valid = ajv.validate(Config.Schema.$id, configValue);
+export function getConfigErrors() {
+	const valid = ajv.validate(Config.Schema.$id, config);
 	const errorObjects = valid ? [] : [...(ajv.errors ?? [])];
 	return errorObjects.map((error) => `${error.instancePath}: ${error.message}`);
 }
