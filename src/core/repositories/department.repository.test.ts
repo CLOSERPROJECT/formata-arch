@@ -139,13 +139,13 @@ describe('DepartmentRepository', () => {
 			expect(config.departments[1].id).toBe('d2');
 		});
 
-		it('updates users and workflow substep roles when department id changes', () => {
+		it('updates roles and workflow substep roles when department id changes', () => {
 			const config = Config.createTestSample();
 			config.departments = [
 				{ id: 'd1', name: 'Dept 1', color: '#000', border: '#000' },
 				{ id: 'd2', name: 'Dept 2', color: '#111', border: '#111' }
 			];
-			config.users = [
+			config.roles = [
 				{ id: 'u1', name: 'Alice', departmentId: 'd1' },
 				{ id: 'u2', name: 'Bob', departmentId: 'd2' }
 			];
@@ -184,8 +184,8 @@ describe('DepartmentRepository', () => {
 			const result = repo.update('d1', updated);
 			expect(result.isOk).toBe(true);
 			expect(config.departments.find((d) => d.id === 'd1-renamed')).toEqual(updated);
-			expect(config.users.find((u) => u.id === 'u1')?.departmentId).toBe('d1-renamed');
-			expect(config.users.find((u) => u.id === 'u2')?.departmentId).toBe('d2');
+			expect(config.roles.find((r) => r.id === 'u1')?.departmentId).toBe('d1-renamed');
+			expect(config.roles.find((r) => r.id === 'u2')?.departmentId).toBe('d2');
 			expect(config.workflow.steps[0].substeps[0].role).toBe('d1-renamed');
 			expect(config.workflow.steps[0].substeps[1].role).toBe('d2');
 		});

@@ -39,7 +39,7 @@ export class ConfigRepository implements Repository<Config.Config> {
 	create(data: Config.Config): Result<Config.Config, Error> {
 		this.config.workflow = data.workflow;
 		this.config.departments = data.departments;
-		this.config.users = data.users;
+		this.config.roles = data.roles;
 		this.config.dpp = data.dpp;
 		return Result.ok(this.config);
 	}
@@ -50,7 +50,7 @@ export class ConfigRepository implements Repository<Config.Config> {
 		}
 		this.config.workflow = data.workflow;
 		this.config.departments = data.departments;
-		this.config.users = data.users;
+		this.config.roles = data.roles;
 		this.config.dpp = data.dpp;
 		return Result.ok(this.config);
 	}

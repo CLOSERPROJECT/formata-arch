@@ -9,7 +9,7 @@ export const Schema = {
 	$defs: {
 		Config: {
 			type: 'object',
-			required: ['workflow', 'departments', 'users', 'dpp'],
+			required: ['workflow', 'departments', 'roles', 'dpp'],
 			additionalProperties: false,
 			properties: {
 				workflow: { $ref: '#/$defs/Workflow' },
@@ -17,9 +17,9 @@ export const Schema = {
 					type: 'array',
 					items: { $ref: '#/$defs/Department' }
 				},
-				users: {
+				roles: {
 					type: 'array',
-					items: { $ref: '#/$defs/User' }
+					items: { $ref: '#/$defs/Role' }
 				},
 				dpp: { $ref: '#/$defs/Dpp' }
 			}
@@ -90,7 +90,7 @@ export const Schema = {
 				border: { type: 'string' }
 			}
 		},
-		User: {
+		Role: {
 			type: 'object',
 			required: ['id', 'name', 'departmentId'],
 			additionalProperties: false,

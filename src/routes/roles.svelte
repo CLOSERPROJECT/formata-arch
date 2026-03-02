@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Crud } from '$core';
-	import { UserRepository } from '$core/repositories/index.js';
+	import { RoleRepository } from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
 	import NewButton from '$lib/components/new-button.svelte';
 
@@ -8,11 +8,11 @@
 
 	//
 
-	const repository = new UserRepository(config);
+	const repository = new RoleRepository(config);
 	const crud = new Crud(repository);
 
 	setTopbar({
-		title: 'Users',
+		title: 'Roles',
 		right: topbarRight
 	});
 </script>

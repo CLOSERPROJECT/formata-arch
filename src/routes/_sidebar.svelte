@@ -26,9 +26,9 @@
 		{ label: 'DPP', href: p('/dpp'), icon: IdCardIcon }
 	];
 
-	const users: NavLink[] = [
+	const accessControl: NavLink[] = [
 		{ label: 'Departments', href: p('/departments'), icon: BuildingIcon },
-		{ label: 'Users', href: p('/users'), icon: UserIcon }
+		{ label: 'Roles', href: p('/roles'), icon: UserIcon }
 	];
 
 	let importInput: HTMLInputElement | undefined = $state();
@@ -49,7 +49,7 @@
 			const data = result.value;
 			config.workflow = data.workflow;
 			config.departments = data.departments;
-			config.users = data.users;
+			config.roles = data.roles;
 			config.dpp = data.dpp;
 			toast.success('Config imported');
 		};
@@ -77,7 +77,7 @@
 	</Sidebar.Header>
 	<Sidebar.Content>
 		{@render group(main, 'Main')}
-		{@render group(users, 'Access control')}
+		{@render group(accessControl, 'Access control')}
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Data</Sidebar.GroupLabel>
 			<Sidebar.Menu>

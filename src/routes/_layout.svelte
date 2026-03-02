@@ -30,7 +30,7 @@
 
 <Sidebar.Provider>
 	<AppSidebar />
-	<main class="flex grow flex-col">
+	<Sidebar.Inset class="overflow-x-hidden">
 		<div
 			class="sticky top-0 z-10 flex h-[53px] items-center justify-between gap-4 border-b bg-background p-2 pr-4"
 		>
@@ -50,5 +50,5 @@
 		<div class="flex grow flex-col">
 			{@render children()}
 		</div>
-	</main>
+	</Sidebar.Inset>
 </Sidebar.Provider>

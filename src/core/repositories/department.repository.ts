@@ -55,8 +55,8 @@ export class DepartmentRepository implements Repository<Department> {
 				return Result.err(new Error(`Department already exists: ${newId}`));
 			}
 			// Update all dependents before changing the department id
-			this.config.users = this.config.users.map((u) =>
-				u.departmentId === key ? { ...u, departmentId: newId } : u
+			this.config.roles = this.config.roles.map((r) =>
+				r.departmentId === key ? { ...r, departmentId: newId } : r
 			);
 			this.config.workflow = {
 				...this.config.workflow,

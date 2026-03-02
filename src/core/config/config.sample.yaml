@@ -84,15 +84,15 @@ departments:
     color: '#f5e3c9'
     border: '#c2945a'
 
-users:
+roles:
   - id: 'u4'
-    name: 'User 4'
+    name: 'Role 4'
     departmentId: 'dep1'
   - id: 'u5'
-    name: 'User 5'
+    name: 'Role 5'
     departmentId: 'dep2'
   - id: 'u6'
-    name: 'User 6'
+    name: 'Role 6'
     departmentId: 'dep3'
 
 dpp:

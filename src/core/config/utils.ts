@@ -23,7 +23,7 @@ export function createTestSample(): Config.Config {
 	return {
 		workflow: { name: 'Test', steps: [] },
 		departments: [{ id: 'd1', name: 'Dept', color: '#000', border: '#000' }],
-		users: [],
+		roles: [],
 		dpp: {
 			enabled: false,
 			gtin: '',
