@@ -105,6 +105,7 @@
 				const step = steps[sel.path[0]];
 				const substep = step?.substeps[sel.path[1]];
 				if (step && substep) {
+					substepRepo.setCurrentStep(step);
 					substepCrud.openEdit(substep);
 				}
 			}
@@ -136,6 +137,7 @@
 			} else {
 				const step = steps[sel.path[0]];
 				if (!step) return;
+				substepRepo.setCurrentStep(step);
 				const draft: Partial<Substep> = {
 					id: step.id,
 					title: 'New substep',
@@ -208,8 +210,12 @@
 					<substepCrud.Forms
 						self={substepCrud}
 						formTitle="substep"
-						onConfirmDelete={() => tree.clearSelection()}
+						onConfirmDelete={() => {
+							substepRepo.setCurrentStep(undefined);
+							tree.clearSelection();
+						}}
 						onCancel={() => {
+							substepRepo.setCurrentStep(undefined);
 							tree.clearSelection();
 						}}
 						hideSubmitButton
