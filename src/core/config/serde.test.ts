@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+
 import { describe, expect, it } from 'vitest';
 
 import { deserialize, serialize } from './serde.js';
@@ -7,7 +10,7 @@ import { deserialize, serialize } from './serde.js';
 describe('serde', () => {
 	it('deserializes config.sample.yaml to Config shape', async () => {
 		const url = new URL('config.sample.yaml', import.meta.url);
-		const raw = await Bun.file(url).text();
+		const raw = await readFile(fileURLToPath(url), 'utf-8');
 		const result = deserialize(raw);
 		expect(result.isOk).toBe(true);
 		if (result.isOk) {
@@ -21,7 +24,7 @@ describe('serde', () => {
 
 	it('round-trips: deserialize(serialize(config)) equals config', async () => {
 		const url = new URL('config.sample.yaml', import.meta.url);
-		const raw = await Bun.file(url).text();
+		const raw = await readFile(fileURLToPath(url), 'utf-8');
 		const parseResult = deserialize(raw);
 		expect(parseResult.isOk).toBe(true);
 		if (!parseResult.isOk) return;

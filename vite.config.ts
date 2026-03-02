@@ -28,6 +28,11 @@ export default defineConfig({
 	},
 	test: {
 		include: ['src/**/*.test.ts'],
-		environment: 'node'
+		environment: 'node',
+		server: {
+			deps: {
+				inline: [/@jis3r\/icons/, /flowbite-svelte-icons/]
+			}
+		}
 	}
 });

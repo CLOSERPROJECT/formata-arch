@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+
 import { Ajv } from 'ajv';
 import { describe, expect, it } from 'vitest';
 import YAML from 'yaml';
@@ -17,7 +20,7 @@ describe('sourceSchema', () => {
 
 	it('validates parsed source.yaml', async () => {
 		const url = new URL('config.sample.yaml', import.meta.url);
-		const raw = await Bun.file(url).text();
+		const raw = await readFile(fileURLToPath(url), 'utf-8');
 		const data = YAML.parse(raw) as unknown;
 		const ajv = new Ajv();
 		ajv.addSchema(Config.Schema);

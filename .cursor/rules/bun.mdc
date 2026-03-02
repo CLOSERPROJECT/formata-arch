@@ -3,3 +3,4 @@ alwaysApply: true
 ---
 
 - ALWAYS use Bun INSTEAD of ANY OTHER package manager
+- for testing, use `bun run test`, NOT `bun test`
