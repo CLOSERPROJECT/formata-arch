@@ -4,41 +4,41 @@ workflow:
     - id: '1'
       title: 'Shipment intake'
       order: 1
-      organization: 'dep1'
+      organization: 'acme-corp'
       substeps:
         - id: '1.1'
           title: 'Record shipment weight (kg)'
           order: 1
-          roles: ['dep1']
+          roles: ['chemist']
           inputKey: 'shipmentKg'
-          inputType: 'number'
+          inputType: 'formata'
           schema:
             type: 'object'
         - id: '1.2'
           title: 'Attach shipment reference'
           order: 2
-          roles: ['dep1']
+          roles: ['chemist']
           inputKey: 'shipmentRef'
-          inputType: 'string'
+          inputType: 'formata'
           schema:
             type: 'object'
     - id: '2'
       title: 'Inspection'
       order: 2
-      organization: 'dep2'
+      organization: 'globex-inc'
       substeps:
         - id: '2.1'
           title: 'Upload inspection report'
           order: 1
-          roles: ['dep2']
+          roles: ['quality-control-inspector']
           inputKey: 'report'
-          inputType: 'file'
+          inputType: 'formata'
           schema:
             type: 'object'
         - id: '2.2'
           title: 'Record inspection outcome'
           order: 2
-          roles: ['dep2']
+          roles: ['quality-control-inspector']
           inputKey: 'inspectionOutcome'
           inputType: 'formata'
           schema:
@@ -62,48 +62,48 @@ workflow:
     - id: '3'
       title: 'Approval'
       order: 3
-      organization: 'dep3'
+      organization: 'initech'
       substeps:
         - id: '3.1'
           title: 'Approve shipment'
           order: 1
-          roles: ['dep3']
+          roles: ['quality-control-supervisor']
           inputKey: 'approval'
-          inputType: 'string'
+          inputType: 'formata'
           schema:
             type: 'object'
 
 organizations:
-  - slug: 'dep1'
+  - slug: 'acme-corp'
     name: 'Acme Corp'
     color: '#d7e9f2'
     border: '#6e99b2'
-  - slug: 'dep2'
+  - slug: 'globex-inc'
     name: 'Globex Inc'
     color: '#e0f1d9'
     border: '#7da36c'
-  - slug: 'dep3'
+  - slug: 'initech'
     name: 'Initech'
     color: '#f5e3c9'
     border: '#c2945a'
 
 roles:
-  - id: 'u4'
-    name: 'Role 4'
-    slug: 'role-4'
-    orgSlug: 'dep1'
+  - id: 'acme-corp/chemist'
+    name: 'Chemist'
+    slug: 'chemist'
+    orgSlug: 'acme-corp'
     color: '#d7e9f2'
     border: '#6e99b2'
-  - id: 'u5'
-    name: 'Role 5'
-    slug: 'role-5'
-    orgSlug: 'dep2'
+  - id: 'globex-inc/quality-control-inspector'
+    name: 'Quality Control Inspector'
+    slug: 'quality-control-inspector'
+    orgSlug: 'globex-inc'
     color: '#e0f1d9'
     border: '#7da36c'
-  - id: 'u6'
-    name: 'Role 6'
-    slug: 'role-6'
-    orgSlug: 'dep3'
+  - id: 'initech/quality-control-supervisor'
+    name: 'Quality Control Supervisor'
+    slug: 'quality-control-supervisor'
+    orgSlug: 'initech'
     color: '#f5e3c9'
     border: '#c2945a'
 
