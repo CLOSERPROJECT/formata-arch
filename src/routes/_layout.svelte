@@ -15,7 +15,12 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
+	import { Loader } from '@lucide/svelte';
+	import { loadOrganizationData } from '$core/api/index.js';
+	import { isAppReady } from '$core/state.svelte.js';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { toast } from 'svelte-sonner';
 
 	import AppSidebar from './_sidebar.svelte';
 
@@ -26,6 +31,16 @@
 	};
 
 	let { children }: Props = $props();
+
+	$effect(() => {
+		if (!isAppReady()) {
+			loadOrganizationData().then((res) => {
+				if (res.isErr) {
+					toast.error(res.error.message);
+				}
+			});
+		}
+	});
 </script>
 
 <Sidebar.Provider>
@@ -52,3 +67,12 @@
 		</div>
 	</Sidebar.Inset>
 </Sidebar.Provider>
+
+<AlertDialog.Root open={!isAppReady()}>
+	<AlertDialog.Content class="flex items-center justify-center">
+		<div class="flex items-center gap-2">
+			<Loader class="animate-spin" />
+			<p>Loading...</p>
+		</div>
+	</AlertDialog.Content>
+</AlertDialog.Root>
