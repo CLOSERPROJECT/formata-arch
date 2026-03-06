@@ -6,6 +6,13 @@ import { SvelteSet } from 'svelte/reactivity';
 
 import type { WorkflowTreeSelection } from './workflow-tree.types.js';
 
+import {
+	canMoveItemDown,
+	canMoveItemUp,
+	moveItemDown,
+	moveItemUp
+} from './workflow-tree.reorder.js';
+
 //
 
 const DEFAULT_SUBSTEP_SCHEMA = {
@@ -17,7 +24,12 @@ export class WorkflowTree {
 	constructor(private opts: { steps: Step[] }) {}
 
 	selection = $state<WorkflowTreeSelection>({ type: 'idle' });
-	expanded = new SvelteSet<string>();
+
+	get steps(): Step[] {
+		return this.opts.steps;
+	}
+
+	// Keys
 
 	private stableKeys = new WeakMap<Step | Substep, string>();
 
@@ -30,9 +42,24 @@ export class WorkflowTree {
 		return key;
 	}
 
-	get steps(): Step[] {
-		return this.opts.steps;
+	// Expansion
+
+	private expanded = new SvelteSet<string>();
+
+	isStepExpanded(step: Step): boolean {
+		return this.expanded.has(this.getKey(step));
 	}
+
+	toggleStepExpanded(step: Step) {
+		const key = this.getKey(step);
+		if (this.expanded.has(key)) {
+			this.expanded.delete(key);
+		} else {
+			this.selectStep(step);
+		}
+	}
+
+	// Crud
 
 	addStep(): void {
 		const steps = this.steps;
@@ -91,54 +118,14 @@ export class WorkflowTree {
 		}
 	}
 
-	moveStepUp(step: Step): void {
-		const steps = this.steps;
-		const i = steps.findIndex((s) => s.id === step.id);
-		if (i <= 0) return;
-		[steps[i - 1], steps[i]] = [steps[i]!, steps[i - 1]!];
-		renumberSteps(steps);
-		const sel = this.selection;
-		if (sel.type === 'step' && sel.step.id === step.id) {
-			this.selection = { type: 'step', step: steps[i - 1]! };
-		} else if (sel.type === 'substep') {
-			this.selection = { type: 'substep', substep: sel.substep };
-		}
+	// Selection
+
+	isStepSelected(step: Step): boolean {
+		return this.selection.type === 'step' && this.selection.step.id === step.id;
 	}
 
-	moveStepDown(step: Step): void {
-		const steps = this.steps;
-		const i = steps.findIndex((s) => s.id === step.id);
-		if (i === -1 || i >= steps.length - 1) return;
-		[steps[i], steps[i + 1]] = [steps[i + 1]!, steps[i]!];
-		renumberSteps(steps);
-		const sel = this.selection;
-		if (sel.type === 'step' && sel.step.id === step.id) {
-			this.selection = { type: 'step', step: steps[i + 1]! };
-		} else if (sel.type === 'substep') {
-			this.selection = { type: 'substep', substep: sel.substep };
-		}
-	}
-
-	moveSubstepUp(step: Step, substep: Substep): void {
-		const subs = step.substeps;
-		const i = subs.findIndex((s) => s.id === substep.id);
-		if (i <= 0) return;
-		[subs[i - 1], subs[i]] = [subs[i]!, subs[i - 1]!];
-		const renumbered = renumberSubsteps(step);
-		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) {
-			this.selection = { type: 'substep', substep: renumbered.substeps[i - 1]! };
-		}
-	}
-
-	moveSubstepDown(step: Step, substep: Substep): void {
-		const subs = step.substeps;
-		const i = subs.findIndex((s) => s.id === substep.id);
-		if (i === -1 || i >= subs.length - 1) return;
-		[subs[i], subs[i + 1]] = [subs[i + 1]!, subs[i]!];
-		const renumbered = renumberSubsteps(step);
-		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) {
-			this.selection = { type: 'substep', substep: renumbered.substeps[i + 1]! };
-		}
+	isSubstepSelected(substep: Substep): boolean {
+		return this.selection.type === 'substep' && this.selection.substep.id === substep.id;
 	}
 
 	selectStep(step: Step): void {
@@ -161,46 +148,67 @@ export class WorkflowTree {
 		workflowEditorState.currentStep = undefined;
 	}
 
+	// Reordering
+
 	canMoveStepUp(step: Step): boolean {
-		const i = this.steps.findIndex((s) => s.id === step.id);
-		return i > 0;
+		return canMoveItemUp(this.steps, step);
 	}
 
 	canMoveStepDown(step: Step): boolean {
-		const i = this.steps.findIndex((s) => s.id === step.id);
-		return i !== -1 && i < this.steps.length - 1;
+		return canMoveItemDown(this.steps, step);
+	}
+
+	moveStepUp(step: Step): void {
+		const steps = this.steps;
+		const result = moveItemUp(steps, step);
+		if (!result.moved) return;
+		renumberSteps(steps);
+		const sel = this.selection;
+		if (sel.type === 'step' && sel.step.id === step.id) {
+			this.selection = { type: 'step', step: result.item! };
+		} else if (sel.type === 'substep') {
+			this.selection = { type: 'substep', substep: sel.substep };
+		}
+	}
+
+	moveStepDown(step: Step): void {
+		const steps = this.steps;
+		const result = moveItemDown(steps, step);
+		if (!result.moved) return;
+		renumberSteps(steps);
+		const sel = this.selection;
+		if (sel.type === 'step' && sel.step.id === step.id) {
+			this.selection = { type: 'step', step: result.item! };
+		} else if (sel.type === 'substep') {
+			this.selection = { type: 'substep', substep: sel.substep };
+		}
 	}
 
 	canMoveSubstepUp(step: Step, substep: Substep): boolean {
-		const i = step.substeps.findIndex((s) => s.id === substep.id);
-		return i > 0;
+		return canMoveItemUp(step.substeps, substep);
 	}
 
 	canMoveSubstepDown(step: Step, substep: Substep): boolean {
-		const i = step.substeps.findIndex((s) => s.id === substep.id);
-		return i !== -1 && i < step.substeps.length - 1;
+		return canMoveItemDown(step.substeps, substep);
 	}
 
-	getStepForSubstep(substep: Substep): Step | undefined {
-		return this.steps.find((s) => s.substeps.some((sub) => sub.id === substep.id));
+	moveSubstepUp(step: Step, substep: Substep): void {
+		const subs = step.substeps;
+		const result = moveItemUp(subs, substep);
+		if (!result.moved) return;
+		const renumbered = renumberSubsteps(step);
+		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) {
+			this.selection = { type: 'substep', substep: renumbered.substeps[result.toIndex]! };
+		}
 	}
 
-	//
-
-	isStepSelected(step: Step): boolean {
-		return this.selection.type === 'step' && this.selection.step.id === step.id;
-	}
-
-	isSubstepSelected(substep: Substep): boolean {
-		return this.selection.type === 'substep' && this.selection.substep.id === substep.id;
-	}
-
-	toggleStepExpanded(step: Step) {
-		const key = this.getKey(step);
-		if (this.expanded.has(key)) {
-			this.expanded.delete(key);
-		} else {
-			this.selectStep(step);
+	moveSubstepDown(step: Step, substep: Substep): void {
+		const subs = step.substeps;
+		const result = moveItemDown(subs, substep);
+		if (!result.moved) return;
+		const renumbered = renumberSubsteps(step);
+		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) {
+			this.selection = { type: 'substep', substep: renumbered.substeps[result.toIndex]! };
 		}
 	}
 }

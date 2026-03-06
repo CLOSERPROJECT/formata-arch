@@ -46,7 +46,7 @@
 						isSelected={self.isStepSelected(step)}
 						onSelect={() => self.selectStep(step)}
 						expandable
-						expanded={self.expanded.has(self.getKey(step))}
+						expanded={self.isStepExpanded(step)}
 						toggleExpanded={() => self.toggleStepExpanded(step)}
 						label={stepLabel(step)}
 						index={step.id}
@@ -58,7 +58,7 @@
 						onAdd={() => self.addSubstep(step)}
 						showIndex={showIndices}
 					/>
-					{#if self.expanded.has(self.getKey(step))}
+					{#if self.isStepExpanded(step)}
 						{#each step.substeps as substep (self.getKey(substep))}
 							<div animate:flip={{ duration: 250 }}>
 								<WorkflowTreeItem
