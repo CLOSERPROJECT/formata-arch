@@ -11,7 +11,7 @@ import 'vitest/config';
 export default defineConfig({
 	base: '/formata-arch/',
 	build: {
-		outDir: 'docs'
+		outDir: 'attesta'
 	},
 	plugins: [tailwindcss(), svelte(), Icons({ compiler: 'svelte' })],
 	resolve: {
