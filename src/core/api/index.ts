@@ -75,7 +75,7 @@ export function saveWorkflow(): Task.Task<void, Error> {
 	return Task.tryOrElse(
 		(err) => new Error('Failed to save workflow', { cause: err }),
 		() =>
-			fetch('/api/workflow', {
+			fetch('/org-admin/formata-builder', {
 				method: 'POST',
 				body: serialized.value
 			})
