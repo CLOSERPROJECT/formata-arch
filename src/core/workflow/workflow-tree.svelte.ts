@@ -163,12 +163,6 @@ export class WorkflowTree {
 		const result = moveItemUp(steps, step);
 		if (!result.moved) return;
 		renumberSteps(steps);
-		const sel = this.selection;
-		if (sel.type === 'step' && sel.step.id === step.id) {
-			this.selection = { type: 'step', step: result.item! };
-		} else if (sel.type === 'substep') {
-			this.selection = { type: 'substep', substep: sel.substep };
-		}
 	}
 
 	moveStepDown(step: Step): void {
@@ -176,12 +170,6 @@ export class WorkflowTree {
 		const result = moveItemDown(steps, step);
 		if (!result.moved) return;
 		renumberSteps(steps);
-		const sel = this.selection;
-		if (sel.type === 'step' && sel.step.id === step.id) {
-			this.selection = { type: 'step', step: result.item! };
-		} else if (sel.type === 'substep') {
-			this.selection = { type: 'substep', substep: sel.substep };
-		}
 	}
 
 	canMoveSubstepUp(step: Step, substep: Substep): boolean {
@@ -196,20 +184,14 @@ export class WorkflowTree {
 		const subs = step.substeps;
 		const result = moveItemUp(subs, substep);
 		if (!result.moved) return;
-		const renumbered = renumberSubsteps(step);
-		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) {
-			this.selection = { type: 'substep', substep: renumbered.substeps[result.toIndex]! };
-		}
+		renumberSubsteps(step);
 	}
 
 	moveSubstepDown(step: Step, substep: Substep): void {
 		const subs = step.substeps;
 		const result = moveItemDown(subs, substep);
 		if (!result.moved) return;
-		const renumbered = renumberSubsteps(step);
-		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) {
-			this.selection = { type: 'substep', substep: renumbered.substeps[result.toIndex]! };
-		}
+		renumberSubsteps(step);
 	}
 }
 
