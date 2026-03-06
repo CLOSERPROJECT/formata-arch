@@ -22,17 +22,15 @@
 </script>
 
 <TooltipProvider delayDuration={0}>
-	<div class="min-h-screen bg-background dark:scheme-dark">
-		{#await promises}
-			<p>Loading...</p>
-		{:then [highlighter]}
-			{@const builder = new BuilderContext(highlighter)}
-			<BuilderStandaloneContent
-				ctx={builder}
-				initialSchema={initialData?.schema}
-				initialUiSchema={initialData?.uiSchema}
-				{onInit}
-			/>
-		{/await}
-	</div>
+	{#await promises}
+		<p>Loading...</p>
+	{:then [highlighter]}
+		{@const builder = new BuilderContext(highlighter)}
+		<BuilderStandaloneContent
+			ctx={builder}
+			initialSchema={initialData?.schema}
+			initialUiSchema={initialData?.uiSchema}
+			{onInit}
+		/>
+	{/await}
 </TooltipProvider>

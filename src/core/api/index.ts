@@ -40,7 +40,7 @@ export function loadOrganizationData(): Task.Task<void, Error> {
 
 	return Task.tryOrElse(
 		(err) => new Error('Failed to fetch organization data', { cause: err }),
-		() => fetch('/api/organizations')
+		() => fetch('/api/catalog')
 	)
 		.andThen((res) =>
 			Task.tryOrElse(
@@ -63,11 +63,11 @@ export function loadOrganizationData(): Task.Task<void, Error> {
 
 export function saveWorkflow(): Task.Task<void, Error> {
 	const errors = getConfigErrors();
-	if (errors.length > 0) {
+	if (errors) {
 		return Task.resolve(undefined);
 	}
 
-	const serialized = Config.serialize(config);
+	const serialized = Config.serialize(config, appState);
 	if (serialized.isErr) {
 		return Task.reject(serialized.error);
 	}

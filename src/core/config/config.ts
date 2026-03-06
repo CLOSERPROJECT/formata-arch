@@ -29,11 +29,12 @@ export const Schema = {
 			required: ['name', 'steps'],
 			additionalProperties: false,
 			properties: {
-				name: { type: 'string' },
-				description: { type: 'string' },
+				name: { type: 'string', minLength: 3 },
+				description: { type: 'string', minLength: 3 },
 				steps: {
 					type: 'array',
-					items: { $ref: '#/$defs/Step' }
+					items: { $ref: '#/$defs/Step' },
+					minItems: 1
 				}
 			}
 		},
@@ -42,15 +43,16 @@ export const Schema = {
 			required: ['id', 'title', 'order', 'organization', 'substeps'],
 			additionalProperties: false,
 			properties: {
-				id: { type: 'string', default: 'id' },
-				description: { type: 'string' },
-				title: { type: 'string' },
+				id: { type: 'string', default: 'id', minLength: 1 },
+				description: { type: 'string', minLength: 3 },
+				title: { type: 'string', minLength: 3 },
 				order: { type: 'integer', default: 0 },
 				organization: { type: 'string' },
 				substeps: {
 					type: 'array',
 					items: { $ref: '#/$defs/Substep' },
-					default: []
+					default: [],
+					minItems: 1
 				}
 			}
 		},
@@ -61,7 +63,7 @@ export const Schema = {
 			properties: {
 				id: { type: 'string', default: 'id' },
 				order: { type: 'integer', default: 0 },
-				title: { type: 'string' },
+				title: { type: 'string', minLength: 3 },
 				inputKey: { type: 'string', title: 'Subtitle' },
 				roles: {
 					type: 'array',

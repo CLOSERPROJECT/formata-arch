@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { Icon } from '$lib/types.js';
 
-	import { DownloadIcon, IdCardIcon, UploadIcon, WaypointsIcon } from '@lucide/svelte';
+	import { DownloadIcon, HomeIcon, IdCardIcon, UploadIcon, WaypointsIcon } from '@lucide/svelte';
 	import { Config } from '$core';
 	import { config } from '$core/state.svelte.js';
 	import ThemeButton from '$lib/components/theme-button.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { toast } from 'svelte-sonner';
 
@@ -60,8 +61,9 @@
 />
 
 <Sidebar.Root>
-	<Sidebar.Header class="h-[53px] justify-center border-b px-4">
+	<Sidebar.Header class="flex h-[53px] flex-row items-center justify-between border-b px-4">
 		<p class="font-semibold tracking-tight text-primary">Attesta Composer</p>
+		<Button href={window.origin} size="icon-sm" variant="outline"><HomeIcon /></Button>
 	</Sidebar.Header>
 	<Sidebar.Content>
 		{@render group(main, 'Main')}

@@ -1,5 +1,7 @@
 import type { Step, Substep } from '$core/config/types.js';
+import type { ErrorObject } from 'ajv';
 
+import { getConfigErrors } from '$core/state.svelte.js';
 import { workflowEditorState } from '$core/workflow/state.svelte.js';
 import { SvelteSet } from 'svelte/reactivity';
 
@@ -66,10 +68,12 @@ export class WorkflowTree {
 			id: String(steps.length + 1),
 			title: '',
 			order: steps.length + 1,
-			organization: '',
+			organization: null as unknown as string,
 			substeps: []
 		};
 		steps.push(newStep);
+		// Re-selecting because once the substep enters the workflow,
+		// it becomes a proxy due to the reactivity system.
 		const insertedStep = steps.at(-1);
 		if (insertedStep) this.selectStep(insertedStep);
 	}
@@ -87,6 +91,8 @@ export class WorkflowTree {
 			uiSchema: {}
 		};
 		step.substeps = [...step.substeps, newSubstep];
+		// Re-selecting because once the substep enters the workflow,
+		// it becomes a proxy due to the reactivity system.
 		const insertedSubstep = step.substeps.at(-1);
 		if (insertedSubstep) this.selectSubstep(insertedSubstep);
 	}
@@ -130,14 +136,16 @@ export class WorkflowTree {
 	}
 
 	selectStep(step: Step): void {
+		if (this.selection.type === 'step' && this.selection.step.id === step.id) return;
 		this.selection = { type: 'step', step };
 		this.expanded.add(this.getKey(step));
 		workflowEditorState.currentStep = step;
 	}
 
 	selectSubstep(substep: Substep): void {
-		this.selection = { type: 'substep', substep };
+		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) return;
 		const step = this.steps.find((s) => s.substeps.some((sub) => sub.id === substep.id));
+		this.selection = { type: 'substep', substep, step: step! };
 		if (step) {
 			this.expanded.add(this.getKey(step));
 			workflowEditorState.currentStep = step;
@@ -193,6 +201,43 @@ export class WorkflowTree {
 		const result = moveItemDown(subs, substep);
 		if (!result.moved) return;
 		renumberSubsteps(step);
+	}
+
+	// Errors
+
+	get errors() {
+		const errs = getConfigErrors();
+		if (!errs) return undefined;
+		return errs.filter((error) => error.instancePath.startsWith(`/workflow/steps`));
+	}
+
+	getStepErrors(step: Step): ErrorObject[] {
+		if (!this.errors) return [];
+		const stepIndex = this.steps.findIndex((s) => s.id === step.id);
+		return this.errors.filter((error) =>
+			error.instancePath.startsWith(`/workflow/steps/${stepIndex}`)
+		);
+	}
+
+	getStepFormErrors(step: Step): ErrorObject[] {
+		return this.getStepErrors(step).filter((error) => error.instancePath.split('/').length === 5);
+	}
+
+	stepHasErrors(step: Step): boolean {
+		return this.getStepErrors(step).length > 0;
+	}
+
+	getSubstepErrors(step: Step, substep: Substep): ErrorObject[] {
+		if (!this.errors) return [];
+		const stepIndex = this.steps.findIndex((s) => s.id === step.id);
+		const substepIndex = step.substeps.findIndex((s) => s.id === substep.id);
+		return this.errors.filter((error) =>
+			error.instancePath.startsWith(`/workflow/steps/${stepIndex}/substeps/${substepIndex}`)
+		);
+	}
+
+	substepHasErrors(step: Step, substep: Substep): boolean {
+		return this.getSubstepErrors(step, substep).length > 0;
 	}
 }
 

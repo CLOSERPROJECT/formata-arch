@@ -2,7 +2,7 @@
 	import { Loader, SaveIcon } from '@lucide/svelte';
 	import { Config } from '$core';
 	import { saveWorkflow } from '$core/api/index.js';
-	import { config, getConfigErrors } from '$core/state.svelte.js';
+	import { appState, config, getConfigErrors } from '$core/state.svelte.js';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -14,9 +14,9 @@
 	//
 
 	const configErrors = $derived(getConfigErrors());
-	const serialized = $derived.by(() => Config.serialize(config));
+	const serialized = $derived.by(() => Config.serialize(config, appState));
 
-	const canExport = $derived(configErrors.length === 0 && !serialized.isErr);
+	const canExport = $derived(!configErrors && !serialized.isErr);
 
 	$effect(() => {
 		if (canExport) {
@@ -31,7 +31,7 @@
 	let loading = $state(false);
 
 	function saveConfig() {
-		if (configErrors.length > 0) {
+		if (configErrors) {
 			toast.error('Fix config validation errors before exporting.');
 			return;
 		}
@@ -56,7 +56,7 @@
 {/snippet}
 
 <div class="flex min-h-0 grow flex-col gap-4 p-4">
-	{#if configErrors.length > 0}
+	{#if configErrors}
 		<Alert.Root variant="destructive">
 			<Alert.Title>Config validation failed.</Alert.Title>
 			<Alert.Description>

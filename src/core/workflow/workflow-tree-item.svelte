@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Plus, Trash2 } from '@lucide/svelte';
+	import {
+		ArrowDown,
+		ArrowUp,
+		ChevronDown,
+		ChevronRight,
+		Plus,
+		Trash2,
+		TriangleAlert
+	} from '@lucide/svelte';
 
 	import TreeButton from './tree-button.svelte';
 
@@ -21,18 +29,18 @@
 		onRemove: () => void;
 		onAdd?: () => void;
 		indent?: number;
+		hasErrors?: boolean;
 	}
 
-	let { indent = 0, ..._ }: Props = $props();
+	let { indent = 0, hasErrors = false, ..._ }: Props = $props();
 </script>
 
 <button
 	tabindex="0"
 	class={[
 		'flex min-h-8 items-center gap-1.5 rounded-sm p-1 transition-colors',
-		'ring-primary',
-		!_.isSelected && 'hover:ring-1',
-		_.isSelected && 'ring-2',
+		!_.isSelected && 'hover:bg-primary/10',
+		_.isSelected && 'bg-primary/10',
 		'group hover:cursor-pointer',
 		'w-full text-sm'
 	]}
@@ -51,12 +59,12 @@
 	{/if}
 
 	{#if _.showIndex}
-		<span class="shrink-0 text-muted-foreground tabular-nums">{_.index}</span>
+		<p class="shrink-0 text-muted-foreground tabular-nums">{_.index}</p>
 	{/if}
 
-	<span class=" min-w-0 grow truncate text-left">
+	<p class="min-w-0 grow truncate text-left">
 		{_.label}
-	</span>
+	</p>
 
 	<div class="flex shrink-0 items-center gap-0.5">
 		{#if _.canMoveUp}
@@ -64,7 +72,7 @@
 				onclick={_.onMoveUp}
 				icon={ArrowUp}
 				aria-label="Move up"
-				class="invisible group-hover:visible"
+				class="hidden group-hover:flex"
 			/>
 		{/if}
 		{#if _.canMoveDown}
@@ -72,7 +80,7 @@
 				onclick={_.onMoveDown}
 				icon={ArrowDown}
 				aria-label="Move down"
-				class="invisible group-hover:visible"
+				class="hidden group-hover:flex"
 			/>
 		{/if}
 
@@ -80,8 +88,14 @@
 			onclick={_.onRemove}
 			icon={Trash2}
 			aria-label="Remove step"
-			class="invisible group-hover:visible"
+			class="hidden group-hover:flex"
 		/>
+
+		{#if hasErrors}
+			<div class="flex size-6 items-center justify-center">
+				<TriangleAlert size={12} class="text-yellow-600 dark:text-yellow-400" />
+			</div>
+		{/if}
 
 		{#if _.onAdd}
 			<TreeButton

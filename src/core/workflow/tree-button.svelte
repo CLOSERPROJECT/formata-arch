@@ -19,7 +19,7 @@
 	variant="ghost"
 	size="icon-sm"
 	{...props}
-	class={[props.class, 'size-6 rounded-sm p-0']}
+	class={[props.class, 'size-6 rounded-sm p-0 hover:bg-primary/20']}
 	onclick={(e) => {
 		e.stopPropagation();
 		onclick?.(e as MouseEvent & { currentTarget: EventTarget & HTMLButtonElement });
