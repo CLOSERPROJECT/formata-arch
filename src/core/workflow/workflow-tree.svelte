@@ -7,7 +7,7 @@
 	import StepForm from '$core/workflow/step-form.svelte';
 	import SubstepForm from '$core/workflow/substep-form.svelte';
 	import { flip } from 'svelte/animate';
-	import { fade } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 
 	import WorkflowTreeItem from './workflow-tree-item.svelte';
 
@@ -99,21 +99,17 @@
 
 	<div class="min-w-0 grow p-4">
 		{#key self.selection}
-			{#if self.selection.type === 'idle'}
-				<div transition:fade>
+			<div in:fly={{ duration: 700, y: 20 }}>
+				{#if self.selection.type === 'idle'}
 					<p class="flex items-center justify-center text-sm text-muted-foreground">
 						Select a step or substep in the tree, or use the add buttons to create one.
 					</p>
-				</div>
-			{:else if self.selection.type === 'step'}
-				<div transition:fade>
+				{:else if self.selection.type === 'step'}
 					<StepForm bind:step={self.selection.step} />
-				</div>
-			{:else if self.selection.type === 'substep'}
-				<div transition:fade>
+				{:else if self.selection.type === 'substep'}
 					<SubstepForm bind:substep={self.selection.substep} />
-				</div>
-			{/if}
+				{/if}
+			</div>
 		{/key}
 	</div>
 </div>
