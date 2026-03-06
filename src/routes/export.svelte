@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DownloadIcon, Loader } from '@lucide/svelte';
+	import { Loader, SaveIcon } from '@lucide/svelte';
 	import { Config } from '$core';
 	import { saveWorkflow } from '$core/api/index.js';
 	import { config, getConfigErrors } from '$core/state.svelte.js';
@@ -50,8 +50,8 @@
 
 {#snippet topbarRight()}
 	<Button onclick={saveConfig}>
-		<DownloadIcon />
-		Download
+		<SaveIcon />
+		Save
 	</Button>
 {/snippet}
 

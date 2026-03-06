@@ -82,7 +82,7 @@
 				class={[
 					'flex min-h-8 items-center gap-1 rounded-sm p-1 transition-colors',
 					'font-semibold text-primary hover:bg-primary/10',
-					'w-full text-sm'
+					'mt-2 w-full text-sm'
 				]}
 				onclick={() => self.addStep()}
 			>
