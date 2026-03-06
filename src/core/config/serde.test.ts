@@ -28,7 +28,7 @@ describe('serde', () => {
 		expect(parseResult.isOk).toBe(true);
 		if (!parseResult.isOk) return;
 		const config = parseResult.value;
-		const strResult = serialize(config);
+		const strResult = serialize(config, { organizations: [], roles: [] });
 		expect(strResult.isOk).toBe(true);
 		if (!strResult.isOk) return;
 		const config2Result = deserialize(strResult.value);

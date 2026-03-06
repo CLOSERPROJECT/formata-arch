@@ -67,7 +67,7 @@ export function saveWorkflow(): Task.Task<void, Error> {
 		return Task.resolve(undefined);
 	}
 
-	const serialized = Config.serialize(config);
+	const serialized = Config.serialize(config, appState);
 	if (serialized.isErr) {
 		return Task.reject(serialized.error);
 	}

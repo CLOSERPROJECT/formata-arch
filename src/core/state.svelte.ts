@@ -47,11 +47,6 @@ const DEFAULT_CONFIG: Config.Config = {
 
 export const config = lsSync<Config.Config>('formata-config', DEFAULT_CONFIG);
 
-// const configResult = Config.deserialize(sourceYaml);
-// if (configResult.isErr) {
-// 	throw new Error(configResult.error.message);
-// }
-
 //
 
 const ajv = new Ajv({ allErrors: true });

@@ -2,7 +2,7 @@
 	import { Loader, SaveIcon } from '@lucide/svelte';
 	import { Config } from '$core';
 	import { saveWorkflow } from '$core/api/index.js';
-	import { config, getConfigErrors } from '$core/state.svelte.js';
+	import { appState, config, getConfigErrors } from '$core/state.svelte.js';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -14,7 +14,7 @@
 	//
 
 	const configErrors = $derived(getConfigErrors());
-	const serialized = $derived.by(() => Config.serialize(config));
+	const serialized = $derived.by(() => Config.serialize(config, appState));
 
 	const canExport = $derived(!configErrors && !serialized.isErr);
 
