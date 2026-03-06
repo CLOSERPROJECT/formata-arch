@@ -44,7 +44,7 @@
 	}
 
 	function toggleExpanded(step: Step) {
-		const key = self.getStepKey(step);
+		const key = self.getKey(step);
 		if (self.expanded.has(key)) {
 			self.expanded.delete(key);
 		} else {
@@ -62,7 +62,7 @@
 			Steps
 		</p>
 		<div class="flex grow flex-col gap-1 text-sm">
-			{#each self.steps as step, stepIndex (self.getStepKey(step))}
+			{#each self.steps as step, stepIndex (self.getKey(step))}
 				<div class="flex flex-col gap-1" animate:flip={{ duration: 500 }}>
 					<div
 						role="button"
@@ -80,8 +80,8 @@
 					>
 						<TreeButton
 							onclick={() => toggleExpanded(step)}
-							icon={self.expanded.has(self.getStepKey(step)) ? ChevronDown : ChevronRight}
-							aria-label={self.expanded.has(self.getStepKey(step)) ? 'Collapse' : 'Expand'}
+							icon={self.expanded.has(self.getKey(step)) ? ChevronDown : ChevronRight}
+							aria-label={self.expanded.has(self.getKey(step)) ? 'Collapse' : 'Expand'}
 						/>
 						<span class="flex shrink-0 items-center gap-1.5">
 							{#if showIndices}
@@ -122,8 +122,8 @@
 							/>
 						</div>
 					</div>
-					{#if self.expanded.has(self.getStepKey(step))}
-						{#each step.substeps as substep, subIndex (substep.id)}
+					{#if self.expanded.has(self.getKey(step))}
+						{#each step.substeps as substep, subIndex (self.getKey(substep))}
 							<div
 								role="button"
 								tabindex="0"
@@ -134,8 +134,8 @@
 									isSubstepSelected(substep) && 'ring-2',
 									'group hover:cursor-pointer'
 								]}
-								style="padding-left: 1.5rem"
-								animate:flip={{ duration: 500 }}
+								style="padding-left: 1.5rem; overflow: visible"
+								animate:flip={{ duration: 250 }}
 								onclick={() => self.selectSubstep(substep)}
 								onkeydown={(e) => e.key === 'Enter' && self.selectSubstep(substep)}
 							>

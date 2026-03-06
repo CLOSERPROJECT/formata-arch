@@ -19,13 +19,13 @@ export class WorkflowTree {
 	selection = $state<WorkflowTreeSelection>({ type: 'idle' });
 	expanded = new SvelteSet<string>();
 
-	private stepKeys = new WeakMap<Step, string>();
+	private stableKeys = new WeakMap<Step | Substep, string>();
 
-	getStepKey(step: Step): string {
-		let key = this.stepKeys.get(step);
+	getKey(item: Step | Substep): string {
+		let key = this.stableKeys.get(item);
 		if (!key) {
 			key = crypto.randomUUID();
-			this.stepKeys.set(step, key);
+			this.stableKeys.set(item, key);
 		}
 		return key;
 	}
@@ -73,7 +73,7 @@ export class WorkflowTree {
 			sel.type === 'substep' && step.substeps.some((s) => s.id === sel.substep.id);
 		steps.splice(index, 1);
 		renumberSteps(steps);
-		this.expanded.delete(this.getStepKey(step));
+		this.expanded.delete(this.getKey(step));
 		if (wasSelectedStep || wasSelectedSubstep) {
 			this.clearSelection();
 		}
@@ -147,7 +147,7 @@ export class WorkflowTree {
 
 	selectStep(step: Step): void {
 		this.selection = { type: 'step', step };
-		this.expanded.add(this.getStepKey(step));
+		this.expanded.add(this.getKey(step));
 		workflowEditorState.currentStep = step;
 	}
 
@@ -155,7 +155,7 @@ export class WorkflowTree {
 		this.selection = { type: 'substep', substep };
 		const step = this.steps.find((s) => s.substeps.some((sub) => sub.id === substep.id));
 		if (step) {
-			this.expanded.add(this.getStepKey(step));
+			this.expanded.add(this.getKey(step));
 			workflowEditorState.currentStep = step;
 		}
 	}
@@ -195,11 +195,11 @@ function remapExpanded(): void {
 }
 
 function renumberSubsteps(step: Step): Step {
-	step.substeps = step.substeps.map((sub, j) => ({
-		...sub,
-		order: j + 1,
-		id: `${step.id}.${j + 1}`
-	}));
+	for (let j = 0; j < step.substeps.length; j++) {
+		const sub = step.substeps[j];
+		sub.order = j + 1;
+		sub.id = `${step.id}.${j + 1}`;
+	}
 	return step;
 }
 
