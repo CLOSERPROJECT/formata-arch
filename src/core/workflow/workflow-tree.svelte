@@ -25,7 +25,7 @@
 		showIndices?: boolean;
 	}
 
-	let { self, showIndices = false }: Props = $props();
+	let { self = $bindable(), showIndices = false }: Props = $props();
 
 	function stepLabel(step: Step): string {
 		return step.title?.trim() || '(Untitled step)';
@@ -36,11 +36,11 @@
 	}
 
 	function isStepSelected(step: Step): boolean {
-		return self.selection.type === 'step' && self.selection.step === step;
+		return self.selection.type === 'step' && self.selection.step.id === step.id;
 	}
 
 	function isSubstepSelected(substep: Substep): boolean {
-		return self.selection.type === 'substep' && self.selection.substep === substep;
+		return self.selection.type === 'substep' && self.selection.substep.id === substep.id;
 	}
 
 	function toggleExpanded(step: Step) {
@@ -204,11 +204,11 @@
 				</div>
 			{:else if self.selection.type === 'step'}
 				<div transition:fade>
-					<StepForm step={self.selection.step} />
+					<StepForm bind:step={self.selection.step} />
 				</div>
 			{:else if self.selection.type === 'substep'}
 				<div transition:fade>
-					<SubstepForm substep={self.selection.substep} />
+					<SubstepForm bind:substep={self.selection.substep} />
 				</div>
 			{/if}
 		{/key}

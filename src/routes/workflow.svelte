@@ -1,21 +1,18 @@
 <script lang="ts">
 	import { CheckIcon, Pencil, TriangleAlert } from '@lucide/svelte';
 	import { config, getConfigErrors } from '$core/state.svelte.js';
+	import WorkflowTreeComponent from '$core/workflow/workflow-tree.svelte';
+	import { WorkflowTree } from '$core/workflow/workflow-tree.svelte.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { WorkflowTree } from '$core/workflow/workflow-tree.svelte.js';
-	import WorkflowTreeComponent from '$core/workflow/workflow-tree.svelte';
 
 	import { setTopbar } from './_layout.svelte';
 
 	//
 
-	const workflowTree = new WorkflowTree({
-		steps: config.workflow.steps,
-		defaultOrganization: config.organizations[0]?.slug
-	});
+	let workflowTree = new WorkflowTree({ steps: config.workflow.steps });
 
 	setTopbar({
 		title: 'Stream / Workflow',
@@ -105,4 +102,4 @@
 	</Popover.Root>
 {/snippet}
 
-<WorkflowTreeComponent self={workflowTree} showIndices />
+<WorkflowTreeComponent bind:self={workflowTree} showIndices />
