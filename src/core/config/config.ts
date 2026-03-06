@@ -43,6 +43,7 @@ export const Schema = {
 			additionalProperties: false,
 			properties: {
 				id: { type: 'string', default: 'id' },
+				description: { type: 'string' },
 				title: { type: 'string' },
 				order: { type: 'integer', default: 0 },
 				organization: { type: 'string' },

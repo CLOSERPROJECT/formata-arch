@@ -2,16 +2,55 @@ import { Config } from '$core';
 import { Ajv } from 'ajv';
 import { lsSync } from 'rune-sync/localstorage';
 
-import sourceYaml from './config/config.sample.yaml?raw';
+import type { Organization, Role } from './api/index.js';
 
 //
 
-const configResult = Config.deserialize(sourceYaml);
-if (configResult.isErr) {
-	throw new Error(configResult.error.message);
+type AppState = {
+	organizations: Organization[];
+	roles: Role[];
+};
+
+export const appState = $state<AppState>({
+	organizations: [],
+	roles: []
+});
+
+const isReady = $derived.by(() => appState.organizations.length > 0 && appState.roles.length > 0);
+
+export function isAppReady() {
+	return isReady;
 }
 
-export const config = lsSync('formata-config', configResult.value);
+//
+
+const DEFAULT_CONFIG: Config.Config = {
+	workflow: {
+		name: 'Workflow',
+		description: 'Workflow description',
+		steps: []
+	},
+	organizations: [],
+	roles: [],
+	dpp: {
+		enabled: false,
+		gtin: '',
+		lotInputKey: '',
+		lotDefault: '',
+		serialInputKey: '',
+		serialStrategy: '',
+		productName: '',
+		productDescription: '',
+		ownerName: ''
+	}
+};
+
+export const config = lsSync<Config.Config>('formata-config', DEFAULT_CONFIG);
+
+// const configResult = Config.deserialize(sourceYaml);
+// if (configResult.isErr) {
+// 	throw new Error(configResult.error.message);
+// }
 
 //
 
