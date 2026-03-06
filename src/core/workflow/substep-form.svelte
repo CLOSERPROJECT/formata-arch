@@ -5,6 +5,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 
+	import FieldWrapper from './components/field-wrapper.svelte';
 	import SubstepFormata from './components/substep-formata.svelte';
 	import { getAvailableRoleOptions } from './state.svelte.js';
 
@@ -31,25 +32,33 @@
 	});
 </script>
 
-<div>
-	<Input bind:value={substep.title} />
+<div class="space-y-6">
+	<FieldWrapper label="Title">
+		<Input bind:value={substep.title} placeholder="Enter substep title" />
+	</FieldWrapper>
 
-	<Textarea bind:value={substep.inputKey} />
+	<FieldWrapper label="Description">
+		<Textarea bind:value={substep.inputKey} />
+	</FieldWrapper>
 
-	<Select.Root type="multiple" name="favoriteFruit" bind:value={substep.roles}>
-		<Select.Trigger class="w-[180px]">
-			{triggerContent}
-		</Select.Trigger>
-		<Select.Content>
-			<Select.Group>
-				{#each availableRoles as role (role.slug)}
-					<Select.Item value={role.slug} label={role.name}>
-						{role.name}
-					</Select.Item>
-				{/each}
-			</Select.Group>
-		</Select.Content>
-	</Select.Root>
+	<FieldWrapper label="Roles">
+		<Select.Root type="multiple" name="favoriteFruit" bind:value={substep.roles}>
+			<Select.Trigger class="w-full">
+				{triggerContent}
+			</Select.Trigger>
+			<Select.Content>
+				<Select.Group>
+					{#each availableRoles as role (role.slug)}
+						<Select.Item value={role.slug} label={role.name}>
+							{role.name}
+						</Select.Item>
+					{/each}
+				</Select.Group>
+			</Select.Content>
+		</Select.Root>
+	</FieldWrapper>
 
-	<SubstepFormata bind:substep />
+	<FieldWrapper label="Data input form">
+		<SubstepFormata bind:substep />
+	</FieldWrapper>
 </div>
