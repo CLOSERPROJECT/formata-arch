@@ -85,11 +85,7 @@ export class WorkflowTree {
 		const wasSelected =
 			this.selection.type === 'substep' && this.selection.substep.id === substep.id;
 		step.substeps = step.substeps.filter((s) => s.id !== substep.id);
-		const renumbered = renumberSubsteps(step);
-		const stepIndex = this.steps.findIndex((s) => s.id === step.id);
-		if (stepIndex !== -1) {
-			this.steps[stepIndex] = renumbered;
-		}
+		renumberSubsteps(step);
 		if (wasSelected) {
 			this.clearSelection();
 		}
