@@ -184,6 +184,25 @@ export class WorkflowTree {
 	getStepForSubstep(substep: Substep): Step | undefined {
 		return this.steps.find((s) => s.substeps.some((sub) => sub.id === substep.id));
 	}
+
+	//
+
+	isStepSelected(step: Step): boolean {
+		return this.selection.type === 'step' && this.selection.step.id === step.id;
+	}
+
+	isSubstepSelected(substep: Substep): boolean {
+		return this.selection.type === 'substep' && this.selection.substep.id === substep.id;
+	}
+
+	toggleStepExpanded(step: Step) {
+		const key = this.getKey(step);
+		if (this.expanded.has(key)) {
+			this.expanded.delete(key);
+		} else {
+			this.selectStep(step);
+		}
+	}
 }
 
 function renumberSubsteps(step: Step): Step {

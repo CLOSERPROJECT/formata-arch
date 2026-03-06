@@ -27,30 +27,14 @@
 
 	let { self = $bindable(), showIndices = false }: Props = $props();
 
+	//
+
 	function stepLabel(step: Step): string {
 		return step.title?.trim() || '(Untitled step)';
 	}
 
 	function substepLabel(substep: Substep): string {
 		return substep.title?.trim() || '(Untitled substep)';
-	}
-
-	function isStepSelected(step: Step): boolean {
-		return self.selection.type === 'step' && self.selection.step.id === step.id;
-	}
-
-	function isSubstepSelected(substep: Substep): boolean {
-		return self.selection.type === 'substep' && self.selection.substep.id === substep.id;
-	}
-
-	function toggleExpanded(step: Step) {
-		const key = self.getKey(step);
-		if (self.expanded.has(key)) {
-			self.expanded.delete(key);
-		} else {
-			self.expanded.add(key);
-			self.selectStep(step);
-		}
 	}
 </script>
 
@@ -64,14 +48,13 @@
 		<div class="flex grow flex-col gap-1 text-sm">
 			{#each self.steps as step, stepIndex (self.getKey(step))}
 				<div class="flex flex-col gap-1" animate:flip={{ duration: 500 }}>
-					<div
-						role="button"
+					<button
 						tabindex="0"
 						class={[
 							'flex min-h-8 items-center gap-1 rounded-sm p-1 transition-colors',
 							'ring-primary',
-							!isStepSelected(step) && 'hover:ring-1',
-							isStepSelected(step) && 'ring-2',
+							!self.isStepSelected(step) && 'hover:ring-1',
+							self.isStepSelected(step) && 'ring-2',
 							'group hover:cursor-pointer'
 						]}
 						style="padding-left: 0.25rem"
@@ -79,7 +62,7 @@
 						onkeydown={(e) => e.key === 'Enter' && self.selectStep(step)}
 					>
 						<TreeButton
-							onclick={() => toggleExpanded(step)}
+							onclick={() => self.toggleStepExpanded(step)}
 							icon={self.expanded.has(self.getKey(step)) ? ChevronDown : ChevronRight}
 							aria-label={self.expanded.has(self.getKey(step)) ? 'Collapse' : 'Expand'}
 						/>
@@ -121,7 +104,7 @@
 								iconClass="stroke-3"
 							/>
 						</div>
-					</div>
+					</button>
 					{#if self.expanded.has(self.getKey(step))}
 						{#each step.substeps as substep, subIndex (self.getKey(substep))}
 							<div
@@ -130,8 +113,8 @@
 								class={[
 									'flex min-h-8 items-center gap-1 rounded-sm p-1 transition-colors',
 									'ring-primary',
-									!isSubstepSelected(substep) && 'hover:ring-1',
-									isSubstepSelected(substep) && 'ring-2',
+									!self.isSubstepSelected(substep) && 'hover:ring-1',
+									self.isSubstepSelected(substep) && 'ring-2',
 									'group hover:cursor-pointer'
 								]}
 								style="padding-left: 1.5rem; overflow: visible"
@@ -142,9 +125,9 @@
 								<span class="w-5 shrink-0" aria-hidden="true"></span>
 								<span class="flex shrink-0 items-center gap-1.5">
 									{#if showIndices}
-										<span class="shrink-0 text-muted-foreground tabular-nums"
-											>{stepIndex + 1}.{subIndex + 1}</span
-										>
+										<span class="shrink-0 text-muted-foreground tabular-nums">
+											{stepIndex + 1}.{subIndex + 1}
+										</span>
 									{/if}
 									<span>{substepLabel(substep)}</span>
 								</span>
