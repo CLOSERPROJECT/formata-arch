@@ -70,7 +70,8 @@ export class WorkflowTree {
 			substeps: []
 		};
 		steps.push(newStep);
-		this.selectStep(newStep);
+		const insertedStep = steps.at(-1);
+		if (insertedStep) this.selectStep(insertedStep);
 	}
 
 	addSubstep(step: Step): void {
@@ -86,7 +87,8 @@ export class WorkflowTree {
 			uiSchema: {}
 		};
 		step.substeps = [...step.substeps, newSubstep];
-		this.selectSubstep(newSubstep);
+		const insertedSubstep = step.substeps.at(-1);
+		if (insertedSubstep) this.selectSubstep(insertedSubstep);
 	}
 
 	removeStep(step: Step): void {
