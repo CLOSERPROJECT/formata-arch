@@ -186,10 +186,6 @@ export class WorkflowTree {
 	}
 }
 
-function remapExpanded(): void {
-	// No-op with stable, external step keys.
-}
-
 function renumberSubsteps(step: Step): Step {
 	for (let j = 0; j < step.substeps.length; j++) {
 		const sub = step.substeps[j];
