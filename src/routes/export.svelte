@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { DownloadIcon } from '@lucide/svelte';
+	import { Loader, SaveIcon } from '@lucide/svelte';
 	import { Config } from '$core';
+	import { saveWorkflow } from '$core/api/index.js';
 	import { config, getConfigErrors } from '$core/state.svelte.js';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { highlight, highlighterPromise } from '$lib/shiki.js';
@@ -24,31 +26,32 @@
 		}
 	});
 
-	function downloadConfig() {
+	//
+
+	let loading = $state(false);
+
+	function saveConfig() {
 		if (configErrors.length > 0) {
 			toast.error('Fix config validation errors before exporting.');
 			return;
 		}
-		const result = Config.serialize(config);
-		if (result.isErr) {
-			toast.error(result.error.message);
-			return;
-		}
-		const blob = new Blob([result.value], { type: 'application/yaml' });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'formata-config.yaml';
-		a.click();
-		URL.revokeObjectURL(url);
-		toast.success('Config exported');
+
+		loading = true;
+		saveWorkflow().then((res) => {
+			if (res.isErr) {
+				toast.error(res.error.message);
+			} else {
+				toast.success('Workflow saved successfully');
+			}
+			loading = false;
+		});
 	}
 </script>
 
 {#snippet topbarRight()}
-	<Button onclick={downloadConfig}>
-		<DownloadIcon />
-		Download
+	<Button onclick={saveConfig}>
+		<SaveIcon />
+		Save
 	</Button>
 {/snippet}
 
@@ -83,3 +86,12 @@
 		{/await}
 	{/if}
 </div>
+
+<AlertDialog.Root open={loading}>
+	<AlertDialog.Content class="flex items-center justify-center">
+		<div class="flex items-center gap-2">
+			<Loader class="animate-spin" />
+			<p>Loading...</p>
+		</div>
+	</AlertDialog.Content>
+</AlertDialog.Root>
