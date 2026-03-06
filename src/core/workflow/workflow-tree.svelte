@@ -3,9 +3,10 @@
 	import type { Substep } from '$core/repositories/substep.repository.svelte.js';
 	import type { WorkflowTree } from '$core/workflow/workflow-tree.svelte.js';
 
-	import { FolderPlusIcon } from '@lucide/svelte';
+	import { PlusIcon } from '@lucide/svelte';
 	import StepForm from '$core/workflow/step-form.svelte';
 	import SubstepForm from '$core/workflow/substep-form.svelte';
+	import * as Resizable from '$lib/components/ui/resizable/index.js';
 	import { flip } from 'svelte/animate';
 	import { fly } from 'svelte/transition';
 
@@ -31,15 +32,11 @@
 	}
 </script>
 
-<div class="flex grow justify-stretch">
-	<div class="w-[400px] shrink-0 overflow-auto border-r p-2">
-		<p
-			class="flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0"
-		>
-			Steps
-		</p>
+<Resizable.PaneGroup direction="horizontal">
+	<Resizable.Pane defaultSize={30} minSize={20} class="min-w-[200px] p-2">
+		<p class="steps-label">Steps</p>
 
-		<div class="">
+		<div>
 			{#each self.steps as step (self.getKey(step))}
 				<div class="space-y-1" animate:flip={{ duration: 500 }}>
 					<WorkflowTreeItem
@@ -90,14 +87,16 @@
 				onclick={() => self.addStep()}
 			>
 				<div class="flex size-[24px] items-center justify-center">
-					<FolderPlusIcon class="size-3.5" />
+					<PlusIcon class="size-3.5 stroke-3" />
 				</div>
 				Add step
 			</button>
 		</div>
-	</div>
+	</Resizable.Pane>
 
-	<div class="min-w-0 grow p-4">
+	<Resizable.Handle class="w-0.5 hover:bg-primary" />
+
+	<Resizable.Pane class="p-4">
 		{#key self.selection}
 			<div in:fly={{ duration: 700, y: 20 }}>
 				{#if self.selection.type === 'idle'}
@@ -111,5 +110,13 @@
 				{/if}
 			</div>
 		{/key}
-	</div>
-</div>
+	</Resizable.Pane>
+</Resizable.PaneGroup>
+
+<style lang="postcss">
+	@reference "../../app.css";
+
+	.steps-label {
+		@apply flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70 ring-sidebar-ring outline-hidden transition-[margin,opacity] duration-200 ease-linear group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0 focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0;
+	}
+</style>

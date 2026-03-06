@@ -33,6 +33,7 @@
 		"globals": "^17.3.0",
 		"json-schema-to-ts": "^3.1.1",
 		"mode-watcher": "^1.1.0",
+		"paneforge": "^1.0.2",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.2",
 		"prettier-plugin-tailwindcss": "^0.7.2",
