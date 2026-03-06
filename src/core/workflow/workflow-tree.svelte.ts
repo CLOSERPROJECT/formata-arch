@@ -136,12 +136,14 @@ export class WorkflowTree {
 	}
 
 	selectStep(step: Step): void {
+		if (this.selection.type === 'step' && this.selection.step.id === step.id) return;
 		this.selection = { type: 'step', step };
 		this.expanded.add(this.getKey(step));
 		workflowEditorState.currentStep = step;
 	}
 
 	selectSubstep(substep: Substep): void {
+		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) return;
 		const step = this.steps.find((s) => s.substeps.some((sub) => sub.id === substep.id));
 		this.selection = { type: 'substep', substep, step: step! };
 		if (step) {
