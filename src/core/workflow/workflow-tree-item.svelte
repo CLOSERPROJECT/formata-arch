@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Plus, Trash2 } from '@lucide/svelte';
-	import TreeButton from '$core/tree/tree-button.svelte';
+
+	import TreeButton from './tree-button.svelte';
+
+	//
 
 	interface Props {
 		isSelected: boolean;

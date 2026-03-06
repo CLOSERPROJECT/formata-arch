@@ -1,5 +1,5 @@
 import type { Role } from '$core/api/index.js';
-import type { Step } from '$core/repositories/step.repository.js';
+import type { Step } from '$core/config/types.js';
 
 import { appState } from '$core/state.svelte.js';
 

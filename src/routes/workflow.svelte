@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { CheckIcon, Pencil, TriangleAlert } from '@lucide/svelte';
 	import { config, getConfigErrors } from '$core/state.svelte.js';
-	import WorkflowTreeComponent from '$core/workflow/workflow-tree.svelte';
+	import WorkflowTreeComponent from '$core/workflow/workflow-editor.svelte';
 	import { WorkflowTree } from '$core/workflow/workflow-tree.svelte.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import Input from '$lib/components/ui/input/input.svelte';
