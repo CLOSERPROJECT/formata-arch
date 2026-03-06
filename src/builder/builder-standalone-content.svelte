@@ -50,10 +50,7 @@
 </script>
 
 <div class={['mx-auto grid gap-6', 'grid-cols-[1fr_3fr_2fr_3fr]']}>
-	<div
-		bind:this={rootElements[0]}
-		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[150px] overflow-y-auto"
-	>
+	<div bind:this={rootElements[0]}>
 		{@render label('Available fields')}
 		<Controls />
 	</div>
@@ -63,10 +60,7 @@
 		<Content />
 	</div>
 
-	<div
-		bind:this={rootElements[2]}
-		class="sticky top-(--header-height) h-[calc(100vh-var(--header-height))] min-w-[200px] overflow-y-auto"
-	>
+	<div bind:this={rootElements[2]}>
 		{@render label('Field settings')}
 		<Settings />
 	</div>

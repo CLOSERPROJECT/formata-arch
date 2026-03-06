@@ -3,7 +3,7 @@
 	import type { BuilderContext } from '$builder/context.svelte.js';
 	import type { Substep } from '$core/config/types.js';
 
-	import { PencilIcon, TriangleAlert } from '@lucide/svelte';
+	import { PencilIcon, SaveIcon, TriangleAlert, XIcon } from '@lucide/svelte';
 	import BuilderStandalone from '$builder/builder-standalone.svelte';
 	import Form from '$builder/preview/form.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -77,21 +77,33 @@
 		</Dialog.Trigger>
 		<Dialog.Content
 			class="h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-none! p-4!"
-			style="--header-height: 10rem"
+			showCloseButton={false}
 		>
-			<Dialog.Header class="border-b pb-2">
-				<Dialog.Title>Formata Config</Dialog.Title>
+			<Dialog.Header class="flex justify-between border-b pb-2">
+				<Dialog.Title class="flex items-center justify-between gap-2">
+					<span> Form Config </span>
+					<div>
+						<Dialog.Close>
+							{#snippet child({ props })}
+								<Button {...props} variant="outline" size="sm">
+									<XIcon />
+									Close
+								</Button>
+							{/snippet}
+						</Dialog.Close>
+						<Button onclick={handleSave} size="sm">
+							<SaveIcon />
+							Save
+						</Button>
+					</div>
+				</Dialog.Title>
 			</Dialog.Header>
 
-			<BuilderStandalone
-				initialData={{ schema: substep.schema, uiSchema: substep.uiSchema as UiSchema }}
-				onInit={handleBuilderInit}
-			/>
-
-			<div
-				class="absolute bottom-0 flex w-full justify-end border-t bg-background/40 p-2 backdrop-blur-xl"
-			>
-				<Button onclick={handleSave}>Save</Button>
+			<div class="relative overflow-y-auto">
+				<BuilderStandalone
+					initialData={{ schema: substep.schema, uiSchema: substep.uiSchema as UiSchema }}
+					onInit={handleBuilderInit}
+				/>
 			</div>
 		</Dialog.Content>
 	</Dialog.Root>
