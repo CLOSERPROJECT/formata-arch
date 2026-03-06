@@ -1,7 +1,14 @@
 <script lang="ts">
 	import type { Icon } from '$lib/types.js';
 
-	import { DownloadIcon, IdCardIcon, UploadIcon, WaypointsIcon } from '@lucide/svelte';
+	import {
+		BuildingIcon,
+		DownloadIcon,
+		IdCardIcon,
+		UploadIcon,
+		UserIcon,
+		WaypointsIcon
+	} from '@lucide/svelte';
 	import { Config } from '$core';
 	import { config } from '$core/state.svelte.js';
 	import ThemeButton from '$lib/components/theme-button.svelte';
@@ -17,6 +24,11 @@
 	const main: NavLink[] = [
 		{ label: 'Stream / Workflow', href: p('/'), icon: WaypointsIcon },
 		{ label: 'DPP', href: p('/dpp'), icon: IdCardIcon }
+	];
+
+	const accessControl: NavLink[] = [
+		{ label: 'Organizations', href: p('/organizations'), icon: BuildingIcon },
+		{ label: 'Roles', href: p('/roles'), icon: UserIcon }
 	];
 
 	let importInput: HTMLInputElement | undefined = $state();
@@ -65,6 +77,7 @@
 	</Sidebar.Header>
 	<Sidebar.Content>
 		{@render group(main, 'Main')}
+		{@render group(accessControl, 'Access control')}
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Data</Sidebar.GroupLabel>
 			<Sidebar.Menu>

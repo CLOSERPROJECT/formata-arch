@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { SaveIcon } from '@lucide/svelte';
-	import { Config, Form } from '$core';
+	import { Crud } from '$core';
+	import { DppRepository } from '$core/repositories/index.js';
 	import { config } from '$core/state.svelte.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 
@@ -8,29 +9,23 @@
 
 	//
 
-	const form = Form.make<Config.Dpp>({
-		schema: Config.getEntitySchema('Dpp'),
-		initialValue: config.dpp,
-		onSubmit: (value) => {
-			config.dpp = value;
-		}
-	});
+	const repository = new DppRepository(config);
+	const crud = new Crud(repository);
+	crud.editingRecord = repository.list()[0];
 
 	setTopbar({
 		title: 'DPP Config',
 		right: topbarRight
 	});
-
-	let formRef: HTMLFormElement | undefined = $state();
 </script>
 
 {#snippet topbarRight()}
-	<Button onclick={() => formRef?.requestSubmit()}>
+	<Button onclick={() => crud.submitForm()}>
 		<SaveIcon />
-		Update
+		Save
 	</Button>
 {/snippet}
 
 <div class="p-4">
-	<Form.Component {form} hideSubmitButton bind:ref={formRef} />
+	<crud.Form self={crud} hideSubmitButton />
 </div>
