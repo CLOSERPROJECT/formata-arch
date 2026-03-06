@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Icon } from '$lib/types.js';
 
-	import { DownloadIcon, HomeIcon, IdCardIcon, UploadIcon, WaypointsIcon } from '@lucide/svelte';
+	import { DownloadIcon, HouseIcon, IdCardIcon, UploadIcon, WaypointsIcon } from '@lucide/svelte';
 	import { Config } from '$core';
 	import { config } from '$core/state.svelte.js';
 	import ThemeButton from '$lib/components/theme-button.svelte';
@@ -63,8 +63,13 @@
 <Sidebar.Root>
 	<Sidebar.Header class="flex h-[53px] flex-row items-center justify-between border-b px-4">
 		<p class="font-semibold tracking-tight text-primary">Attesta Composer</p>
-		<Button href={window.origin} size="icon-sm" variant="ghost" class="hover:bg-sidebar-accent">
-			<HomeIcon />
+		<Button
+			onclick={() => (window.location.href = window.origin)}
+			size="icon-sm"
+			variant="ghost"
+			class="hover:bg-sidebar-accent"
+		>
+			<HouseIcon />
 		</Button>
 	</Sidebar.Header>
 	<Sidebar.Content>
