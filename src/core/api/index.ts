@@ -40,7 +40,7 @@ export function loadOrganizationData(): Task.Task<void, Error> {
 
 	return Task.tryOrElse(
 		(err) => new Error('Failed to fetch organization data', { cause: err }),
-		() => fetch('/api/organizations')
+		() => fetch('/api/catalog')
 	)
 		.andThen((res) =>
 			Task.tryOrElse(
