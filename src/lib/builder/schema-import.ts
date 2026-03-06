@@ -52,6 +52,24 @@ function nodeId(): NodeId {
 	return crypto.randomUUID() as NodeId;
 }
 
+/** Builder emits components[defaultWidget] = widget when widget differs from default. */
+const BUILDER_DEFAULT_WIDGETS: Partial<Record<NodeType, string>> = {
+	[NodeType.String]: 'textWidget',
+	[NodeType.Number]: 'numberWidget',
+	[NodeType.Boolean]: 'checkboxWidget',
+	[NodeType.Enum]: 'selectWidget',
+	[NodeType.MultiEnum]: 'checkboxesWidget'
+};
+
+/** Valid widget overrides per node type (from theme-schemas). */
+const WIDGET_OVERRIDES: Partial<Record<NodeType, Set<string>>> = {
+	[NodeType.String]: new Set(['datePickerWidget', 'textareaWidget']),
+	[NodeType.Number]: new Set(['rangeWidget']),
+	[NodeType.Boolean]: new Set(['switchWidget']),
+	[NodeType.Enum]: new Set(['radioWidget', 'comboboxWidget']),
+	[NodeType.MultiEnum]: new Set(['multiSelectWidget'])
+};
+
 /** Infer widget from uiSchema fragment (best-effort). */
 function inferWidgetFromUiSchema(
 	uiSchema: UiSchema | undefined,
@@ -61,17 +79,27 @@ function inferWidgetFromUiSchema(
 	if (!uiSchema) return defaultWidget;
 	const components = uiSchema['ui:components'];
 	if (components && typeof components === 'object') {
+		const c = components as Record<string, unknown>;
 		// Check for known component -> widget mappings used by the builder
 		// @ts-expect-error - Type is missing in the library but exists in formata-form
-		if (components['stringField'] === 'formataQrField') return 'textWidget';
-		if (components['objectField'] === 'aggregatedField') return 'aggregatedWidget';
-		if (components['arrayField'] === 'multiEnumField') return 'checkboxesWidget';
-		if (components['arrayField'] === 'arrayTagsField') return 'tagsWidget';
+		if (c['stringField'] === 'formataQrField') return 'textWidget';
+		if (c['objectField'] === 'aggregatedField') return 'aggregatedWidget';
+		if (c['arrayField'] === 'multiEnumField') return 'checkboxesWidget';
+		if (c['arrayField'] === 'arrayTagsField') return 'tagsWidget';
 		if (
-			components['arrayField'] === 'arrayFilesField' ||
-			components['arrayField'] === 'arrayNativeFilesField'
+			c['arrayField'] === 'arrayFilesField' ||
+			c['arrayField'] === 'arrayNativeFilesField'
 		)
 			return 'fileWidget';
+		// Check for widget-override mappings: builder emits components[defaultWidget] = widget
+		const builderDefault = BUILDER_DEFAULT_WIDGETS[nodeType];
+		const validOverrides = WIDGET_OVERRIDES[nodeType];
+		if (builderDefault && validOverrides) {
+			const override = c[builderDefault];
+			if (typeof override === 'string' && validOverrides.has(override)) {
+				return override;
+			}
+		}
 	}
 	// ui:options might not store widget directly; theme uses shadcn4Text etc.
 	return defaultWidget;
@@ -421,11 +449,15 @@ function parseSchemaValue(
 		if (opts.minLength !== undefined) stringNode.options.minLength = Number(opts.minLength);
 		if (opts.maxLength !== undefined) stringNode.options.maxLength = Number(opts.maxLength);
 		if (opts.pattern !== undefined) stringNode.options.pattern = String(opts.pattern);
-		stringNode.options.widget = inferWidgetFromUiSchema(
-			uiSchema,
-			NodeType.String,
-			'textWidget'
-		) as never;
+		let stringWidget = inferWidgetFromUiSchema(uiSchema, NodeType.String, 'textWidget');
+		// Schema format hint: when uiSchema lacks override, prefer datePickerWidget for date-like formats
+		if (
+			stringWidget === 'textWidget' &&
+			(schema.format === 'date' || schema.format === 'date-time' || schema.format === 'time')
+		) {
+			stringWidget = 'datePickerWidget';
+		}
+		stringNode.options.widget = stringWidget as never;
 		if (uiSchema?.['ui:options'] && typeof uiSchema['ui:options'] === 'object') {
 			const uio = uiSchema['ui:options'] as Record<string, unknown>;
 			if (typeof uio.placeholder === 'string') stringNode.options.placeholder = uio.placeholder;
