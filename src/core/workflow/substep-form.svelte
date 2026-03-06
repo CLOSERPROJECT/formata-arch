@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Substep } from '$core/repositories/substep.repository.svelte.js';
+	import type { Substep } from '$core/config/types.js';
 
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';

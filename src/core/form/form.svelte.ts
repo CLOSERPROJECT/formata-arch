@@ -9,18 +9,12 @@ import {
 	type Schema,
 	type UiSchema
 } from '@sjsf/form';
-import { overrideByRecord } from '@sjsf/form/lib/resolver';
 import * as defaults from '$builder/editor/node-settings.js';
 import { onDestroy, untrack } from 'svelte';
 
-import AnimatedArray from './animated-array.svelte';
-import { resolver } from './form.resolver.js';
+import { resolver } from './resolver.js';
 
 //
-
-const theme = overrideByRecord(defaults.theme, {
-	arrayField: AnimatedArray
-});
 
 interface Props<T> {
 	schema: Schema;
@@ -35,7 +29,6 @@ export function make<T>(props: Props<T>): FormState<T> {
 	const form = createForm({
 		...defaults,
 		resolver,
-		theme,
 		// validator: (options) => {
 		// 	const v = defaults.validator(options);
 		// 	const validator: FormValidator<Partial<T>> = {
@@ -68,7 +61,7 @@ export function make<T>(props: Props<T>): FormState<T> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function setComponentContext(form: FormState<any>) {
+export function setContext(form: FormState<any>) {
 	setFormContext(form);
 
 	onDestroy(() => {

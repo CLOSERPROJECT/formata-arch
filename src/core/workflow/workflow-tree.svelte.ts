@@ -1,5 +1,4 @@
-import type { Step } from '$core/repositories/step.repository.js';
-import type { Substep } from '$core/repositories/substep.repository.svelte.js';
+import type { Step, Substep } from '$core/config/types.js';
 
 import { workflowEditorState } from '$core/workflow/state.svelte.js';
 import { SvelteSet } from 'svelte/reactivity';
