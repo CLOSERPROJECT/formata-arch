@@ -63,7 +63,9 @@
 <Sidebar.Root>
 	<Sidebar.Header class="flex h-[53px] flex-row items-center justify-between border-b px-4">
 		<p class="font-semibold tracking-tight text-primary">Attesta Composer</p>
-		<Button href={window.origin} size="icon-sm" variant="outline"><HomeIcon /></Button>
+		<Button href={window.origin} size="icon-sm" variant="ghost" class="hover:bg-sidebar-accent">
+			<HomeIcon />
+		</Button>
 	</Sidebar.Header>
 	<Sidebar.Content>
 		{@render group(main, 'Main')}
