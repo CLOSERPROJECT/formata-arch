@@ -35,9 +35,9 @@
 	<Resizable.Pane defaultSize={30} minSize={20} class="min-w-[200px] p-2">
 		<p class="steps-label">Steps</p>
 
-		<div>
+		<div class="space-y-0.5">
 			{#each self.steps as step (self.getKey(step))}
-				<div class="space-y-1" animate:flip={{ duration: 500 }}>
+				<div class="space-y-0.5" animate:flip={{ duration: 500 }}>
 					<WorkflowTreeItem
 						isSelected={self.isStepSelected(step)}
 						onSelect={() => self.selectStep(step)}
@@ -53,6 +53,7 @@
 						onRemove={() => self.removeStep(step)}
 						onAdd={() => self.addSubstep(step)}
 						showIndex={showIndices}
+						hasErrors={self.stepHasErrors(step)}
 					/>
 					{#if self.isStepExpanded(step)}
 						{#each step.substeps as substep (self.getKey(substep))}
@@ -69,6 +70,7 @@
 									onRemove={() => self.removeSubstep(step, substep)}
 									showIndex={showIndices}
 									indent={1}
+									hasErrors={self.substepHasErrors(step, substep)}
 								/>
 							</div>
 						{/each}
@@ -103,9 +105,15 @@
 						Select a step or substep in the tree, or use the add buttons to create one.
 					</p>
 				{:else if self.selection.type === 'step'}
-					<StepForm bind:step={self.selection.step} />
+					<StepForm
+						bind:step={self.selection.step}
+						errors={self.getStepFormErrors(self.selection.step)}
+					/>
 				{:else if self.selection.type === 'substep'}
-					<SubstepForm bind:substep={self.selection.substep} />
+					<SubstepForm
+						bind:substep={self.selection.substep}
+						errors={self.getSubstepErrors(self.selection.step, self.selection.substep)}
+					/>
 				{/if}
 			</div>
 		{/key}

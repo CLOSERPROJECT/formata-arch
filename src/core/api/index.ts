@@ -63,7 +63,7 @@ export function loadOrganizationData(): Task.Task<void, Error> {
 
 export function saveWorkflow(): Task.Task<void, Error> {
 	const errors = getConfigErrors();
-	if (errors.length > 0) {
+	if (errors) {
 		return Task.resolve(undefined);
 	}
 

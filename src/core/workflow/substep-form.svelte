@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Substep } from '$core/config/types.js';
+	import type { ErrorObject } from 'ajv';
 
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
@@ -13,9 +14,10 @@
 
 	interface Props {
 		substep: Substep;
+		errors?: ErrorObject[];
 	}
 
-	let { substep = $bindable() }: Props = $props();
+	let { substep = $bindable(), errors = [] }: Props = $props();
 
 	//
 
@@ -33,15 +35,15 @@
 </script>
 
 <div class="space-y-6">
-	<FieldWrapper label="Title">
+	<FieldWrapper label="Title" field="title" {errors}>
 		<Input bind:value={substep.title} placeholder="Enter substep title" />
 	</FieldWrapper>
 
-	<FieldWrapper label="Description">
+	<FieldWrapper label="Description" field="inputKey" {errors}>
 		<Textarea bind:value={substep.inputKey} />
 	</FieldWrapper>
 
-	<FieldWrapper label="Roles">
+	<FieldWrapper label="Roles" field="roles" {errors}>
 		<Select.Root type="multiple" name="favoriteFruit" bind:value={substep.roles}>
 			<Select.Trigger class="w-full">
 				{triggerContent}
@@ -58,7 +60,7 @@
 		</Select.Root>
 	</FieldWrapper>
 
-	<FieldWrapper label="Data input form">
+	<FieldWrapper label="Data input form" field="schema" {errors}>
 		<SubstepFormata bind:substep />
 	</FieldWrapper>
 </div>

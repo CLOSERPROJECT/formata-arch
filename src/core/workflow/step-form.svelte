@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Step } from '$core/config/types.js';
+	import type { ErrorObject } from 'ajv';
 
 	import { appState } from '$core/state.svelte.js';
 	import { Input } from '$lib/components/ui/input/index.js';
@@ -12,13 +13,16 @@
 
 	interface Props {
 		step: Step;
+		errors?: ErrorObject[];
 	}
 
-	let { step = $bindable() }: Props = $props();
+	let { step = $bindable(), errors = [] }: Props = $props();
 
 	//
 
 	const organizations = $derived(appState.organizations);
+
+	const isEmpty = $derived(!step.organization?.trim());
 
 	const triggerContent = $derived(
 		organizations.find((org) => org.slug === step.organization)?.name ?? 'Select organization'
@@ -26,17 +30,17 @@
 </script>
 
 <div class="space-y-6">
-	<FieldWrapper label="Title">
+	<FieldWrapper label="Title" field="title" {errors}>
 		<Input bind:value={step.title} placeholder="Enter step title" />
 	</FieldWrapper>
 
-	<FieldWrapper label="Description">
+	<FieldWrapper label="Description" field="description" {errors}>
 		<Textarea bind:value={step.description} />
 	</FieldWrapper>
 
-	<FieldWrapper label="Organization">
+	<FieldWrapper label="Organization" field="organization" {errors}>
 		<Select.Root type="single" name="organization" bind:value={step.organization}>
-			<Select.Trigger class="w-full">
+			<Select.Trigger class={['w-full', isEmpty && 'text-muted-foreground']}>
 				{triggerContent}
 			</Select.Trigger>
 			<Select.Content>

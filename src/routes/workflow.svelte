@@ -66,14 +66,14 @@
 			{#snippet child({ props })}
 				<Button
 					{...props}
-					disabled={configErrors.length === 0}
+					disabled={!configErrors}
 					variant="outline"
 					class={[
-						configErrors.length > 0 &&
+						configErrors &&
 							'border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
 					]}
 				>
-					{#if configErrors.length > 0}
+					{#if configErrors}
 						<TriangleAlert size={14} />
 						<span>{configErrors.length} errors</span>
 					{:else}
@@ -84,15 +84,15 @@
 			{/snippet}
 		</Popover.Trigger>
 		<Popover.Content
-			class={configErrors.length > 0
+			class={configErrors
 				? 'max-h-60 w-80 overflow-y-auto border-destructive text-destructive'
 				: ''}
 		>
-			{#if configErrors.length > 0}
+			{#if configErrors}
 				<p class="mb-2 text-sm font-medium">Validation errors</p>
 				<ul class="list-inside list-disc space-y-1 text-sm">
 					{#each configErrors as err, i (i)}
-						<li>{err}</li>
+						<li>{err.instancePath}: {err.message}</li>
 					{/each}
 				</ul>
 			{:else}

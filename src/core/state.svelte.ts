@@ -1,5 +1,5 @@
 import { Config } from '$core';
-import { Ajv } from 'ajv';
+import { Ajv, type ErrorObject } from 'ajv';
 import { lsSync } from 'rune-sync/localstorage';
 
 import type { Organization, Role } from './api/index.js';
@@ -57,8 +57,8 @@ export const config = lsSync<Config.Config>('formata-config', DEFAULT_CONFIG);
 const ajv = new Ajv({ allErrors: true });
 ajv.addSchema(Config.Schema);
 
-export function getConfigErrors() {
+export function getConfigErrors(): ErrorObject[] | undefined {
 	const valid = ajv.validate(Config.Schema.$id, config);
-	const errorObjects = valid ? [] : [...(ajv.errors ?? [])];
-	return errorObjects.map((error) => `${error.instancePath}: ${error.message}`);
+	if (valid) return undefined;
+	return [...(ajv.errors ?? [])];
 }

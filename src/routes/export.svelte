@@ -16,7 +16,7 @@
 	const configErrors = $derived(getConfigErrors());
 	const serialized = $derived.by(() => Config.serialize(config));
 
-	const canExport = $derived(configErrors.length === 0 && !serialized.isErr);
+	const canExport = $derived(!configErrors && !serialized.isErr);
 
 	$effect(() => {
 		if (canExport) {
@@ -31,7 +31,7 @@
 	let loading = $state(false);
 
 	function saveConfig() {
-		if (configErrors.length > 0) {
+		if (configErrors) {
 			toast.error('Fix config validation errors before exporting.');
 			return;
 		}
@@ -56,7 +56,7 @@
 {/snippet}
 
 <div class="flex min-h-0 grow flex-col gap-4 p-4">
-	{#if configErrors.length > 0}
+	{#if configErrors}
 		<Alert.Root variant="destructive">
 			<Alert.Title>Config validation failed.</Alert.Title>
 			<Alert.Description>
