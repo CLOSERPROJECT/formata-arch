@@ -76,10 +76,10 @@
 			{/snippet}
 		</Dialog.Trigger>
 		<Dialog.Content
-			class="h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-none! p-4!"
+			class="flex! h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-none! flex-col! p-4!"
 			showCloseButton={false}
 		>
-			<Dialog.Header class="flex justify-between border-b pb-2">
+			<Dialog.Header class="border-b pb-2">
 				<Dialog.Title class="flex items-center justify-between gap-2">
 					<span> Form Config </span>
 					<div>

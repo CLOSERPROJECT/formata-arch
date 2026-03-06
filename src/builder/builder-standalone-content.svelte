@@ -49,23 +49,23 @@
 	);
 </script>
 
-<div class={['mx-auto grid gap-6', 'grid-cols-[1fr_3fr_2fr_3fr]']}>
-	<div bind:this={rootElements[0]}>
+<div class={['relative mx-auto grid gap-6', 'grid-cols-[1fr_3fr_2fr_3fr]']}>
+	<div bind:this={rootElements[0]} class="sticky top-0">
 		{@render label('Available fields')}
 		<Controls />
 	</div>
 
-	<div bind:this={rootElements[1]}>
+	<div bind:this={rootElements[1]} class="sticky top-0">
 		{@render label('Form structure')}
 		<Content />
 	</div>
 
-	<div bind:this={rootElements[2]}>
+	<div bind:this={rootElements[2]} class="sticky top-0">
 		{@render label('Field settings')}
 		<Settings />
 	</div>
 
-	<div class="overflow-x-hidden">
+	<div class="sticky top-0 overflow-x-hidden">
 		{@render label('Form preview')}
 		<Form />
 	</div>
