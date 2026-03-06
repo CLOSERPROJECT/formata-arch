@@ -44,10 +44,11 @@
 	}
 
 	function toggleExpanded(step: Step) {
-		if (self.expanded.has(step.id)) {
-			self.expanded.delete(step.id);
+		const key = self.getStepKey(step);
+		if (self.expanded.has(key)) {
+			self.expanded.delete(key);
 		} else {
-			self.expanded.add(step.id);
+			self.expanded.add(key);
 			self.selectStep(step);
 		}
 	}
@@ -61,7 +62,7 @@
 			Steps
 		</p>
 		<div class="flex grow flex-col gap-1 text-sm">
-			{#each self.steps as step, stepIndex (step.id)}
+			{#each self.steps as step, stepIndex (self.getStepKey(step))}
 				<div class="flex flex-col gap-1" animate:flip={{ duration: 500 }}>
 					<div
 						role="button"
@@ -79,8 +80,8 @@
 					>
 						<TreeButton
 							onclick={() => toggleExpanded(step)}
-							icon={self.expanded.has(step.id) ? ChevronDown : ChevronRight}
-							aria-label={self.expanded.has(step.id) ? 'Collapse' : 'Expand'}
+							icon={self.expanded.has(self.getStepKey(step)) ? ChevronDown : ChevronRight}
+							aria-label={self.expanded.has(self.getStepKey(step)) ? 'Collapse' : 'Expand'}
 						/>
 						<span class="flex shrink-0 items-center gap-1.5">
 							{#if showIndices}
@@ -121,7 +122,7 @@
 							/>
 						</div>
 					</div>
-					{#if self.expanded.has(step.id)}
+					{#if self.expanded.has(self.getStepKey(step))}
 						{#each step.substeps as substep, subIndex (substep.id)}
 							<div
 								role="button"

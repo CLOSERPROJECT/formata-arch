@@ -19,6 +19,17 @@ export class WorkflowTree {
 	selection = $state<WorkflowTreeSelection>({ type: 'idle' });
 	expanded = new SvelteSet<string>();
 
+	private stepKeys = new WeakMap<Step, string>();
+
+	getStepKey(step: Step): string {
+		let key = this.stepKeys.get(step);
+		if (!key) {
+			key = crypto.randomUUID();
+			this.stepKeys.set(step, key);
+		}
+		return key;
+	}
+
 	get steps(): Step[] {
 		return this.opts.steps;
 	}
@@ -62,7 +73,7 @@ export class WorkflowTree {
 			sel.type === 'substep' && step.substeps.some((s) => s.id === sel.substep.id);
 		steps.splice(index, 1);
 		renumberSteps(steps);
-		this.expanded.delete(step.id);
+		this.expanded.delete(this.getStepKey(step));
 		if (wasSelectedStep || wasSelectedSubstep) {
 			this.clearSelection();
 		}
@@ -88,11 +99,8 @@ export class WorkflowTree {
 		const steps = this.steps;
 		const i = steps.findIndex((s) => s.id === step.id);
 		if (i <= 0) return;
-		const prevId = steps[i - 1]?.id;
-		const stepId = step.id;
 		[steps[i - 1], steps[i]] = [steps[i]!, steps[i - 1]!];
 		renumberSteps(steps);
-		remapExpanded(this.expanded, stepId, prevId ?? '', i - 1, i);
 		const sel = this.selection;
 		if (sel.type === 'step' && sel.step.id === step.id) {
 			this.selection = { type: 'step', step: steps[i - 1]! };
@@ -105,11 +113,8 @@ export class WorkflowTree {
 		const steps = this.steps;
 		const i = steps.findIndex((s) => s.id === step.id);
 		if (i === -1 || i >= steps.length - 1) return;
-		const nextId = steps[i + 1]?.id;
-		const stepId = step.id;
 		[steps[i], steps[i + 1]] = [steps[i + 1]!, steps[i]!];
 		renumberSteps(steps);
-		remapExpanded(this.expanded, stepId, nextId ?? '', i, i + 1);
 		const sel = this.selection;
 		if (sel.type === 'step' && sel.step.id === step.id) {
 			this.selection = { type: 'step', step: steps[i + 1]! };
@@ -124,10 +129,6 @@ export class WorkflowTree {
 		if (i <= 0) return;
 		[subs[i - 1], subs[i]] = [subs[i]!, subs[i - 1]!];
 		const renumbered = renumberSubsteps(step);
-		const stepIndex = this.steps.findIndex((s) => s.id === step.id);
-		if (stepIndex !== -1) {
-			this.steps[stepIndex] = renumbered;
-		}
 		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) {
 			this.selection = { type: 'substep', substep: renumbered.substeps[i - 1]! };
 		}
@@ -139,10 +140,6 @@ export class WorkflowTree {
 		if (i === -1 || i >= subs.length - 1) return;
 		[subs[i], subs[i + 1]] = [subs[i + 1]!, subs[i]!];
 		const renumbered = renumberSubsteps(step);
-		const stepIndex = this.steps.findIndex((s) => s.id === step.id);
-		if (stepIndex !== -1) {
-			this.steps[stepIndex] = renumbered;
-		}
 		if (this.selection.type === 'substep' && this.selection.substep.id === substep.id) {
 			this.selection = { type: 'substep', substep: renumbered.substeps[i + 1]! };
 		}
@@ -150,7 +147,7 @@ export class WorkflowTree {
 
 	selectStep(step: Step): void {
 		this.selection = { type: 'step', step };
-		this.expanded.add(step.id);
+		this.expanded.add(this.getStepKey(step));
 		workflowEditorState.currentStep = step;
 	}
 
@@ -158,7 +155,7 @@ export class WorkflowTree {
 		this.selection = { type: 'substep', substep };
 		const step = this.steps.find((s) => s.substeps.some((sub) => sub.id === substep.id));
 		if (step) {
-			this.expanded.add(step.id);
+			this.expanded.add(this.getStepKey(step));
 			workflowEditorState.currentStep = step;
 		}
 	}
@@ -193,42 +190,25 @@ export class WorkflowTree {
 	}
 }
 
-function remapExpanded(
-	expanded: SvelteSet<string>,
-	oldIdA: string,
-	oldIdB: string,
-	indexA: number,
-	indexB: number
-): void {
-	const hadA = expanded.has(oldIdA);
-	const hadB = expanded.has(oldIdB);
-	expanded.delete(oldIdA);
-	expanded.delete(oldIdB);
-	const newIds = [String(indexA + 1), String(indexB + 1)];
-	if (hadA) expanded.add(newIds[0]!);
-	if (hadB) expanded.add(newIds[1]!);
+function remapExpanded(): void {
+	// No-op with stable, external step keys.
 }
 
 function renumberSubsteps(step: Step): Step {
-	return {
-		...step,
-		substeps: step.substeps.map((sub, j) => ({
-			...sub,
-			order: j + 1,
-			id: `${step.id}.${j + 1}`
-		}))
-	};
+	step.substeps = step.substeps.map((sub, j) => ({
+		...sub,
+		order: j + 1,
+		id: `${step.id}.${j + 1}`
+	}));
+	return step;
 }
 
 function renumberSteps(steps: Step[]): void {
 	for (let i = 0; i < steps.length; i++) {
 		const step = steps[i];
 		if (!step) continue;
-		const renumbered: Step = {
-			...step,
-			order: i + 1,
-			id: String(i + 1)
-		};
-		steps[i] = renumberSubsteps(renumbered);
+		step.order = i + 1;
+		step.id = String(i + 1);
+		renumberSubsteps(step);
 	}
 }
