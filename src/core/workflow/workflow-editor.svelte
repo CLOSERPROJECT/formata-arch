@@ -106,6 +106,7 @@
 					</p>
 				{:else if self.selection.type === 'step'}
 					<StepForm
+						workflowTree={self}
 						bind:step={self.selection.step}
 						errors={self.getStepFormErrors(self.selection.step)}
 					/>

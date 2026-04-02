@@ -6,18 +6,20 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
-	import { Previous } from 'runed';
+
+	import type { WorkflowTree } from './workflow-tree.svelte.js';
 
 	import FieldWrapper from './components/field-wrapper.svelte';
 
 	//
 
 	interface Props {
+		workflowTree: WorkflowTree;
 		step: Step;
 		errors?: ErrorObject[];
 	}
 
-	let { step = $bindable(), errors = [] }: Props = $props();
+	let { workflowTree, step = $bindable(), errors = [] }: Props = $props();
 
 	//
 
@@ -28,15 +30,6 @@
 	const triggerContent = $derived(
 		organizations.find((org) => org.slug === step.organization)?.name ?? 'Select organization'
 	);
-
-	const previousOrganization = new Previous(() => step.organization);
-	$effect(() => {
-		if (previousOrganization.current !== step.organization) {
-			for (const substep of step.substeps) {
-				substep.roles = [];
-			}
-		}
-	});
 </script>
 
 <div class="space-y-6">
@@ -49,7 +42,12 @@
 	</FieldWrapper>
 
 	<FieldWrapper label="Organization" field="organization" {errors}>
-		<Select.Root type="single" name="organization" bind:value={step.organization}>
+		<Select.Root
+			type="single"
+			name="organization"
+			value={step.organization}
+			onValueChange={(value) => workflowTree.editStepOrganization(step, value)}
+		>
 			<Select.Trigger class={['w-full', isEmpty && 'text-muted-foreground']}>
 				{triggerContent}
 			</Select.Trigger>

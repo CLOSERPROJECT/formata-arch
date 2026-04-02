@@ -125,6 +125,16 @@ export class WorkflowTree {
 		}
 	}
 
+	//
+
+	editStepOrganization(step: Step, organization: string): void {
+		if (step.organization === organization) return;
+		step.organization = organization;
+		for (const substep of step.substeps) {
+			substep.roles = [];
+		}
+	}
+
 	// Selection
 
 	isStepSelected(step: Step): boolean {
