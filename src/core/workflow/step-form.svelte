@@ -6,6 +6,7 @@
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { Previous } from 'runed';
 
 	import FieldWrapper from './components/field-wrapper.svelte';
 
@@ -27,6 +28,15 @@
 	const triggerContent = $derived(
 		organizations.find((org) => org.slug === step.organization)?.name ?? 'Select organization'
 	);
+
+	const previousOrganization = new Previous(() => step.organization);
+	$effect(() => {
+		if (previousOrganization.current !== step.organization) {
+			for (const substep of step.substeps) {
+				substep.roles = [];
+			}
+		}
+	});
 </script>
 
 <div class="space-y-6">
