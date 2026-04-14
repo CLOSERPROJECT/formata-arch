@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { openDB } from 'idb';
-
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import { TooltipProvider } from '$lib/components/ui/tooltip/index.js';
 	import { highlighterPromise } from '$lib/shiki.js';
-	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	import { setShadcnThemeContext } from '$lib/sjsf/theme.shadcn.js';
+	import { openDB } from 'idb';
 
 	import type { AppDBSchema } from './shared/index.js';
-	import { IDBProjectsRepository } from './projects/idb-projects-repository.js';
-	import { BuilderContext } from './builder/context.svelte.js';
-	import { themeManager } from './theme.svelte.js';
-	import { ProjectsContext } from './projects/context.svelte.js';
+
 	import Builder from './builder/builder.svelte';
+	import { BuilderContext } from './builder/context.svelte.js';
 	import Header from './header.svelte';
-	import { setShadcnThemeContext } from '$lib/sjsf/theme.shadcn.js';
+	import { ProjectsContext } from './projects/context.svelte.js';
+	import { IDBProjectsRepository } from './projects/idb-projects-repository.js';
+	import { themeManager } from './theme.svelte.js';
 
 	const clearLink = new URL(location.href);
 	clearLink.search = '';
