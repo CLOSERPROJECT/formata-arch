@@ -16,15 +16,17 @@ type AppState =
 	| { type: 'ready' }
 	| { type: 'ready-edit'; streamId: string };
 
+export const appData = lsSync<{ config: Config.Config }>('formata-config', {
+	config: DEFAULT_CONFIG
+});
+
 export class App {
 	constructor() {
 		this.init();
 	}
 
-	config = lsSync<Config.Config>('formata-config', DEFAULT_CONFIG);
-
 	configErrors: ErrorObject[] | undefined = $derived.by(() => {
-		const res = Config.validate(this.config);
+		const res = Config.validate(appData.config);
 		if (res.isOk) {
 			return undefined;
 		} else {
@@ -70,7 +72,7 @@ export class App {
 		if (streamId) {
 			const res = await loadStream(streamId);
 			if (res.isOk) {
-				this.config = res.value;
+				appData.config = res.value;
 				this.#state = { type: 'ready-edit', streamId };
 				return;
 			} else {
@@ -86,7 +88,7 @@ export class App {
 	 * Packages the config with the matching organizations and roles.
 	 */
 	buildConfig(): Config.Config {
-		const baseData = this.config.workflow.steps.map((step) => ({
+		const baseData = appData.config.workflow.steps.map((step) => ({
 			organization: step.organization,
 			roles: uniq(step.substeps.flatMap((substep) => substep.roles))
 		}));
@@ -108,7 +110,7 @@ export class App {
 		}
 
 		return {
-			...$state.snapshot(this.config),
+			...$state.snapshot(appData.config),
 			organizations: uniq(selectedOrganizations),
 			roles: uniq(selectedRoles)
 		};
@@ -153,10 +155,7 @@ export class App {
 				toast.error('Failed to import config');
 			}
 		} else {
-			this.config.dpp = result.value.dpp;
-			this.config.workflow.steps = result.value.workflow.steps;
-			this.config.organizations = result.value.organizations;
-			this.config.roles = result.value.roles;
+			appData.config = result.value;
 			toast.success('Config imported');
 		}
 	}

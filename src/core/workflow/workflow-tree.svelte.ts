@@ -1,7 +1,8 @@
-import type { App } from '$core/app/app.svelte.js';
 import type { Step, Substep } from '$core/config/types.js';
 import type { ErrorObject } from 'ajv';
 
+import { appData } from '$core/app/app.svelte.js';
+import { app } from '$core/app/index.js';
 import { workflowEditorState } from '$core/workflow/state.svelte.js';
 import { SvelteSet } from 'svelte/reactivity';
 
@@ -22,12 +23,12 @@ const DEFAULT_SUBSTEP_SCHEMA = {
 };
 
 export class WorkflowTree {
-	constructor(private app: App) {}
+	constructor() {}
 
 	selection = $state<WorkflowTreeSelection>({ type: 'idle' });
 
 	get steps(): Step[] {
-		return this.app.config.workflow.steps;
+		return appData.config.workflow.steps;
 	}
 
 	// Keys
@@ -216,7 +217,7 @@ export class WorkflowTree {
 	// Errors
 
 	get errors() {
-		const errs = this.app.configErrors;
+		const errs = app.configErrors;
 		if (!errs) return undefined;
 		return errs.filter((error) => error.instancePath.startsWith(`/workflow/steps`));
 	}
