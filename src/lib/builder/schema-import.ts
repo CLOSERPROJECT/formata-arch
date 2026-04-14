@@ -81,15 +81,11 @@ function inferWidgetFromUiSchema(
 	if (components && typeof components === 'object') {
 		const c = components as Record<string, unknown>;
 		// Check for known component -> widget mappings used by the builder
-		// @ts-expect-error - Type is missing in the library but exists in formata-form
 		if (c['stringField'] === 'formataQrField') return 'textWidget';
 		if (c['objectField'] === 'aggregatedField') return 'aggregatedWidget';
 		if (c['arrayField'] === 'multiEnumField') return 'checkboxesWidget';
 		if (c['arrayField'] === 'arrayTagsField') return 'tagsWidget';
-		if (
-			c['arrayField'] === 'arrayFilesField' ||
-			c['arrayField'] === 'arrayNativeFilesField'
-		)
+		if (c['arrayField'] === 'arrayFilesField' || c['arrayField'] === 'arrayNativeFilesField')
 			return 'fileWidget';
 		// Check for widget-override mappings: builder emits components[defaultWidget] = widget
 		const builderDefault = BUILDER_DEFAULT_WIDGETS[nodeType];
@@ -318,7 +314,10 @@ function parseSchemaValue(
 				) as never;
 				return fileNode;
 			}
-			if (arrayFileFromUi?.native && (itemsSchema.type === undefined || itemsSchema.type === null)) {
+			if (
+				arrayFileFromUi?.native &&
+				(itemsSchema.type === undefined || itemsSchema.type === null)
+			) {
 				// Native multiple file: items schema is {}
 				const fileNode = createNode(NodeType.File);
 				applyCommonOptions(fileNode, schema, uiSchema, titleFallback);
@@ -331,11 +330,7 @@ function parseSchemaValue(
 				) as never;
 				return fileNode;
 			}
-			if (
-				itemsSchema.type === 'string' &&
-				arrayFileFromUi &&
-				!arrayFileFromUi.native
-			) {
+			if (itemsSchema.type === 'string' && arrayFileFromUi && !arrayFileFromUi.native) {
 				// Non-native multiple file (format may have been stripped on save)
 				const fileNode = createNode(NodeType.File);
 				applyCommonOptions(fileNode, schema, uiSchema, titleFallback);

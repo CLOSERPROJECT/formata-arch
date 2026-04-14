@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SaveIcon } from '@lucide/svelte';
 	import { Config, Form } from '$core';
-	import { config } from '$core/state.svelte.js';
+	import { app } from '$core/app/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	import { setTopbar } from './_layout.svelte';
@@ -10,9 +10,9 @@
 
 	const form = Form.make<Config.Dpp>({
 		schema: Config.getEntitySchema('Dpp'),
-		initialValue: config.dpp,
+		initialValue: app.config.dpp,
 		onSubmit: (value) => {
-			config.dpp = value;
+			app.config.dpp = value;
 		}
 	});
 

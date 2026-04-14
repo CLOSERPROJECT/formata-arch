@@ -2,7 +2,7 @@
 	import type { Step } from '$core/config/types.js';
 	import type { ErrorObject } from 'ajv';
 
-	import { appState } from '$core/state.svelte.js';
+	import { app } from '$core/app/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
@@ -23,12 +23,11 @@
 
 	//
 
-	const organizations = $derived(appState.organizations);
-
 	const isEmpty = $derived(!step.organization?.trim());
 
 	const triggerContent = $derived(
-		organizations.find((org) => org.slug === step.organization)?.name ?? 'Select organization'
+		app.availableOrganizations.find((org) => org.slug === step.organization)?.name ??
+			'Select organization'
 	);
 </script>
 
@@ -53,7 +52,7 @@
 			</Select.Trigger>
 			<Select.Content>
 				<Select.Group>
-					{#each organizations as org (org.slug)}
+					{#each app.availableOrganizations as org (org.slug)}
 						<Select.Item value={org.slug} label={org.name}>
 							{org.name}
 						</Select.Item>

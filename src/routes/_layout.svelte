@@ -13,14 +13,11 @@
 </script>
 
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-
-	import { Loader } from '@lucide/svelte';
-	import { loadOrganizationData } from '$core/api/index.js';
-	import { isAppReady } from '$core/state.svelte.js';
+	import { AlertTriangleIcon, Loader } from '@lucide/svelte';
+	import { app } from '$core/app/index.js';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { toast } from 'svelte-sonner';
+	import { type Snippet } from 'svelte';
 
 	import AppSidebar from './_sidebar.svelte';
 
@@ -31,16 +28,6 @@
 	};
 
 	let { children }: Props = $props();
-
-	$effect(() => {
-		if (!isAppReady()) {
-			loadOrganizationData().then((res) => {
-				if (res.isErr) {
-					toast.error(res.error.message);
-				}
-			});
-		}
-	});
 </script>
 
 <Sidebar.Provider>
@@ -68,11 +55,16 @@
 	</Sidebar.Inset>
 </Sidebar.Provider>
 
-<AlertDialog.Root open={!isAppReady()}>
+<AlertDialog.Root open={app.isLoading}>
 	<AlertDialog.Content class="flex items-center justify-center">
 		<div class="flex items-center gap-2">
-			<Loader class="animate-spin" />
-			<p>Loading...</p>
+			{#if app.state.type === 'loading-error'}
+				<AlertTriangleIcon class="animate-spin" />
+				<p>Failed to load app</p>
+			{:else}
+				<Loader class="animate-spin" />
+				<p>Loading...</p>
+			{/if}
 		</div>
 	</AlertDialog.Content>
 </AlertDialog.Root>

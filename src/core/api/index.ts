@@ -1,46 +1,41 @@
 import { Config } from '$core';
-import { appState, config, getConfigErrors } from '$core/state.svelte.js';
 import * as Task from 'true-myth/task';
 import z from 'zod';
 
-import mockData from './mock.json' with { type: 'json' };
+import catalogMockData from './catalog.mock.json' with { type: 'json' };
+import streamMockData from './stream.mock.json' with { type: 'json' };
 
 //
 
-export const OrganizationSchema = z.object({
+const OrganizationSchema: z.ZodType<Config.Organization> = z.object({
 	slug: z.string(),
 	name: z.string()
 });
-export type Organization = z.infer<typeof OrganizationSchema>;
 
-export const RoleSchema = z.object({
+const RoleSchema: z.ZodType<Config.Role> = z.object({
 	orgSlug: z.string(),
 	name: z.string(),
 	slug: z.string(),
 	color: z.string(),
 	border: z.string()
 });
-export type Role = z.infer<typeof RoleSchema>;
 
-export const OrganizationDataSchema = z.object({
+const OrganizationDataSchema = z.object({
 	organizations: z.array(OrganizationSchema),
 	roles: z.array(RoleSchema)
 });
-export type OrganizationData = z.infer<typeof OrganizationDataSchema>;
+
+type OrganizationData = z.infer<typeof OrganizationDataSchema>;
 
 //
 
-export function loadOrganizationData(): Task.Task<void, Error> {
-	if (import.meta.env.DEV) {
-		OrganizationDataSchema.parse(mockData);
-		appState.organizations = mockData.organizations;
-		appState.roles = mockData.roles;
-		return Task.resolve(undefined);
-	}
-
+export function loadOrganizationData(): Task.Task<OrganizationData, Error> {
 	return Task.tryOrElse(
 		(err) => new Error('Failed to fetch organization data', { cause: err }),
-		() => fetch('/api/catalog')
+		async () => {
+			if (import.meta.env.DEV) return new Response(JSON.stringify(catalogMockData));
+			return fetch('/api/catalog');
+		}
 	)
 		.andThen((res) =>
 			Task.tryOrElse(
@@ -53,33 +48,49 @@ export function loadOrganizationData(): Task.Task<void, Error> {
 				(err) => new Error('Failed to parse organization data', { cause: err }),
 				async () => OrganizationDataSchema.parse(json)
 			)
-		)
-		.andThen((data) => {
-			appState.organizations = data.organizations;
-			appState.roles = data.roles;
-			return Task.resolve(undefined);
-		});
+		);
 }
 
-export function saveWorkflow(): Task.Task<void, Error> {
-	const errors = getConfigErrors();
-	if (errors) {
-		return Task.resolve(undefined);
-	}
-
-	const serialized = Config.serialize(config, appState);
-	if (serialized.isErr) {
-		return Task.reject(serialized.error);
-	}
-
+export function loadStream(id: string): Task.Task<Config.Config, Error> {
 	return Task.tryOrElse(
-		(err) => new Error('Failed to save workflow', { cause: err }),
-		() =>
-			fetch('/org-admin/formata-builder', {
-				method: 'POST',
-				body: serialized.value
-			})
-	).map(() => {
-		return undefined;
-	});
+		(err) => new Error('Failed to load stream', { cause: err }),
+		async () => {
+			if (import.meta.env.DEV) return new Response(JSON.stringify(streamMockData));
+			return fetch(`/org-admin/formata-builder/stream/${id}`);
+		}
+	)
+		.andThen((res) =>
+			Task.tryOrElse(
+				(err) => new Error('Failed to get json response', { cause: err }),
+				() => res.json()
+			)
+		)
+		.andThen((json) =>
+			Task.fromResult(
+				Config.validate(json).mapErr(
+					(err) => new Error('Failed to validate stream', { cause: err })
+				)
+			)
+		);
+}
+
+export function saveStream(config: Config.Config, streamId?: string): Task.Task<void, Error> {
+	return Task.fromResult(Config.serialize(config)).andThen((c) =>
+		Task.tryOrElse(
+			(err) => new Error('Failed to save workflow', { cause: err }),
+			async () => {
+				let url = '/org-admin/formata-builder';
+				if (streamId) {
+					url += `?stream=${streamId}`;
+				}
+				if (import.meta.env.DEV) {
+					console.log(url, c);
+				}
+				await fetch(url, {
+					method: 'POST',
+					body: c
+				});
+			}
+		)
+	);
 }

@@ -1,5 +1,4 @@
 import type { Schema as JSONSchema } from '@sjsf/form';
-import type { FromSchema } from 'json-schema-to-ts';
 
 //
 
@@ -91,21 +90,18 @@ export const Schema = {
 		},
 		Organization: {
 			type: 'object',
-			required: ['slug', 'name', 'color', 'border'],
+			required: ['slug', 'name'],
 			additionalProperties: false,
 			properties: {
 				slug: { type: 'string' },
-				name: { type: 'string' },
-				color: { type: 'string' },
-				border: { type: 'string' }
+				name: { type: 'string' }
 			}
 		},
 		Role: {
 			type: 'object',
-			required: ['id', 'name', 'slug', 'orgSlug', 'color', 'border'],
+			required: ['name', 'slug', 'orgSlug', 'color', 'border'],
 			additionalProperties: false,
 			properties: {
-				id: { type: 'string' },
 				name: { type: 'string' },
 				slug: { type: 'string' },
 				orgSlug: { type: 'string' },
@@ -141,7 +137,3 @@ export const Schema = {
 		}
 	}
 } as const satisfies JSONSchema;
-
-export type Schema = typeof Schema;
-
-export type Config = FromSchema<Schema>;

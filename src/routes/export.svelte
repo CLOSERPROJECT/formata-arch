@@ -1,68 +1,34 @@
 <script lang="ts">
-	import { Loader, SaveIcon } from '@lucide/svelte';
-	import { Config } from '$core';
-	import { saveWorkflow } from '$core/api/index.js';
-	import { appState, config, getConfigErrors } from '$core/state.svelte.js';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import { SaveIcon } from '@lucide/svelte';
+	import { app } from '$core/app/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { highlight, highlighterPromise } from '$lib/shiki.js';
-	import { toast } from 'svelte-sonner';
 
 	import { setTopbar } from './_layout.svelte';
 
 	//
 
-	const configErrors = $derived(getConfigErrors());
-	const serialized = $derived.by(() => Config.serialize(config, appState));
+	setTopbar({ title: 'Export', right: topbarRight });
 
-	const canExport = $derived(!configErrors && !serialized.isErr);
-
-	$effect(() => {
-		if (canExport) {
-			setTopbar({ title: 'Export', right: topbarRight });
-		} else {
-			setTopbar({ title: 'Export' });
-		}
-	});
-
-	//
-
-	let loading = $state(false);
-
-	function saveConfig() {
-		if (configErrors) {
-			toast.error('Fix config validation errors before exporting.');
-			return;
-		}
-
-		loading = true;
-		saveWorkflow().then((res) => {
-			if (res.isErr) {
-				toast.error(res.error.message);
-			} else {
-				toast.success('Workflow saved successfully');
-			}
-			loading = false;
-		});
-	}
+	const serialized = app.getSerializedConfig();
 </script>
 
 {#snippet topbarRight()}
-	<Button onclick={saveConfig}>
+	<Button onclick={() => app.saveConfig()} disabled={!app.canSave}>
 		<SaveIcon />
 		Save
 	</Button>
 {/snippet}
 
 <div class="flex min-h-0 grow flex-col gap-4 p-4">
-	{#if configErrors}
+	{#if app.configErrors}
 		<Alert.Root variant="destructive">
 			<Alert.Title>Config validation failed.</Alert.Title>
 			<Alert.Description>
 				<p>Please fix the following validation errors before exporting:</p>
 				<ul class="mt-2 list-inside list-disc space-y-1">
-					{#each configErrors as err, i (i)}
+					{#each app.configErrors as err, i (i)}
 						<li>{err}</li>
 					{/each}
 				</ul>
@@ -86,12 +52,3 @@
 		{/await}
 	{/if}
 </div>
-
-<AlertDialog.Root open={loading}>
-	<AlertDialog.Content class="flex items-center justify-center">
-		<div class="flex items-center gap-2">
-			<Loader class="animate-spin" />
-			<p>Loading...</p>
-		</div>
-	</AlertDialog.Content>
-</AlertDialog.Root>

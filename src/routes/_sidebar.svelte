@@ -1,13 +1,11 @@
 <script lang="ts">
 	import type { Icon } from '$lib/types.js';
 
-	import { DownloadIcon, HouseIcon, IdCardIcon, UploadIcon, WaypointsIcon } from '@lucide/svelte';
-	import { Config } from '$core';
-	import { config } from '$core/state.svelte.js';
+	import { HouseIcon, IdCardIcon, SaveIcon, UploadIcon, WaypointsIcon } from '@lucide/svelte';
+	import { app } from '$core/app/index.js';
 	import ThemeButton from '$lib/components/theme-button.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { toast } from 'svelte-sonner';
 
 	import { isActive, p } from './_index.js';
 
@@ -20,6 +18,8 @@
 		{ label: 'DPP', href: p('/dpp'), icon: IdCardIcon }
 	];
 
+	//
+
 	let importInput: HTMLInputElement | undefined = $state();
 
 	function onImportChange(e: Event) {
@@ -30,17 +30,7 @@
 		const reader = new FileReader();
 		reader.onload = () => {
 			const text = reader.result as string;
-			const result = Config.deserialize(text);
-			if (result.isErr) {
-				toast.error(result.error.message);
-				return;
-			}
-			const data = result.value;
-			config.workflow = data.workflow;
-			config.organizations = data.organizations;
-			config.roles = data.roles;
-			config.dpp = data.dpp;
-			toast.success('Config imported');
+			app.importConfigFromString(text);
 		};
 		reader.readAsText(file, 'utf-8');
 	}
@@ -77,7 +67,7 @@
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Data</Sidebar.GroupLabel>
 			<Sidebar.Menu>
-				{@render sidebarLinkButton({ label: 'Export', href: p('/export'), icon: DownloadIcon })}
+				{@render sidebarLinkButton({ label: 'Save', href: p('/export'), icon: SaveIcon })}
 				<Sidebar.MenuItem>
 					<Sidebar.MenuButton onclick={triggerImport}>
 						<UploadIcon />

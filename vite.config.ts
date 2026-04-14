@@ -9,7 +9,7 @@ import 'vitest/config';
 //
 
 export default defineConfig({
-	base: '/formata-arch/',
+	base: '/formata-arch',
 	build: {
 		outDir: 'attesta'
 	},

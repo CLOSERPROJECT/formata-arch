@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CheckIcon, Pencil, TriangleAlert } from '@lucide/svelte';
-	import { config, getConfigErrors } from '$core/state.svelte.js';
+	import { app } from '$core/app/index.js';
 	import WorkflowTreeComponent from '$core/workflow/workflow-editor.svelte';
 	import { WorkflowTree } from '$core/workflow/workflow-tree.svelte.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -12,7 +12,7 @@
 
 	//
 
-	let workflowTree = new WorkflowTree({ steps: config.workflow.steps });
+	let workflowTree = new WorkflowTree({ steps: app.config.workflow.steps });
 
 	setTopbar({
 		title: 'Stream / Workflow',
@@ -20,14 +20,14 @@
 		right: navbarRight
 	});
 
-	const configErrors = $derived(getConfigErrors());
+	const configErrors = $derived(app.configErrors);
 
 	const descriptionBinding = {
 		get value() {
-			return config.workflow.description ?? '';
+			return app.config.workflow.description ?? '';
 		},
 		set value(v: string) {
-			config.workflow.description = v || undefined;
+			app.config.workflow.description = v || undefined;
 		}
 	};
 </script>
@@ -35,7 +35,7 @@
 {#snippet navbarLeft()}
 	<div class="flex max-w-md grow items-center gap-1">
 		<Input
-			bind:value={config.workflow.name}
+			bind:value={app.config.workflow.name}
 			class="h-8 grow font-medium md:text-sm"
 			placeholder="Workflow name"
 		/>

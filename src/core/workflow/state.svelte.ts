@@ -1,7 +1,6 @@
-import type { Role } from '$core/api/index.js';
-import type { Step } from '$core/config/types.js';
+import type { Role, Step } from '$core/config/types.js';
 
-import { appState } from '$core/state.svelte.js';
+import { app } from '$core/app/index.js';
 
 //
 
@@ -10,11 +9,13 @@ export const workflowEditorState = $state({
 });
 
 const currentOrganization = $derived.by(() =>
-	appState.organizations.find((org) => org.slug === workflowEditorState.currentStep?.organization)
+	app.availableOrganizations.find(
+		(org) => org.slug === workflowEditorState.currentStep?.organization
+	)
 );
 
 const roles = $derived.by(() =>
-	appState.roles.filter((role) => role.orgSlug === currentOrganization?.slug)
+	app.roles.filter((role) => role.orgSlug === currentOrganization?.slug)
 );
 
 export function getAvailableRoleOptions(): Role[] {

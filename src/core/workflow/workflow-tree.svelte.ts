@@ -1,7 +1,7 @@
 import type { Step, Substep } from '$core/config/types.js';
 import type { ErrorObject } from 'ajv';
 
-import { getConfigErrors } from '$core/state.svelte.js';
+import { app } from '$core/app/index.js';
 import { workflowEditorState } from '$core/workflow/state.svelte.js';
 import { SvelteSet } from 'svelte/reactivity';
 
@@ -216,7 +216,7 @@ export class WorkflowTree {
 	// Errors
 
 	get errors() {
-		const errs = getConfigErrors();
+		const errs = app.configErrors;
 		if (!errs) return undefined;
 		return errs.filter((error) => error.instancePath.startsWith(`/workflow/steps`));
 	}

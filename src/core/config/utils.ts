@@ -1,17 +1,16 @@
-import type { Schema } from '@sjsf/form';
+import type { Schema as JSONSchema } from '@sjsf/form';
 
 import { cloneDeep } from 'lodash';
 
-import * as Config from './config.js';
+import { Schema } from './schema.js';
+import * as Config from './types.js';
 
 //
 
-export type Entity = keyof typeof Config.Schema.$defs;
+type Entity = keyof typeof Schema.$defs;
 
-export const entities = Object.keys(Config.Schema.$defs) as Entity[];
-
-export function getEntitySchema(entity: Entity): Schema {
-	const schema = cloneDeep({ ...Config.Schema });
+export function getEntitySchema(entity: Entity): JSONSchema {
+	const schema = cloneDeep({ ...Schema });
 	// @ts-expect-error - It's a valid reference
 	schema.$ref = `#/$defs/${entity}`;
 	return schema;
@@ -22,7 +21,7 @@ export function getEntitySchema(entity: Entity): Schema {
 export function createTestSample(): Config.Config {
 	return {
 		workflow: { name: 'Test', steps: [] },
-		organizations: [{ slug: 'd1', name: 'Dept', color: '#000', border: '#000' }],
+		organizations: [{ slug: 'd1', name: 'Dept' }],
 		roles: [],
 		dpp: {
 			enabled: false,
