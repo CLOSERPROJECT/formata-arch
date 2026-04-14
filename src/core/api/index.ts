@@ -86,12 +86,12 @@ export function saveStream(
 		Task.tryOrElse(
 			(err) => new Error('Failed to save workflow', { cause: err }),
 			async () => {
-				let url = '/org-admin/formata-builder';
+				const url = new URL('/org-admin/formata-builder', window.location.origin);
 				if (streamId) {
-					url += `?stream=${streamId}`;
+					url.searchParams.set('stream', streamId);
 				}
 				if (newFlag) {
-					url += `?new=true`;
+					url.searchParams.set('new', 'true');
 				}
 				if (import.meta.env.DEV) {
 					console.log(url, c);
