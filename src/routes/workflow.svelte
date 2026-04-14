@@ -12,7 +12,7 @@
 
 	//
 
-	let workflowTree = new WorkflowTree(app);
+const workflowTree = new WorkflowTree(app);
 
 	setTopbar({
 		title: 'Stream / Workflow',
@@ -102,4 +102,4 @@
 	</Popover.Root>
 {/snippet}
 
-<WorkflowTreeComponent bind:self={workflowTree} showIndices />
+<WorkflowTreeComponent self={workflowTree} showIndices />

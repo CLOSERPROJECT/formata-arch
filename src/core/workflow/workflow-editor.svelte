@@ -18,7 +18,7 @@
 		showIndices?: boolean;
 	}
 
-	let { self = $bindable(), showIndices = false }: Props = $props();
+	let { self, showIndices = false }: Props = $props();
 
 	//
 
