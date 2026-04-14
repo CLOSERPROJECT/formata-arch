@@ -14,7 +14,7 @@ type AppState =
 	| { type: 'loading' }
 	| { type: 'loading-error'; error: Error }
 	| { type: 'ready' }
-	| { type: 'ready-edit'; streamId: string };
+	| { type: 'ready-edit'; streamId: string; new: boolean };
 
 export const appData = lsSync<{ config: Config.Config }>('formata-config', {
 	config: DEFAULT_CONFIG
@@ -69,11 +69,12 @@ export class App {
 		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const params = new URLSearchParams(window.location.search);
 		const streamId = params.get('stream');
+		const newFlag = params.get('new');
 		if (streamId) {
 			const res = await loadStream(streamId);
 			if (res.isOk) {
 				appData.config = res.value;
-				this.#state = { type: 'ready-edit', streamId };
+				this.#state = { type: 'ready-edit', streamId, new: newFlag === 'true' };
 				return;
 			} else {
 				this.#state = { type: 'loading-error', error: res.error };
@@ -126,10 +127,10 @@ export class App {
 	async saveConfig() {
 		if (!this.canSave) return;
 
-		const streamId = this.#state.type === 'ready-edit' ? this.#state.streamId : undefined;
+		const editState = this.#state.type === 'ready-edit' ? $state.snapshot(this.#state) : undefined;
 		this.#state = { type: 'loading' };
 
-		saveStream(this.buildConfig(), streamId)
+		saveStream(this.buildConfig(), editState?.streamId, editState?.new)
 			.match({
 				Resolved: () => {
 					toast.success('Workflow saved successfully');

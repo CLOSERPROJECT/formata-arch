@@ -77,7 +77,11 @@ export function loadStream(id: string): Task.Task<Config.Config, Error> {
 		);
 }
 
-export function saveStream(config: Config.Config, streamId?: string): Task.Task<void, Error> {
+export function saveStream(
+	config: Config.Config,
+	streamId?: string,
+	newFlag?: boolean
+): Task.Task<void, Error> {
 	return Task.fromResult(Config.serialize(config)).andThen((c) =>
 		Task.tryOrElse(
 			(err) => new Error('Failed to save workflow', { cause: err }),
@@ -85,6 +89,9 @@ export function saveStream(config: Config.Config, streamId?: string): Task.Task<
 				let url = '/org-admin/formata-builder';
 				if (streamId) {
 					url += `?stream=${streamId}`;
+				}
+				if (newFlag) {
+					url += `?new=true`;
 				}
 				if (import.meta.env.DEV) {
 					console.log(url, c);
