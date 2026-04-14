@@ -10,7 +10,6 @@
 		"serialInputKey": "",
 		"serialStrategy": ""
 	},
-	"editable": false,
 	"organizations": [
 		{ "name": "Organization 1", "slug": "organization-1" },
 		{ "name": "Organization 2", "slug": "organization-2" },

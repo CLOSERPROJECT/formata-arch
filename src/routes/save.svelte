@@ -9,7 +9,7 @@
 
 	//
 
-	setTopbar({ title: 'Export', right: topbarRight });
+	setTopbar({ title: 'Save stream', right: topbarRight });
 
 	const serialized = app.getSerializedConfig();
 </script>

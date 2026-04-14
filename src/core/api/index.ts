@@ -68,7 +68,10 @@ export function loadStream(id: string): Task.Task<Config.Config, Error> {
 		.andThen((json) =>
 			Task.fromResult(
 				Config.validate(json).mapErr(
-					(err) => new Error('Failed to validate stream', { cause: err })
+					(err) =>
+						new Error('Failed to validate stream:\n' + err.map((e) => e.message).join('\n'), {
+							cause: err
+						})
 				)
 			)
 		);
@@ -85,6 +88,7 @@ export function saveStream(config: Config.Config, streamId?: string): Task.Task<
 				}
 				if (import.meta.env.DEV) {
 					console.log(url, c);
+					return;
 				}
 				await fetch(url, {
 					method: 'POST',

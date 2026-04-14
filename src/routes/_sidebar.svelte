@@ -67,7 +67,7 @@
 		<Sidebar.Group>
 			<Sidebar.GroupLabel>Data</Sidebar.GroupLabel>
 			<Sidebar.Menu>
-				{@render sidebarLinkButton({ label: 'Save', href: p('/export'), icon: SaveIcon })}
+				{@render sidebarLinkButton({ label: 'Save', href: p('/save'), icon: SaveIcon })}
 				<Sidebar.MenuItem>
 					<Sidebar.MenuButton onclick={triggerImport}>
 						<UploadIcon />
