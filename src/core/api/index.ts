@@ -97,10 +97,13 @@ export function saveStream(
 					console.log(url, c);
 					return;
 				}
-				await fetch(url, {
+				const res = await fetch(url, {
 					method: 'POST',
 					body: c
 				});
+				if (!res.ok) {
+					throw new Error('Failed to save workflow: ' + res.statusText);
+				}
 			}
 		)
 	);
