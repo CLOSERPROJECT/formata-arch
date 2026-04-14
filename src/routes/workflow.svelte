@@ -12,7 +12,7 @@
 
 	//
 
-	let workflowTree = new WorkflowTree({ steps: app.config.workflow.steps });
+	let workflowTree = new WorkflowTree(app);
 
 	setTopbar({
 		title: 'Stream / Workflow',

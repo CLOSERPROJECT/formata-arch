@@ -29,7 +29,7 @@
 				<p>Please fix the following validation errors before exporting:</p>
 				<ul class="mt-2 list-inside list-disc space-y-1">
 					{#each app.configErrors as err, i (i)}
-						<li>{err}</li>
+						<li>{err.instancePath}: {err.message}</li>
 					{/each}
 				</ul>
 			</Alert.Description>

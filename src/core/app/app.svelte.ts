@@ -153,7 +153,10 @@ export class App {
 				toast.error('Failed to import config');
 			}
 		} else {
-			this.config = result.value;
+			this.config.dpp = result.value.dpp;
+			this.config.workflow.steps = result.value.workflow.steps;
+			this.config.organizations = result.value.organizations;
+			this.config.roles = result.value.roles;
 			toast.success('Config imported');
 		}
 	}
