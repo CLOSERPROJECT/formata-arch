@@ -10,15 +10,15 @@ import { DEFAULT_CONFIG } from './utils.js';
 
 //
 
-type AppState =
-	| { type: 'loading' }
-	| { type: 'loading-error'; error: Error }
-	| { type: 'ready' }
-	| { type: 'ready-edit'; streamId: string; new: boolean };
-
 export const appData = lsSync<{ config: Config.Config }>('formata-config', {
 	config: DEFAULT_CONFIG
 });
+
+//
+
+type AppState = { type: 'loading' } | { type: 'loading-error'; error: Error } | { type: 'ready' };
+
+type EditData = { streamId: string; new: boolean };
 
 export class App {
 	constructor() {
@@ -52,6 +52,8 @@ export class App {
 		return this.#state.type === 'loading' || this.#state.type === 'loading-error';
 	}
 
+	#editData: EditData | undefined;
+
 	/**
 	 * Loads the available organizations and roles from catalog
 	 * and detects if the app is in edit mode.
@@ -72,13 +74,12 @@ export class App {
 		const newFlag = params.get('new');
 		if (streamId) {
 			const res = await loadStream(streamId);
-			if (res.isOk) {
-				appData.config = res.value;
-				this.#state = { type: 'ready-edit', streamId, new: newFlag === 'true' };
-				return;
-			} else {
+			if (!res.isOk) {
 				this.#state = { type: 'loading-error', error: res.error };
 				return;
+			} else {
+				appData.config = res.value;
+				this.#editData = { streamId, new: newFlag === 'true' };
 			}
 		}
 
@@ -126,22 +127,14 @@ export class App {
 	 */
 	async saveConfig() {
 		if (!this.canSave) return;
-
-		const editState = this.#state.type === 'ready-edit' ? $state.snapshot(this.#state) : undefined;
 		this.#state = { type: 'loading' };
 
-		saveStream(this.buildConfig(), editState?.streamId, editState?.new)
-			.match({
-				Resolved: () => {
-					toast.success('Workflow saved successfully');
-				},
-				Rejected: (error) => {
-					toast.error(error.message);
-				}
-			})
-			.finally(() => {
-				this.#state = { type: 'ready' };
-			});
+		await saveStream(this.buildConfig(), this.#editData?.streamId, this.#editData?.new).match({
+			Resolved: () => toast.success('Workflow saved successfully'),
+			Rejected: (error) => toast.error(error.message)
+		});
+
+		this.#state = { type: 'ready' };
 	}
 
 	/**
