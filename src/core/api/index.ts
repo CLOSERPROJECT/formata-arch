@@ -1,4 +1,11 @@
 import { Config } from '$core';
+import {
+	createDevAwareFetcher,
+	fetchJsonTask,
+	fetchTask,
+	ValidationError,
+	zod
+} from '$core/utils/fetch.js';
 import * as Task from 'true-myth/task';
 import z from 'zod';
 
@@ -30,51 +37,21 @@ type OrganizationData = z.infer<typeof OrganizationDataSchema>;
 //
 
 export function loadOrganizationData(): Task.Task<OrganizationData, Error> {
-	return Task.tryOrElse(
-		(err) => new Error('Failed to fetch organization data', { cause: err }),
-		async () => {
-			if (import.meta.env.DEV) return new Response(JSON.stringify(catalogMockData));
-			return fetch('/api/catalog');
-		}
-	)
-		.andThen((res) =>
-			Task.tryOrElse(
-				(err) => new Error('Failed to get json response', { cause: err }),
-				() => res.json()
-			)
-		)
-		.andThen((json) =>
-			Task.tryOrElse(
-				(err) => new Error('Failed to parse organization data', { cause: err }),
-				async () => OrganizationDataSchema.parse(json)
-			)
-		);
+	return fetchJsonTask(
+		'/api/catalog',
+		zod(OrganizationDataSchema),
+		undefined,
+		createDevAwareFetcher(() => catalogMockData)
+	);
 }
 
 export function loadStream(id: string): Task.Task<Config.Config, Error> {
-	return Task.tryOrElse(
-		(err) => new Error('Failed to load stream', { cause: err }),
-		async () => {
-			if (import.meta.env.DEV) return new Response(JSON.stringify(streamMockData));
-			return fetch(`/org-admin/formata-builder/stream/${id}`);
-		}
-	)
-		.andThen((res) =>
-			Task.tryOrElse(
-				(err) => new Error('Failed to get json response', { cause: err }),
-				() => res.json()
-			)
-		)
-		.andThen((json) =>
-			Task.fromResult(
-				Config.validate(json).mapErr(
-					(err) =>
-						new Error('Failed to validate stream:\n' + err.map((e) => e.message).join('\n'), {
-							cause: err
-						})
-				)
-			)
-		);
+	return fetchJsonTask(
+		`/org-admin/formata-builder/stream/${id}`,
+		(payload: unknown) => Config.validate(payload).mapErr(ValidationError.fromAjv),
+		undefined,
+		createDevAwareFetcher(() => streamMockData)
+	);
 }
 
 export function saveStream(
@@ -82,29 +59,20 @@ export function saveStream(
 	streamId?: string,
 	newFlag?: boolean
 ): Task.Task<void, Error> {
-	return Task.fromResult(Config.serialize(config)).andThen((c) =>
-		Task.tryOrElse(
-			(err) => new Error('Failed to save workflow', { cause: err }),
-			async () => {
-				const url = new URL('/org-admin/formata-builder', window.location.origin);
-				if (streamId) {
-					url.searchParams.set('stream', streamId);
-				}
-				if (newFlag) {
-					url.searchParams.set('new', 'true');
-				}
-				if (import.meta.env.DEV) {
-					console.log(url, c);
-					return;
-				}
-				const res = await fetch(url, {
-					method: 'POST',
-					body: c
-				});
-				if (!res.ok) {
-					throw new Error('Failed to save workflow: ' + res.statusText);
-				}
+	return Task.fromResult(Config.serialize(config))
+		.andThen((c) => {
+			const url = new URL('/org-admin/formata-builder', window.location.origin);
+			if (streamId) {
+				url.searchParams.set('stream', streamId);
 			}
-		)
-	);
+			if (newFlag) {
+				url.searchParams.set('new', 'true');
+			}
+			return fetchTask(
+				url,
+				{ method: 'POST', body: c },
+				createDevAwareFetcher(() => console.log(url, c))
+			);
+		})
+		.map(() => undefined);
 }
