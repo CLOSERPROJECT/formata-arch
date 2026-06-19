@@ -5,7 +5,11 @@ export type SingleFormConfig = {
 	uiSchema?: UiSchema;
 };
 
-export type SingleFormSavedMessage = SingleFormConfig & {
+export type SingleFormSavePayload = SingleFormConfig & {
+	changeReason: string;
+};
+
+export type SingleFormSavedMessage = SingleFormSavePayload & {
 	type: 'formata:schema-saved';
 };
 
@@ -50,7 +54,7 @@ export async function loadSingleFormConfig(loadUrl: string): Promise<SingleFormC
 	return data;
 }
 
-export async function saveSingleFormConfig(saveUrl: string, data: SingleFormConfig): Promise<void> {
+export async function saveSingleFormConfig(saveUrl: string, data: SingleFormSavePayload): Promise<void> {
 	const response = await fetch(saveUrl, {
 		method: 'POST',
 		credentials: 'include',

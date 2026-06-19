@@ -6,6 +6,7 @@
 	import BuilderStandalone from '$builder/builder-standalone.svelte';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -32,20 +33,38 @@
 	let loadState = $state.raw<LoadState>(initialLoadState);
 	let builder = $state<BuilderContext>();
 	let saving = $state(false);
+	let changeReason = $state('');
+	let baselineFormSnapshot = $state.raw<string>();
+	const trimmedChangeReason = $derived(changeReason.trim());
+	const hasChangeReason = $derived(trimmedChangeReason.length > 0);
+	const hasFormChanged = $derived.by(() => {
+		if (!builder || baselineFormSnapshot === undefined) return false;
+		return createFormSnapshot(builder) !== baselineFormSnapshot;
+	});
+	const canSave = $derived(Boolean(builder) && !saving && hasChangeReason && hasFormChanged);
+
+	function createFormSnapshot(ctx: BuilderContext): string {
+		return JSON.stringify($state.snapshot({ rootNode: ctx.rootNode }));
+	}
 
 	function handleBuilderInit(ctx: BuilderContext) {
 		builder = ctx;
 		ctx.validate();
+		baselineFormSnapshot = createFormSnapshot(ctx);
 	}
 
 	async function handleSave() {
-		if (!builder || saving) return;
+		if (!builder || !canSave) return;
 		if (!builder.validate()) {
 			toast.error('Fix builder errors and warnings before saving.');
 			return;
 		}
 		builder.build();
-		const data = { schema: builder.schema, uiSchema: builder.uiSchema as UiSchema };
+		const data = {
+			schema: builder.schema,
+			uiSchema: builder.uiSchema as UiSchema,
+			changeReason: trimmedChangeReason
+		};
 		saving = true;
 		try {
 			if (saveUrl) {
@@ -53,6 +72,8 @@
 			}
 			window.parent?.postMessage({ type: 'formata:schema-saved', ...data }, targetOrigin);
 			toast.success('Schema saved');
+			baselineFormSnapshot = createFormSnapshot(builder);
+			changeReason = '';
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message : 'Failed to save schema config');
 		} finally {
@@ -85,14 +106,14 @@
 </script>
 
 <main class="flex min-h-svh flex-col bg-background text-foreground">
-	<header class="flex h-[53px] items-center justify-between gap-4 border-b px-4">
+	<header class="flex min-h-[53px] items-center justify-between gap-4 border-b px-4 py-2">
 		<div>
 			<p class="font-medium">Single-form builder</p>
 			<p class="text-xs text-muted-foreground">
 				Edit one JSON Schema and uiSchema pair without workflow storage.
 			</p>
 		</div>
-		<div class="flex items-center gap-2">
+		<div class="flex flex-wrap items-center justify-end gap-2">
 			{#if builder}
 				<span
 					class={[
@@ -111,7 +132,14 @@
 					{builder.warningsCount} warnings
 				</span>
 			{/if}
-			<Button onclick={handleSave} disabled={!builder || saving}>
+			<Input
+				aria-label="Change reason"
+				class="w-72 max-w-[45vw]"
+				disabled={!builder || saving}
+				placeholder="Reason for change"
+				bind:value={changeReason}
+			/>
+			<Button onclick={handleSave} disabled={!canSave}>
 				{#if saving}
 					<LoaderIcon class="animate-spin" />
 					Saving

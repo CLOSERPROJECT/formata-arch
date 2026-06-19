@@ -1,13 +1,18 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
 	getHashSearchParams,
 	isSingleFormConfig,
 	isSingleFormLoadMessage,
-	isSingleFormPath
+	isSingleFormPath,
+	saveSingleFormConfig
 } from './single-form-contract.js';
 
 describe('single form contract', () => {
+	afterEach(() => {
+		vi.unstubAllGlobals();
+	});
+
 	it('detects standalone route hashes', () => {
 		expect(isSingleFormPath('#/single-form?load=/api/form-config')).toBe(true);
 		expect(isSingleFormPath('#/schema-editor')).toBe(true);
@@ -28,5 +33,28 @@ describe('single form contract', () => {
 		expect(isSingleFormConfig({ uiSchema: {} })).toBe(false);
 		expect(isSingleFormLoadMessage({ type: 'formata:schema-load', ...config })).toBe(true);
 		expect(isSingleFormLoadMessage({ type: 'other', ...config })).toBe(false);
+	});
+
+	it('posts change reasons when saving', async () => {
+		const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+		vi.stubGlobal('fetch', fetchMock);
+
+		await saveSingleFormConfig('/api/save', {
+			schema: { type: 'object' },
+			uiSchema: {},
+			changeReason: 'Add customer field'
+		});
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			'/api/save',
+			expect.objectContaining({
+				method: 'POST',
+				body: JSON.stringify({
+					schema: { type: 'object' },
+					uiSchema: {},
+					changeReason: 'Add customer field'
+				})
+			})
+		);
 	});
 });
