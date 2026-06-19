@@ -14,9 +14,10 @@
 			schema: Schema;
 			uiSchema?: UiSchema;
 		};
+		onChange?: (ctx: BuilderContext) => void;
 		onInit?: (ctx: BuilderContext) => void;
 	};
-	const { initialData, onInit }: Props = $props();
+	const { initialData, onChange, onInit }: Props = $props();
 
 	const promises = Promise.all([highlighterPromise]);
 </script>
@@ -31,6 +32,7 @@
 				ctx={builder}
 				initialSchema={initialData?.schema}
 				initialUiSchema={initialData?.uiSchema}
+				{onChange}
 				{onInit}
 			/>
 		{/await}

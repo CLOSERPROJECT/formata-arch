@@ -35,22 +35,32 @@
 	let saving = $state(false);
 	let changeReason = $state('');
 	let baselineFormSnapshot = $state.raw<string>();
+	let hasFormChanged = $state(false);
 	const trimmedChangeReason = $derived(changeReason.trim());
 	const hasChangeReason = $derived(trimmedChangeReason.length > 0);
-	const hasFormChanged = $derived.by(() => {
-		if (!builder || baselineFormSnapshot === undefined) return false;
-		return createFormSnapshot(builder) !== baselineFormSnapshot;
-	});
 	const canSave = $derived(Boolean(builder) && !saving && hasChangeReason && hasFormChanged);
 
 	function createFormSnapshot(ctx: BuilderContext): string {
 		return JSON.stringify($state.snapshot({ rootNode: ctx.rootNode }));
 	}
 
+	function refreshFormChanged() {
+		hasFormChanged =
+			builder !== undefined &&
+			baselineFormSnapshot !== undefined &&
+			createFormSnapshot(builder) !== baselineFormSnapshot;
+	}
+
 	function handleBuilderInit(ctx: BuilderContext) {
 		builder = ctx;
 		ctx.validate();
 		baselineFormSnapshot = createFormSnapshot(ctx);
+		hasFormChanged = false;
+	}
+
+	function handleBuilderChange(ctx: BuilderContext) {
+		builder = ctx;
+		refreshFormChanged();
 	}
 
 	async function handleSave() {
@@ -73,6 +83,7 @@
 			window.parent?.postMessage({ type: 'formata:schema-saved', ...data }, targetOrigin);
 			toast.success('Schema saved');
 			baselineFormSnapshot = createFormSnapshot(builder);
+			hasFormChanged = false;
 			changeReason = '';
 		} catch (error) {
 			toast.error(error instanceof Error ? error.message : 'Failed to save schema config');
@@ -178,7 +189,11 @@
 		</section>
 	{:else}
 		<section class="grow overflow-auto p-4">
-			<BuilderStandalone initialData={loadState.data} onInit={handleBuilderInit} />
+			<BuilderStandalone
+				initialData={loadState.data}
+				onChange={handleBuilderChange}
+				onInit={handleBuilderInit}
+			/>
 		</section>
 	{/if}
 </main>

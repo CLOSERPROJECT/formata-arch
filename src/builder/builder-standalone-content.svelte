@@ -1,6 +1,7 @@
 <script lang="ts">
-	import type { Schema, UiSchema } from '@sjsf/form';
+	import type { Schema, SchemaValue, UiSchema } from '@sjsf/form';
 
+	import { isSchemaValueDeepEqual } from '@sjsf/form/core';
 	import { on } from 'svelte/events';
 
 	import { BuilderContext, setBuilderContext } from './context.svelte.js';
@@ -13,21 +14,34 @@
 		ctx: BuilderContext;
 		initialSchema?: Schema;
 		initialUiSchema?: UiSchema;
+		onChange?: (ctx: BuilderContext) => void;
 		onInit?: (ctx: BuilderContext) => void;
 	};
-	const { ctx, initialSchema, initialUiSchema, onInit }: Props = $props();
+	const { ctx, initialSchema, initialUiSchema, onChange, onInit }: Props = $props();
 
 	setBuilderContext(ctx);
 
-	let initialLoadDone = false;
-	function applyInitialState(builder: BuilderContext) {
-		if (initialSchema !== undefined && !initialLoadDone) {
-			initialLoadDone = true;
-			builder.loadFromSchema(initialSchema, initialUiSchema);
+	let initialized = false;
+	let lastFormSnapshot: SchemaValue | undefined;
+	$effect(() => {
+		const formSnapshot = $state.snapshot({ rootNode: ctx.rootNode });
+		if (!initialized) {
+			initialized = true;
+			if (initialSchema !== undefined) {
+				ctx.loadFromSchema(initialSchema, initialUiSchema);
+				lastFormSnapshot = $state.snapshot({ rootNode: ctx.rootNode });
+			} else {
+				lastFormSnapshot = formSnapshot;
+			}
+			onInit?.(ctx);
+			return;
 		}
-		onInit?.(builder);
-	}
-	$effect(() => applyInitialState(ctx));
+		if (isSchemaValueDeepEqual(lastFormSnapshot, formSnapshot)) {
+			return;
+		}
+		lastFormSnapshot = formSnapshot;
+		onChange?.(ctx);
+	});
 
 	let rootElements = $state(new Array<HTMLDivElement | null>(3));
 	$effect(() =>
