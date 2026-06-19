@@ -1,0 +1,16 @@
+{
+    "schema": {
+        "required": [
+            "Incoming Kilogramssssssss"
+        ],
+        "title": "Record incoming gallium",
+        "type": "object",
+        "properties": {
+            "Incoming Kilogramssssssss": {
+                "type": "number",
+                "title": "Incoming Kilogramssssssss"
+            }
+        }
+    },
+    "uiSchema": {}
+}
