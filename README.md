@@ -15,12 +15,19 @@ The `load` endpoint is requested with `GET` and must return:
 { "schema": { "type": "object", "properties": {} }, "uiSchema": {} }
 ```
 
-On save, Formata-Arch validates the builder state, then `POST`s the same shape to `save` when
-provided. It also emits:
+On save, Formata-Arch requires a change reason, validates the builder state, then `POST`s the
+schema config plus `changeReason` to `save` when provided. The save button stays disabled until the
+form has changed and a reason is entered.
+
+```js
+{ schema, uiSchema, changeReason }
+```
+
+It also emits:
 
 ```js
 window.parent.postMessage(
-	{ type: 'formata:schema-saved', schema, uiSchema },
+	{ type: 'formata:schema-saved', schema, uiSchema, changeReason },
 	'<target-origin>'
 );
 ```
