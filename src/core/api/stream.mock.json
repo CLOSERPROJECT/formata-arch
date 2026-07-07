@@ -17,36 +17,26 @@
 	],
 	"roles": [
 		{
-			"border": "var(--role-blue-border)",
-			"color": "var(--role-blue-bg)",
 			"name": "Chemist",
 			"orgSlug": "organization-1",
 			"slug": "chemist"
 		},
 		{
-			"border": "var(--role-blue-border)",
-			"color": "var(--role-blue-bg)",
 			"name": "Mechanic",
 			"orgSlug": "organization-1",
 			"slug": "mechanic"
 		},
 		{
-			"border": "var(--role-cyan-border)",
-			"color": "var(--role-cyan-bg)",
 			"name": "Supervisor",
 			"orgSlug": "organization-1",
 			"slug": "supervisor"
 		},
 		{
-			"border": "var(--role-emerald-border)",
-			"color": "var(--role-emerald-bg)",
 			"name": "Analyst",
 			"orgSlug": "organization-2",
 			"slug": "analyst"
 		},
 		{
-			"border": "var(--role-pink-border)",
-			"color": "var(--role-pink-bg)",
 			"name": "QA Inspector",
 			"orgSlug": "organization-3",
 			"slug": "qainspector"

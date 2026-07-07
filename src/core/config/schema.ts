@@ -99,14 +99,12 @@ export const Schema = {
 		},
 		Role: {
 			type: 'object',
-			required: ['name', 'slug', 'orgSlug', 'color', 'border'],
-			additionalProperties: false,
+			required: ['name', 'slug', 'orgSlug'],
+			additionalProperties: true,
 			properties: {
 				name: { type: 'string' },
 				slug: { type: 'string' },
-				orgSlug: { type: 'string' },
-				color: { type: 'string' },
-				border: { type: 'string' }
+				orgSlug: { type: 'string' }
 			}
 		},
 		Dpp: {

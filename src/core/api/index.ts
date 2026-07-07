@@ -19,12 +19,11 @@ const OrganizationSchema: z.ZodType<Config.Organization> = z.object({
 	name: z.string()
 });
 
-const RoleSchema: z.ZodType<Config.Role> = z.object({
+const RoleSchema = z.object({
 	orgSlug: z.string(),
 	name: z.string(),
 	slug: z.string(),
-	color: z.string(),
-	border: z.string()
+	palette: z.string().optional()
 });
 
 const OrganizationDataSchema = z.object({
