@@ -46,7 +46,7 @@ export function loadOrganizationData(): Task.Task<OrganizationData, Error> {
 
 export function loadStream(id: string): Task.Task<Config.Config, Error> {
 	return fetchJsonTask(
-		`/org-admin/formata-builder/stream/${id}`,
+		`/my/organization/formata-builder/stream/${id}`,
 		(payload: unknown) => Config.validate(payload).mapErr(ValidationError.fromAjv),
 		undefined,
 		createDevAwareFetcher(() => streamMockData)
@@ -60,7 +60,7 @@ export function saveStream(
 ): Task.Task<void, Error> {
 	return Task.fromResult(Config.serialize(config))
 		.andThen((c) => {
-			const url = new URL('/org-admin/formata-builder', window.location.origin);
+			const url = new URL('/my/organization/formata-builder', window.location.origin);
 			if (streamId) {
 				url.searchParams.set('stream', streamId);
 			}
