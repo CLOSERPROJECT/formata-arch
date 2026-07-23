@@ -54,7 +54,7 @@
 	<Sidebar.Header class="flex h-[53px] flex-row items-center justify-between border-b px-4">
 		<p class="font-semibold tracking-tight text-primary">Attesta Composer</p>
 		<Button
-			onclick={() => (window.location.href = window.origin)}
+			onclick={() => (window.location.href = `${window.origin}/my`)}
 			size="icon-sm"
 			variant="ghost"
 			class="hover:bg-sidebar-accent"
