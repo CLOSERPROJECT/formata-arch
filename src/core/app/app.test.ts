@@ -59,7 +59,7 @@ describe('App configErrors / canSave wiring', () => {
 		const app = new App();
 		await flushMicrotasks();
 
-		expect(app.availableCategories).toEqual(SAMPLE_CATEGORIES);
+		expect(app.catalog.categories).toEqual(SAMPLE_CATEGORIES);
 
 		const config = await loadSampleConfig();
 		const { categorySlug: _c, subCategorySlug: _s, ...workflow } = config.workflow;

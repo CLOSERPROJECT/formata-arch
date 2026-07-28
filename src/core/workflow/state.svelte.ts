@@ -1,4 +1,5 @@
-import type { Role, Step } from '$core/config/types.js';
+import type { Step } from '$core/config/types.js';
+import type { CatalogRole } from '$core/api/catalog-schema.js';
 
 import { app } from '$core/app/index.js';
 
@@ -9,15 +10,15 @@ export const workflowEditorState = $state({
 });
 
 const currentOrganization = $derived.by(() =>
-	app.availableOrganizations.find(
+	app.catalog.organizations.find(
 		(org) => org.slug === workflowEditorState.currentStep?.organization
 	)
 );
 
 const roles = $derived.by(() =>
-	app.roles.filter((role) => role.orgSlug === currentOrganization?.slug)
+	app.catalog.roles.filter((role) => role.orgSlug === currentOrganization?.slug)
 );
 
-export function getAvailableRoleOptions(): Role[] {
+export function getAvailableRoleOptions(): CatalogRole[] {
 	return roles;
 }

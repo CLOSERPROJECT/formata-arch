@@ -1,7 +1,7 @@
 import type { ErrorObject } from 'ajv';
 
 import { Config } from '$core';
-import type { CatalogOrganization, CatalogRole, CategoryTree } from '$core/api/catalog-schema.js';
+import type { Catalog } from '$core/api/catalog-schema.js';
 import { loadCatalog, loadStream, saveStream } from '$core/api/index.js';
 import { uniq } from 'lodash';
 import { lsSync } from 'rune-sync/localstorage';
@@ -21,28 +21,27 @@ type AppState = { type: 'loading' } | { type: 'loading-error'; error: Error } | 
 
 type EditData = { streamId: string; new: boolean };
 
+const EMPTY_CATALOG: Catalog = {
+	organizations: [],
+	roles: [],
+	categories: []
+};
+
 export class App {
 	constructor() {
 		this.init();
 	}
 
+	catalog: Catalog = $state(structuredClone(EMPTY_CATALOG));
+
 	configErrors: ErrorObject[] | undefined = $derived.by(() => {
-		const res = Config.validate(appData.config, { categories: this.availableCategories });
+		const res = Config.validate(appData.config, { categories: this.catalog.categories });
 		if (res.isOk) {
 			return undefined;
 		} else {
 			return res.error;
 		}
 	});
-
-	availableOrganizations: CatalogOrganization[] = $state([]);
-
-	availableRoles: CatalogRole[] = $state([]);
-	get roles() {
-		return this.availableRoles;
-	}
-
-	availableCategories: CategoryTree[] = $state([]);
 
 	#state = $state.raw<AppState>({ type: 'loading' });
 	get state() {
@@ -55,15 +54,12 @@ export class App {
 	#editData: EditData | undefined;
 
 	/**
-	 * Loads organizations, roles, and categories from catalog
-	 * and detects if the app is in edit mode.
+	 * Loads catalog data and detects if the app is in edit mode.
 	 */
 	private async init() {
 		const res = await loadCatalog();
 		if (res.isOk) {
-			this.availableOrganizations = res.value.organizations;
-			this.availableRoles = res.value.roles;
-			this.availableCategories = res.value.categories;
+			this.catalog = res.value;
 		} else {
 			this.#state = { type: 'loading-error', error: res.error };
 			return;
@@ -100,12 +96,12 @@ export class App {
 		const selectedRoles: Config.Role[] = [];
 
 		for (const data of baseData) {
-			const organization = this.availableOrganizations.find(
+			const organization = this.catalog.organizations.find(
 				(org) => org.slug === data.organization
 			);
 			if (organization) selectedOrganizations.push(organization);
 			for (const role of data.roles) {
-				const foundRole = this.availableRoles.find(
+				const foundRole = this.catalog.roles.find(
 					(r) => r.slug === role && r.orgSlug === data.organization
 				);
 				if (foundRole) selectedRoles.push(foundRole);

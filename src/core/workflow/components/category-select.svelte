@@ -17,10 +17,10 @@
 	const categorySlug = $derived(workflow.categorySlug);
 	const subCategorySlug = $derived(workflow.subCategorySlug);
 
-	const subCategories = $derived(filteredSubCategories(app.availableCategories, categorySlug));
+	const subCategories = $derived(filteredSubCategories(app.catalog.categories, categorySlug));
 
 	const selectedCategory = $derived(
-		app.availableCategories.find((category) => category.slug === categorySlug)
+		app.catalog.categories.find((category) => category.slug === categorySlug)
 	);
 	const selectedSubCategory = $derived(
 		subCategories.find((subCategory) => subCategory.slug === subCategorySlug)
@@ -67,7 +67,7 @@
 			</Select.Trigger>
 			<Select.Content portalProps={{ disabled: true }}>
 				<Select.Group>
-					{#each app.availableCategories as category (category.slug)}
+					{#each app.catalog.categories as category (category.slug)}
 						<Select.Item value={category.slug} label={category.name}>
 							<span class="flex items-center gap-2">
 								{#if category.iconURL}
