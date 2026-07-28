@@ -18,6 +18,8 @@ describe('serde', () => {
 			expect(config).toHaveProperty('organizations');
 			expect(config).toHaveProperty('roles');
 			expect(config).toHaveProperty('dpp');
+			expect(config.workflow.categorySlug).toBe('materials');
+			expect(config.workflow.subCategorySlug).toBe('metals');
 		}
 	});
 

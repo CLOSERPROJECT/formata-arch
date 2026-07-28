@@ -30,11 +30,17 @@ export const Schema = {
 			properties: {
 				name: { type: 'string', minLength: 3 },
 				description: { type: 'string', minLength: 3 },
+				categorySlug: { type: 'string', minLength: 1 },
+				subCategorySlug: { type: 'string', minLength: 1 },
 				steps: {
 					type: 'array',
 					items: { $ref: '#/$defs/Step' },
 					minItems: 1
 				}
+			},
+			dependentRequired: {
+				categorySlug: ['subCategorySlug'],
+				subCategorySlug: ['categorySlug']
 			}
 		},
 		Step: {

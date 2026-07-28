@@ -1,4 +1,4 @@
-import { Ajv, type ErrorObject } from 'ajv';
+import Ajv2019, { type ErrorObject } from 'ajv/dist/2019.js';
 import { Result } from 'true-myth/result';
 
 import type { Config } from './types.js';
@@ -7,7 +7,7 @@ import { Schema } from './schema.js';
 
 //
 
-const ajv = new Ajv({ allErrors: true });
+const ajv = new Ajv2019({ allErrors: true });
 ajv.addSchema(Schema);
 
 export function isConfig(data: unknown): data is Config {
