@@ -45,5 +45,74 @@
 			"palette": "pink"
 		}
 	],
+	"categories": [
+		{
+			"name": "Materials",
+			"slug": "materials",
+			"icon": "weee",
+			"iconURL": "/static/taxonomy/weee.svg",
+			"sortOrder": 1,
+			"subCategories": [
+				{
+					"name": "Metals",
+					"slug": "metals",
+					"icon": "power-electronics",
+					"iconURL": "/static/taxonomy/power-electronics.svg",
+					"sortOrder": 1,
+					"description": "Recovery and refinement of metal materials including gallium"
+				},
+				{
+					"name": "Recycling",
+					"slug": "recycling",
+					"icon": "weee",
+					"iconURL": "/static/taxonomy/weee.svg",
+					"sortOrder": 2,
+					"description": "Recycling flows for recovered materials"
+				}
+			]
+		},
+		{
+			"name": "Recycling and Recovery",
+			"slug": "recycling-and-recovery",
+			"icon": "weee",
+			"iconURL": "/static/taxonomy/weee.svg",
+			"sortOrder": 2,
+			"subCategories": [
+				{
+					"name": "Photovoltaic Panels",
+					"slug": "photovoltaic-panels",
+					"icon": "photovoltaic-module",
+					"iconURL": "/static/taxonomy/photovoltaic-module.svg",
+					"sortOrder": 1,
+					"description": "Tracking disassembly and material recovery from photovoltaic panels"
+				},
+				{
+					"name": "Printed Circuit Boards (PCB)",
+					"slug": "printed-circuit-boards-pcb",
+					"icon": "pcb",
+					"iconURL": "/static/taxonomy/pcb.svg",
+					"sortOrder": 3,
+					"description": "Precious metal recovery process from electronic circuit boards"
+				}
+			]
+		},
+		{
+			"name": "Supply Chain",
+			"slug": "supply-chain",
+			"icon": "batch-traceability",
+			"iconURL": "/static/taxonomy/batch-traceability.svg",
+			"sortOrder": 3,
+			"subCategories": [
+				{
+					"name": "Procurement",
+					"slug": "procurement",
+					"icon": "procurement-workflow",
+					"iconURL": "/static/taxonomy/procurement-workflow.svg",
+					"sortOrder": 3,
+					"description": "Purchase order and procurement management"
+				}
+			]
+		}
+	],
 	"stream": "dpp:\n  enabled: true\n  gtin: '09506000134352'\n  lotDefault: ''\n  lotInputKey: batchId\n  ownerName: Attesta Demo Operator\n  productDescription: Gallium intake and refinement process with notarized checkpoints.\n  productName: Recycled Gallium Batch\n  serialInputKey: ''\n  serialStrategy: ''\n\norganizations:\n  - name: Organization 1\n    slug: organization-1\n  - name: Organization 2\n    slug: organization-2\n  - name: Organization 3\n    slug: organization-3\n\nroles:\n  - name: Chemist\n    orgSlug: organization-1\n    slug: chemist\n  - name: Mechanic\n    orgSlug: organization-1\n    slug: mechanic\n  - name: Supervisor\n    orgSlug: organization-1\n    slug: supervisor\n  - name: Analyst\n    orgSlug: organization-2\n    slug: analyst\n  - name: QA Inspector\n    orgSlug: organization-3\n    slug: qainspector\n\nworkflow:\n  description: Workflow for intake, refinement, and QA of recycled gallium batches\n    with notarized checkpoints.\n  name: Gallium recycling notarization\n  steps:\n    - id: '1'\n      order: 1\n      organization: organization-1\n      substeps:\n        - id: '1.1'\n          inputKey: qa\n          inputType: formata\n          order: 0\n          roles:\n            - chemist\n          schema:\n            properties:\n              confidenceLevel:\n                maximum: 5\n                minimum: 1\n                title: Confidence level (range 1-5)\n                type: integer\n              evidenceFile:\n                format: data-url\n                title: Evidence file\n                type: string\n              inspectorName:\n                title: Inspector name\n                type: string\n              notes:\n                title: QA notes\n                type: string\n              purityScore:\n                maximum: 100\n                minimum: 0\n                title: Purity score (range 0-100)\n                type: number\n              result:\n                enum:\n                  - pass\n                  - conditional_pass\n                  - rework\n                  - reject\n                title: QA result\n                type: string\n              riskBand:\n                enum:\n                  - low\n                  - medium\n                  - high\n                  - critical\n                title: Risk band\n                type: string\n              testMethod:\n                enum:\n                  - xrf\n                  - icp_ms\n                  - wet_chemistry\n                  - visual_only\n                title: Test method\n                type: string\n            required:\n              - inspectorName\n              - result\n              - purityScore\n              - riskBand\n            type: object\n          title: Record formata\n          uiSchema:\n            confidenceLevel:\n              ui:components:\n                numberWidget: rangeWidget\n              ui:options:\n                help: Numeric range value between 1 and 5.\n            evidenceFile:\n              ui:components:\n                stringField: fileField\n              ui:options:\n                help: Upload QA evidence.\n            notes:\n              ui:components:\n                textWidget: textareaWidget\n              ui:options:\n                help: Write a detailed QA narrative and exceptions.\n            purityScore:\n              ui:components:\n                numberWidget: rangeWidget\n              ui:options:\n                help: Numeric range value between 0 and 100.\n            riskBand:\n              ui:options:\n                help: Choose the risk classification for this batch.\n            testMethod:\n              ui:options:\n                help: Select how QA validation was performed.\n            ui:options:\n              order:\n                - inspectorName\n                - testMethod\n                - result\n                - riskBand\n                - purityScore\n                - confidenceLevel\n                - notes\n                - evidenceFile\n        - id: '1.2'\n          inputKey: incomingKg\n          inputType: formata\n          order: 1\n          roles:\n            - mechanic\n          schema:\n            properties:\n              incomingKg:\n                title: incomingKg\n                type: number\n            required:\n              - incomingKg\n            title: Record incoming gallium\n            type: object\n          title: Record incoming gallium (kg)\n        - id: '1.3'\n          inputKey: batchId\n          inputType: formata\n          order: 2\n          roles:\n            - supervisor\n          schema:\n            properties:\n              batchId:\n                title: batchId\n                type: string\n            required:\n              - batchId\n            title: Batch ID reference\n            type: object\n          title: Attach batch ID\n        - id: '1.4'\n          inputKey: Gallium certification\n          inputType: formata\n          order: 3\n          roles:\n            - supervisor\n          schema:\n            properties:\n              Certification:\n                title: Certification\n            required:\n              - Certification\n            title: Gallium certification\n            type: object\n          title: Upload gallium certification\n          uiSchema:\n            Certification:\n              ui:components:\n                unknownField: unknownNativeFileField\n      title: Incoming intake\n    - id: '2'\n      order: 2\n      organization: organization-2\n      substeps:\n        - id: '2.1'\n          inputKey: refinedKg\n          inputType: formata\n          order: 1\n          roles:\n            - analyst\n          schema:\n            properties:\n              refinedKg:\n                title: refinedKg\n                type: number\n            required:\n              - refinedKg\n            title: Record refined gallium output\n            type: object\n          title: Record refined gallium output (kg)\n        - id: '2.2'\n          inputKey: purityPct\n          inputType: formata\n          order: 2\n          roles:\n            - analyst\n          schema:\n            properties:\n              purityPct:\n                title: purityPct\n                type: number\n            required:\n              - purityPct\n            title: Record purity percentage\n            type: object\n          title: Record purity (%)\n      title: Refinement\n    - id: '3'\n      order: 3\n      organization: organization-3\n      substeps:\n        - id: '3.1'\n          inputKey: qaChecklist\n          inputType: formata\n          order: 1\n          roles:\n            - qainspector\n          schema:\n            properties:\n              confidenceLevel:\n                maximum: 5\n                minimum: 1\n                title: Confidence level (range 1-5)\n                type: integer\n              evidenceFile:\n                format: data-url\n                title: Evidence file\n                type: string\n              inspectorName:\n                title: Inspector name\n                type: string\n              notes:\n                title: QA notes\n                type: string\n              purityScore:\n                maximum: 100\n                minimum: 0\n                title: Purity score (range 0-100)\n                type: number\n              result:\n                enum:\n                  - pass\n                  - conditional_pass\n                  - rework\n                  - reject\n                title: QA result\n                type: string\n              riskBand:\n                enum:\n                  - low\n                  - medium\n                  - high\n                  - critical\n                title: Risk band\n                type: string\n              testMethod:\n                enum:\n                  - xrf\n                  - icp_ms\n                  - wet_chemistry\n                  - visual_only\n                title: Test method\n                type: string\n            required:\n              - inspectorName\n              - result\n              - purityScore\n              - riskBand\n            type: object\n          title: QA sign-off\n          uiSchema:\n            confidenceLevel:\n              ui:components:\n                numberWidget: rangeWidget\n              ui:options:\n                help: Numeric range value between 1 and 5.\n            evidenceFile:\n              ui:components:\n                stringField: fileField\n              ui:options:\n                help: Upload QA evidence.\n            notes:\n              ui:components:\n                textWidget: textareaWidget\n              ui:options:\n                help: Write a detailed QA narrative and exceptions.\n            purityScore:\n              ui:components:\n                numberWidget: rangeWidget\n              ui:options:\n                help: Numeric range value between 0 and 100.\n            riskBand:\n              ui:options:\n                help: Choose the risk classification for this batch.\n            testMethod:\n              ui:options:\n                help: Select how QA validation was performed.\n            ui:options:\n              order:\n                - inspectorName\n                - testMethod\n                - result\n                - riskBand\n                - purityScore\n                - confidenceLevel\n                - notes\n                - evidenceFile\n        - id: '3.2'\n          inputKey: finalHash\n          inputType: formata\n          order: 2\n          roles:\n            - qainspector\n          schema:\n            properties:\n              finalHash:\n                title: finalHash\n                type: string\n            required:\n              - finalHash\n            title: Final hash\n            type: object\n          title: Finalize notarization\n      title: QA + Notarize\n"
 }

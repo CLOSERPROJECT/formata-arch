@@ -26,12 +26,35 @@ const RoleSchema = z.object({
 	palette: z.string().optional()
 });
 
-const OrganizationDataSchema = z.object({
-	organizations: z.array(OrganizationSchema),
-	roles: z.array(RoleSchema)
+const CategorySubTreeSchema: z.ZodType<Config.CategorySubTree> = z.object({
+	slug: z.string(),
+	name: z.string(),
+	icon: z.string().optional(),
+	iconURL: z.string().optional(),
+	sortOrder: z.number().optional(),
+	description: z.string().optional()
 });
 
-type OrganizationData = z.infer<typeof OrganizationDataSchema>;
+const CategoryTreeSchema: z.ZodType<Config.CategoryTree> = z.object({
+	slug: z.string(),
+	name: z.string(),
+	icon: z.string().optional(),
+	iconURL: z.string().optional(),
+	sortOrder: z.number().optional(),
+	subCategories: z.array(CategorySubTreeSchema)
+});
+
+const OrganizationDataSchema = z.object({
+	organizations: z.array(OrganizationSchema),
+	roles: z.array(RoleSchema),
+	categories: z.array(CategoryTreeSchema)
+});
+
+export type OrganizationData = z.infer<typeof OrganizationDataSchema>;
+
+export function parseOrganizationData(payload: unknown) {
+	return zod(OrganizationDataSchema)(payload);
+}
 
 //
 

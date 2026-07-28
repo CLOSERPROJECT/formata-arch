@@ -26,7 +26,7 @@ export class App {
 	}
 
 	configErrors: ErrorObject[] | undefined = $derived.by(() => {
-		const res = Config.validate(appData.config, { categories: this.#categories });
+		const res = Config.validate(appData.config, { categories: this.#availableCategories });
 		if (res.isOk) {
 			return undefined;
 		} else {
@@ -44,9 +44,9 @@ export class App {
 		return this.#availableRoles;
 	}
 
-	#categories: Config.CategoryTree[] = [];
-	get categories() {
-		return this.#categories;
+	#availableCategories: Config.CategoryTree[] = [];
+	get availableCategories() {
+		return this.#availableCategories;
 	}
 
 	#state = $state.raw<AppState>({ type: 'loading' });
@@ -60,7 +60,7 @@ export class App {
 	#editData: EditData | undefined;
 
 	/**
-	 * Loads the available organizations and roles from catalog
+	 * Loads organizations, roles, and categories from catalog
 	 * and detects if the app is in edit mode.
 	 */
 	private async init() {
@@ -68,6 +68,7 @@ export class App {
 		if (res.isOk) {
 			this.#availableOrganizations = res.value.organizations;
 			this.#availableRoles = res.value.roles;
+			this.#availableCategories = res.value.categories;
 		} else {
 			this.#state = { type: 'loading-error', error: res.error };
 			return;
