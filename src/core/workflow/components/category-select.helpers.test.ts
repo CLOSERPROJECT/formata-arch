@@ -45,49 +45,31 @@ describe('category-select helpers', () => {
 	});
 
 	it('sets category slug and clears sub-category', () => {
-		appData.config = {
-			...appData.config,
-			workflow: {
-				...appData.config.workflow,
-				categorySlug: 'materials',
-				subCategorySlug: 'metals'
-			}
-		};
+		appData.config.workflow.categorySlug = 'materials';
+		appData.config.workflow.subCategorySlug = 'metals';
 
-		setWorkflowCategorySlug(appData.config.workflow, 'supply-chain');
+		setWorkflowCategorySlug('supply-chain');
 
 		expect(appData.config.workflow.categorySlug).toBe('supply-chain');
-		expect(appData.config.workflow.subCategorySlug).toBeUndefined();
+		expect(appData.config.workflow).not.toHaveProperty('subCategorySlug');
 	});
 
 	it('sets sub-category slug without changing category', () => {
-		appData.config = {
-			...appData.config,
-			workflow: {
-				...appData.config.workflow,
-				categorySlug: 'materials'
-			}
-		};
+		appData.config.workflow.categorySlug = 'materials';
 
-		setWorkflowSubCategorySlug(appData.config.workflow, 'metals');
+		setWorkflowSubCategorySlug('metals');
 
 		expect(appData.config.workflow.categorySlug).toBe('materials');
 		expect(appData.config.workflow.subCategorySlug).toBe('metals');
 	});
 
 	it('clears both category slugs', () => {
-		appData.config = {
-			...appData.config,
-			workflow: {
-				...appData.config.workflow,
-				categorySlug: 'materials',
-				subCategorySlug: 'metals'
-			}
-		};
+		appData.config.workflow.categorySlug = 'materials';
+		appData.config.workflow.subCategorySlug = 'metals';
 
-		clearWorkflowCategorySlugs(appData.config.workflow);
+		clearWorkflowCategorySlugs();
 
-		expect(appData.config.workflow.categorySlug).toBeUndefined();
-		expect(appData.config.workflow.subCategorySlug).toBeUndefined();
+		expect(appData.config.workflow).not.toHaveProperty('categorySlug');
+		expect(appData.config.workflow).not.toHaveProperty('subCategorySlug');
 	});
 });

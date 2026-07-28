@@ -46,7 +46,7 @@
 				aria-hidden={!hasSelection}
 				tabindex={hasSelection ? undefined : -1}
 				disabled={!hasSelection}
-				onclick={() => clearWorkflowCategorySlugs(workflow)}
+				onclick={() => clearWorkflowCategorySlugs()}
 			>
 				Clear
 				<XIcon size={11} />
@@ -55,7 +55,7 @@
 		<Select.Root
 			type="single"
 			value={categorySlug}
-			onValueChange={(value) => setWorkflowCategorySlug(workflow, value)}
+			onValueChange={(value) => setWorkflowCategorySlug(value)}
 		>
 			<Select.Trigger size="sm" class={['w-full', !categorySlug && 'text-muted-foreground']}>
 				<span class="flex items-center gap-2">
@@ -88,7 +88,7 @@
 			type="single"
 			disabled={!categorySlug}
 			value={subCategorySlug}
-			onValueChange={(value) => setWorkflowSubCategorySlug(workflow, value)}
+			onValueChange={(value) => setWorkflowSubCategorySlug(value)}
 		>
 			<Select.Trigger
 				size="sm"
