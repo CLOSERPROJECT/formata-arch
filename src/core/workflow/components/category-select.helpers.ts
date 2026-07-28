@@ -1,11 +1,11 @@
-import type { CategorySubTree, CategoryTree } from '$core/catalog/schema.js';
+import { Catalog } from '$core';
 
 import { appData } from '$core/app/app.svelte.js';
 
 export function filteredSubCategories(
-	categories: CategoryTree[],
+	categories: Catalog.Category[],
 	categorySlug: string | undefined
-): CategorySubTree[] {
+): Catalog.SubCategory[] {
 	if (!categorySlug) return [];
 	return categories.find((category) => category.slug === categorySlug)?.subCategories ?? [];
 }

@@ -20,7 +20,7 @@ type AppState = { type: 'loading' } | { type: 'loading-error'; error: Error } | 
 
 type EditData = { streamId: string; new: boolean };
 
-const EMPTY_CATALOG: Catalog.Catalog = {
+const EMPTY_CATALOG: Catalog.Data = {
 	organizations: [],
 	roles: [],
 	categories: []
@@ -31,7 +31,7 @@ export class App {
 		this.init();
 	}
 
-	catalog: Catalog.Catalog = $state(structuredClone(EMPTY_CATALOG));
+	catalog: Catalog.Data = $state(structuredClone(EMPTY_CATALOG));
 
 	configErrors: ErrorObject[] | undefined = $derived.by(() => {
 		const res = Config.validate(appData.config, { categories: this.catalog.categories });

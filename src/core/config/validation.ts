@@ -1,6 +1,7 @@
-import type { CategoryTree } from '../catalog/schema.js';
 import Ajv2019, { type ErrorObject } from 'ajv/dist/2019.js';
 import { Result } from 'true-myth/result';
+
+import * as Catalog from '../catalog/index.js';
 
 import type { Config } from './types.js';
 
@@ -9,7 +10,7 @@ import { Schema } from './schema.js';
 //
 
 export type ValidateOptions = {
-	categories?: CategoryTree[];
+	categories?: Catalog.Category[];
 };
 
 const ajv = new Ajv2019({ allErrors: true });
@@ -37,7 +38,7 @@ function hasDependentRequiredError(errors: ErrorObject[]): boolean {
 }
 
 function isKnownTaxonomyPath(
-	categories: CategoryTree[],
+	categories: Catalog.Category[],
 	categorySlug: string,
 	subCategorySlug: string
 ): boolean {
@@ -46,7 +47,7 @@ function isKnownTaxonomyPath(
 	return category.subCategories.some((sub) => sub.slug === subCategorySlug);
 }
 
-function validateTaxonomy(data: Config, categories: CategoryTree[]): ErrorObject[] {
+function validateTaxonomy(data: Config, categories: Catalog.Category[]): ErrorObject[] {
 	const workflow = data.workflow;
 	const categorySlug = workflow.categorySlug;
 	const subCategorySlug = workflow.subCategorySlug;

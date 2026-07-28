@@ -1,9 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { Catalog } from '$core';
 import * as Task from 'true-myth/task';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import type { CategoryTree } from '../catalog/schema.js';
 
 import { deserialize } from '../config/serde.js';
 import { appData } from './app.svelte.js';
@@ -11,7 +10,7 @@ import { DEFAULT_CONFIG } from './utils.js';
 
 //
 
-const SAMPLE_CATEGORIES: CategoryTree[] = [
+const SAMPLE_CATEGORIES: Catalog.Category[] = [
 	{
 		slug: 'materials',
 		name: 'Materials',

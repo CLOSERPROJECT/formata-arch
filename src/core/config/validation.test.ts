@@ -1,15 +1,14 @@
+import { Catalog } from '$core';
+import { describe, expect, it } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
-
-import type { CategoryTree } from '../catalog/schema.js';
 
 import { deserialize } from './serde.js';
 import { validate } from './validation.js';
 
 //
 
-const SAMPLE_CATEGORIES: CategoryTree[] = [
+const SAMPLE_CATEGORIES: Catalog.Category[] = [
 	{
 		slug: 'materials',
 		name: 'Materials',

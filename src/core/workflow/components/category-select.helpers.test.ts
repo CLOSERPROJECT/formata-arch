@@ -1,6 +1,6 @@
+import { Catalog } from '$core';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { CategoryTree } from '$core/catalog/schema.js';
 import { appData } from '$core/app/app.svelte.js';
 import { DEFAULT_CONFIG } from '$core/app/utils.js';
 
@@ -11,7 +11,7 @@ import {
 	setWorkflowSubCategorySlug
 } from './category-select.helpers.js';
 
-const SAMPLE_CATEGORIES: CategoryTree[] = [
+const SAMPLE_CATEGORIES: Catalog.Category[] = [
 	{
 		slug: 'materials',
 		name: 'Materials',
