@@ -2,6 +2,7 @@
 	import { CheckIcon, Pencil, TriangleAlert } from '@lucide/svelte';
 	import { appData } from '$core/app/app.svelte.js';
 	import { app } from '$core/app/index.js';
+	import CategorySelect from '$core/workflow/components/category-select.svelte';
 	import WorkflowTreeComponent from '$core/workflow/workflow-editor.svelte';
 	import { WorkflowTree } from '$core/workflow/workflow-tree.svelte.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -34,6 +35,7 @@
 </script>
 
 {#snippet navbarLeft()}
+	<CategorySelect />
 	<div class="flex max-w-md grow items-center gap-1">
 		<Input
 			bind:value={appData.config.workflow.name}
