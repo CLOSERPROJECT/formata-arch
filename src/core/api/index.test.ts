@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import catalogMockData from './catalog.mock.json' with { type: 'json' };
-import { parseOrganizationData } from './index.js';
+import { parseCatalog } from './index.js';
 
-describe('parseOrganizationData', () => {
+describe('parseCatalog', () => {
 	it('parses catalog mock with nested categories and iconURL', () => {
-		const result = parseOrganizationData(catalogMockData);
+		const result = parseCatalog(catalogMockData);
 		expect(result.isOk).toBe(true);
 		if (!result.isOk) return;
 
@@ -17,7 +17,7 @@ describe('parseOrganizationData', () => {
 	});
 
 	it('includes Gallium stream mock taxonomy path (materials / metals)', () => {
-		const result = parseOrganizationData(catalogMockData);
+		const result = parseCatalog(catalogMockData);
 		expect(result.isOk).toBe(true);
 		if (!result.isOk) return;
 
@@ -29,7 +29,7 @@ describe('parseOrganizationData', () => {
 
 	it('rejects catalog payload missing categories', () => {
 		const { categories: _categories, ...incomplete } = catalogMockData as Record<string, unknown>;
-		const result = parseOrganizationData(incomplete);
+		const result = parseCatalog(incomplete);
 		expect(result.isOk).toBe(false);
 	});
 });

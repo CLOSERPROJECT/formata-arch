@@ -1,7 +1,8 @@
 import type { ErrorObject } from 'ajv';
 
 import { Config } from '$core';
-import { loadOrganizationData, loadStream, saveStream } from '$core/api/index.js';
+import type { CatalogOrganization, CatalogRole, CategoryTree } from '$core/api/catalog-schema.js';
+import { loadCatalog, loadStream, saveStream } from '$core/api/index.js';
 import { uniq } from 'lodash';
 import { lsSync } from 'rune-sync/localstorage';
 import { toast } from 'svelte-sonner';
@@ -34,14 +35,14 @@ export class App {
 		}
 	});
 
-	availableOrganizations: Config.Organization[] = $state([]);
+	availableOrganizations: CatalogOrganization[] = $state([]);
 
-	availableRoles: Config.Role[] = $state([]);
+	availableRoles: CatalogRole[] = $state([]);
 	get roles() {
 		return this.availableRoles;
 	}
 
-	availableCategories: Config.CategoryTree[] = $state([]);
+	availableCategories: CategoryTree[] = $state([]);
 
 	#state = $state.raw<AppState>({ type: 'loading' });
 	get state() {
@@ -58,7 +59,7 @@ export class App {
 	 * and detects if the app is in edit mode.
 	 */
 	private async init() {
-		const res = await loadOrganizationData();
+		const res = await loadCatalog();
 		if (res.isOk) {
 			this.availableOrganizations = res.value.organizations;
 			this.availableRoles = res.value.roles;

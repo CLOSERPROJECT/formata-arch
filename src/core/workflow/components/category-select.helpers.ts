@@ -1,4 +1,4 @@
-import type { CategorySubTree, CategoryTree } from '$core/config/validation.js';
+import type { CategorySubTree, CategoryTree } from '$core/api/catalog-schema.js';
 import type { Config } from '$core/config/types.js';
 
 import { appData } from '$core/app/app.svelte.js';

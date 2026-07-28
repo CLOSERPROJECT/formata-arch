@@ -1,3 +1,4 @@
+import type { CategoryTree } from '../api/catalog-schema.js';
 import Ajv2019, { type ErrorObject } from 'ajv/dist/2019.js';
 import { Result } from 'true-myth/result';
 
@@ -6,24 +7,6 @@ import type { Config } from './types.js';
 import { Schema } from './schema.js';
 
 //
-
-export type CategorySubTree = {
-	slug: string;
-	name: string;
-	icon?: string;
-	iconURL?: string;
-	sortOrder?: number;
-	description?: string;
-};
-
-export type CategoryTree = {
-	slug: string;
-	name: string;
-	icon?: string;
-	iconURL?: string;
-	sortOrder?: number;
-	subCategories: CategorySubTree[];
-};
 
 export type ValidateOptions = {
 	categories?: CategoryTree[];

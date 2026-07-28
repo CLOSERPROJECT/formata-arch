@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as Task from 'true-myth/task';
 
-import type { CategoryTree } from '../config/validation.js';
+import type { CategoryTree } from '../api/catalog-schema.js';
 import { deserialize } from '../config/serde.js';
 
 import { appData } from './app.svelte.js';
@@ -20,7 +20,7 @@ const SAMPLE_CATEGORIES: CategoryTree[] = [
 ];
 
 vi.mock('$core/api/index.js', () => ({
-	loadOrganizationData: () =>
+	loadCatalog: () =>
 		Task.resolve({
 			organizations: [],
 			roles: [],
