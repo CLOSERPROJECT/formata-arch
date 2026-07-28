@@ -26,7 +26,7 @@ export class App {
 	}
 
 	configErrors: ErrorObject[] | undefined = $derived.by(() => {
-		const res = Config.validate(appData.config);
+		const res = Config.validate(appData.config, { categories: this.#categories });
 		if (res.isOk) {
 			return undefined;
 		} else {
@@ -42,6 +42,11 @@ export class App {
 	#availableRoles: Config.Role[] = [];
 	get roles() {
 		return this.#availableRoles;
+	}
+
+	#categories: Config.CategoryTree[] = [];
+	get categories() {
+		return this.#categories;
 	}
 
 	#state = $state.raw<AppState>({ type: 'loading' });
