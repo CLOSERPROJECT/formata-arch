@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Substep } from '$core/config/types.js';
+	import type { Substep } from '$core/stream/types.js';
 	import type { ErrorObject } from 'ajv';
 
 	import { Input } from '$lib/components/ui/input/index.js';

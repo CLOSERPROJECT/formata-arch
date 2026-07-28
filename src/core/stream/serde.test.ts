@@ -7,8 +7,8 @@ import { deserialize, serialize } from './serde.js';
 //
 
 describe('serde', () => {
-	it('deserializes config.sample.yaml to Config shape', async () => {
-		const url = new URL('config.sample.yaml', import.meta.url);
+	it('deserializes stream.sample.yaml to Config shape', async () => {
+		const url = new URL('stream.sample.yaml', import.meta.url);
 		const raw = await readFile(fileURLToPath(url), 'utf-8');
 		const result = deserialize(raw);
 		expect(result.isOk).toBe(true);
@@ -18,11 +18,13 @@ describe('serde', () => {
 			expect(config).toHaveProperty('organizations');
 			expect(config).toHaveProperty('roles');
 			expect(config).toHaveProperty('dpp');
+			expect(config.workflow.categorySlug).toBe('materials');
+			expect(config.workflow.subCategorySlug).toBe('metals');
 		}
 	});
 
 	it('round-trips: deserialize(serialize(config)) equals config', async () => {
-		const url = new URL('config.sample.yaml', import.meta.url);
+		const url = new URL('stream.sample.yaml', import.meta.url);
 		const raw = await readFile(fileURLToPath(url), 'utf-8');
 		const parseResult = deserialize(raw);
 		expect(parseResult.isOk).toBe(true);

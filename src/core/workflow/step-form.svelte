@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Step } from '$core/config/types.js';
+	import type { Step } from '$core/stream/types.js';
 	import type { ErrorObject } from 'ajv';
 
 	import { app } from '$core/app/index.js';
@@ -26,7 +26,7 @@
 	const isEmpty = $derived(!step.organization?.trim());
 
 	const triggerContent = $derived(
-		app.availableOrganizations.find((org) => org.slug === step.organization)?.name ??
+		app.catalog.organizations.find((org) => org.slug === step.organization)?.name ??
 			'Select organization'
 	);
 </script>
@@ -52,7 +52,7 @@
 			</Select.Trigger>
 			<Select.Content>
 				<Select.Group>
-					{#each app.availableOrganizations as org (org.slug)}
+					{#each app.catalog.organizations as org (org.slug)}
 						<Select.Item value={org.slug} label={org.name}>
 							{org.name}
 						</Select.Item>

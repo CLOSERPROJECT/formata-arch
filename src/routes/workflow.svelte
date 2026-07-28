@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { CheckIcon, Pencil, TriangleAlert } from '@lucide/svelte';
+	import { CheckIcon, Cog, TriangleAlert } from '@lucide/svelte';
 	import { appData } from '$core/app/app.svelte.js';
 	import { app } from '$core/app/index.js';
+	import CategorySelect from '$core/workflow/components/category-select.svelte';
 	import WorkflowTreeComponent from '$core/workflow/workflow-editor.svelte';
 	import { WorkflowTree } from '$core/workflow/workflow-tree.svelte.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -16,12 +17,12 @@
 	const workflowTree = new WorkflowTree();
 
 	setTopbar({
-		title: 'Stream / Workflow',
+		title: 'Stream',
 		left: navbarLeft,
 		right: navbarRight
 	});
 
-	const configErrors = $derived(app.configErrors);
+	const errors = $derived(app.errors);
 
 	const descriptionBinding = {
 		get value() {
@@ -43,19 +44,23 @@
 		<Popover.Root>
 			<Popover.Trigger>
 				{#snippet child({ props })}
-					<Button {...props} variant="ghost" size="sm" class="text-xs text-muted-foreground">
-						<Pencil size={12} />
-						<span>Edit description</span>
+					<Button {...props} variant="ghost" size="icon-sm" aria-label="Metadata">
+						<Cog size={14} />
 					</Button>
 				{/snippet}
 			</Popover.Trigger>
-			<Popover.Content>
-				<p class="mb-2 text-sm font-medium">Description</p>
-				<Textarea
-					bind:value={descriptionBinding.value}
-					placeholder="Workflow description"
-					class="w-full"
-				/>
+			<Popover.Content class="w-80">
+				<div class="flex flex-col gap-6">
+					<div class="flex flex-col gap-1.5">
+						<p class="text-sm font-medium">Description</p>
+						<Textarea
+							bind:value={descriptionBinding.value}
+							placeholder="Workflow description"
+							class="w-full"
+						/>
+					</div>
+					<CategorySelect />
+				</div>
 			</Popover.Content>
 		</Popover.Root>
 	</div>
@@ -67,16 +72,16 @@
 			{#snippet child({ props })}
 				<Button
 					{...props}
-					disabled={!configErrors}
+					disabled={!errors}
 					variant="outline"
 					class={[
-						configErrors &&
+						errors &&
 							'border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
 					]}
 				>
-					{#if configErrors}
+					{#if errors}
 						<TriangleAlert size={14} />
-						<span>{configErrors.length} errors</span>
+						<span>{errors.length} errors</span>
 					{:else}
 						<CheckIcon size={14} />
 						<span>Config is valid</span>
@@ -85,14 +90,14 @@
 			{/snippet}
 		</Popover.Trigger>
 		<Popover.Content
-			class={configErrors
+			class={errors
 				? 'max-h-60 w-80 overflow-y-auto border-destructive text-destructive'
 				: ''}
 		>
-			{#if configErrors}
+			{#if errors}
 				<p class="mb-2 text-sm font-medium">Validation errors</p>
 				<ul class="list-inside list-disc space-y-1 text-sm">
-					{#each configErrors as err, i (i)}
+					{#each errors as err, i (i)}
 						<li>{err.instancePath}: {err.message}</li>
 					{/each}
 				</ul>

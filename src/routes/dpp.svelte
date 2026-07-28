@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SaveIcon } from '@lucide/svelte';
-	import { Config, Form } from '$core';
+	import { Form, Stream } from '$core';
 	import { appData } from '$core/app/app.svelte.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 
@@ -8,8 +8,8 @@
 
 	//
 
-	const form = Form.make<Config.Dpp>({
-		schema: Config.getEntitySchema('Dpp'),
+	const form = Form.make<Stream.Dpp>({
+		schema: Stream.getEntitySchema('Dpp'),
 		initialValue: appData.config.dpp,
 		onSubmit: (value) => {
 			appData.config.dpp = value;

@@ -1,6 +1,6 @@
-import { Config } from '$core';
+import { Stream } from '$core';
 
-export const DEFAULT_CONFIG: Config.Config = {
+export const DEFAULT_STREAM: Stream.Data = {
 	workflow: {
 		name: 'Workflow',
 		description: 'Workflow description',
