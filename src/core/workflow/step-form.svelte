@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Step } from '$core/config/types.js';
+	import type { Step } from '$core/stream/types.js';
 	import type { ErrorObject } from 'ajv';
 
 	import { app } from '$core/app/index.js';

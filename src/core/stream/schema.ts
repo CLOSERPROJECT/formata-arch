@@ -3,10 +3,10 @@ import type { Schema as JSONSchema } from '@sjsf/form';
 //
 
 export const Schema = {
-	$id: 'formata-arch/config',
-	$ref: '#/$defs/Config',
+	$id: 'formata-arch/stream',
+	$ref: '#/$defs/Data',
 	$defs: {
-		Config: {
+		Data: {
 			type: 'object',
 			required: ['workflow', 'organizations', 'roles', 'dpp'],
 			additionalProperties: false,

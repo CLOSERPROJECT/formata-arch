@@ -3,18 +3,18 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-import * as Config from './schema.js';
+import { Schema } from './schema.js';
 import { deserialize } from './serde.js';
 import { validate } from './validation.js';
 
 //
 
 async function loadSampleConfig() {
-	const url = new URL('config.sample.yaml', import.meta.url);
+	const url = new URL('stream.sample.yaml', import.meta.url);
 	const raw = await readFile(fileURLToPath(url), 'utf-8');
 	const result = deserialize(raw);
 	if (!result.isOk) {
-		throw new Error('failed to load config.sample.yaml');
+		throw new Error('failed to load stream.sample.yaml');
 	}
 	return result.value;
 }
@@ -22,14 +22,14 @@ async function loadSampleConfig() {
 describe('sourceSchema', () => {
 	it('compiles with AJV', () => {
 		const ajv = new Ajv2019();
-		const compile = () => ajv.compile(Config.Schema);
+		const compile = () => ajv.compile(Schema);
 		expect(compile).not.toThrow();
 		const validate = compile();
 		expect(typeof validate).toBe('function');
 	});
 
 	it('validates parsed source.yaml', async () => {
-		const url = new URL('config.sample.yaml', import.meta.url);
+		const url = new URL('stream.sample.yaml', import.meta.url);
 		const raw = await readFile(fileURLToPath(url), 'utf-8');
 		const data = deserialize(raw);
 		if (!data.isOk) {

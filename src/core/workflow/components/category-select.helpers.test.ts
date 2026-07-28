@@ -2,7 +2,7 @@ import { Catalog } from '$core';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { appData } from '$core/app/app.svelte.js';
-import { DEFAULT_CONFIG } from '$core/app/utils.js';
+import { DEFAULT_STREAM } from '$core/app/utils.js';
 
 import {
 	clearWorkflowCategorySlugs,
@@ -29,7 +29,7 @@ const SAMPLE_CATEGORIES: Catalog.Category[] = [
 
 describe('category-select helpers', () => {
 	beforeEach(() => {
-		appData.config = structuredClone(DEFAULT_CONFIG);
+		appData.config = structuredClone(DEFAULT_STREAM);
 	});
 
 	it('filters sub-categories by selected category slug', () => {

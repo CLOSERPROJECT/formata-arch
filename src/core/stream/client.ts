@@ -1,4 +1,3 @@
-import { Config } from '$core';
 import {
 	createDevAwareFetcher,
 	fetchJsonTask,
@@ -7,25 +6,28 @@ import {
 } from '$core/utils/fetch.js';
 import * as Task from 'true-myth/task';
 
+import { serialize } from './serde.js';
+import type { Data } from './types.js';
+import { validate } from './validation.js';
 import streamMockData from './stream.mock.json' with { type: 'json' };
 
 //
 
-export function loadStream(id: string): Task.Task<Config.Config, Error> {
+export function load(id: string): Task.Task<Data, Error> {
 	return fetchJsonTask(
 		`/my/organization/formata-builder/stream/${id}`,
-		(payload: unknown) => Config.validate(payload).mapErr(ValidationError.fromAjv),
+		(payload: unknown) => validate(payload).mapErr(ValidationError.fromAjv),
 		undefined,
 		createDevAwareFetcher(() => streamMockData)
 	);
 }
 
-export function saveStream(
-	config: Config.Config,
+export function save(
+	data: Data,
 	streamId?: string,
 	newFlag?: boolean
 ): Task.Task<void, Error> {
-	return Task.fromResult(Config.serialize(config))
+	return Task.fromResult(serialize(data))
 		.andThen((c) => {
 			const url = new URL('/my/organization/formata-builder', window.location.origin);
 			if (streamId) {

@@ -22,7 +22,7 @@
 		right: navbarRight
 	});
 
-	const configErrors = $derived(app.configErrors);
+	const errors = $derived(app.errors);
 
 	const descriptionBinding = {
 		get value() {
@@ -72,16 +72,16 @@
 			{#snippet child({ props })}
 				<Button
 					{...props}
-					disabled={!configErrors}
+					disabled={!errors}
 					variant="outline"
 					class={[
-						configErrors &&
+						errors &&
 							'border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive'
 					]}
 				>
-					{#if configErrors}
+					{#if errors}
 						<TriangleAlert size={14} />
-						<span>{configErrors.length} errors</span>
+						<span>{errors.length} errors</span>
 					{:else}
 						<CheckIcon size={14} />
 						<span>Config is valid</span>
@@ -90,14 +90,14 @@
 			{/snippet}
 		</Popover.Trigger>
 		<Popover.Content
-			class={configErrors
+			class={errors
 				? 'max-h-60 w-80 overflow-y-auto border-destructive text-destructive'
 				: ''}
 		>
-			{#if configErrors}
+			{#if errors}
 				<p class="mb-2 text-sm font-medium">Validation errors</p>
 				<ul class="list-inside list-disc space-y-1 text-sm">
-					{#each configErrors as err, i (i)}
+					{#each errors as err, i (i)}
 						<li>{err.instancePath}: {err.message}</li>
 					{/each}
 				</ul>

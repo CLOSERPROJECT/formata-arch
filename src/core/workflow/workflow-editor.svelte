@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Step, Substep } from '$core/config/types.js';
+	import type { Step, Substep } from '$core/stream/types.js';
 	import type { WorkflowTree } from '$core/workflow/workflow-tree.svelte.js';
 
 	import { PlusIcon } from '@lucide/svelte';

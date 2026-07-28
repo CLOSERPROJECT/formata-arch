@@ -22,11 +22,11 @@ const SAMPLE_CATEGORIES: Catalog.Category[] = [
 ];
 
 async function loadSampleConfig() {
-	const url = new URL('config.sample.yaml', import.meta.url);
+	const url = new URL('stream.sample.yaml', import.meta.url);
 	const raw = await readFile(fileURLToPath(url), 'utf-8');
 	const result = deserialize(raw);
 	if (!result.isOk) {
-		throw new Error('failed to load config.sample.yaml');
+		throw new Error('failed to load stream.sample.yaml');
 	}
 	return result.value;
 }

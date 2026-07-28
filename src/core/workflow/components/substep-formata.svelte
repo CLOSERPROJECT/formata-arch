@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { UiSchema } from '@sjsf/form';
 	import type { BuilderContext } from '$builder/context.svelte.js';
-	import type { Substep } from '$core/config/types.js';
+	import type { Substep } from '$core/stream/types.js';
 
 	import { PencilIcon, SaveIcon, TriangleAlert, XIcon } from '@lucide/svelte';
 	import BuilderStandalone from '$builder/builder-standalone.svelte';

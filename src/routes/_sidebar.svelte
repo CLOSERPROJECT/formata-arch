@@ -30,7 +30,7 @@
 		const reader = new FileReader();
 		reader.onload = () => {
 			const text = reader.result as string;
-			app.importConfigFromString(text);
+			app.importFromString(text);
 		};
 		reader.readAsText(file, 'utf-8');
 	}

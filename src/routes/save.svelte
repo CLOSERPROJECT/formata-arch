@@ -11,24 +11,24 @@
 
 	setTopbar({ title: 'Save stream', right: topbarRight });
 
-	const serialized = app.getSerializedConfig();
+	const serialized = app.getSerialized();
 </script>
 
 {#snippet topbarRight()}
-	<Button onclick={() => app.saveConfig()} disabled={!app.canSave}>
+	<Button onclick={() => app.save()} disabled={!app.canSave}>
 		<SaveIcon />
 		Save
 	</Button>
 {/snippet}
 
 <div class="flex min-h-0 grow flex-col gap-4 p-4">
-	{#if app.configErrors}
+	{#if app.errors}
 		<Alert.Root variant="destructive">
 			<Alert.Title>Config validation failed.</Alert.Title>
 			<Alert.Description>
 				<p>Please fix the following validation errors before exporting:</p>
 				<ul class="mt-2 list-inside list-disc space-y-1">
-					{#each app.configErrors as err, i (i)}
+					{#each app.errors as err, i (i)}
 						<li>{err.instancePath}: {err.message}</li>
 					{/each}
 				</ul>

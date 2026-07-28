@@ -1,4 +1,4 @@
-import type { Step, Substep } from '$core/config/types.js';
+import type { Step, Substep } from '$core/stream/types.js';
 
 //
 

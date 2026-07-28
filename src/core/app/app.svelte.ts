@@ -1,17 +1,16 @@
 import type { ErrorObject } from 'ajv';
 
-import { Catalog, Config } from '$core';
-import { loadStream, saveStream } from '$core/api/index.js';
+import { Catalog, Stream } from '$core';
 import { uniq } from 'lodash';
 import { lsSync } from 'rune-sync/localstorage';
 import { toast } from 'svelte-sonner';
 
-import { DEFAULT_CONFIG } from './utils.js';
+import { DEFAULT_STREAM } from './utils.js';
 
 //
 
-export const appData = lsSync<{ config: Config.Config }>('formata-config', {
-	config: DEFAULT_CONFIG
+export const appData = lsSync<{ config: Stream.Data }>('formata-config', {
+	config: DEFAULT_STREAM
 });
 
 //
@@ -33,8 +32,8 @@ export class App {
 
 	catalog: Catalog.Data = $state(structuredClone(EMPTY_CATALOG));
 
-	configErrors: ErrorObject[] | undefined = $derived.by(() => {
-		const res = Config.validate(appData.config, { categories: this.catalog.categories });
+	errors: ErrorObject[] | undefined = $derived.by(() => {
+		const res = Stream.validate(appData.config, { categories: this.catalog.categories });
 		if (res.isOk) {
 			return undefined;
 		} else {
@@ -69,7 +68,7 @@ export class App {
 		const streamId = params.get('stream');
 		const newFlag = params.get('new');
 		if (streamId) {
-			const res = await loadStream(streamId);
+			const res = await Stream.load(streamId);
 			if (!res.isOk) {
 				this.#state = { type: 'loading-error', error: res.error };
 				return;
@@ -83,16 +82,16 @@ export class App {
 	}
 
 	/**
-	 * Packages the config with the matching organizations and roles.
+	 * Packages the stream document with the matching organizations and roles.
 	 */
-	buildConfig(): Config.Config {
+	build(): Stream.Data {
 		const baseData = appData.config.workflow.steps.map((step) => ({
 			organization: step.organization,
 			roles: uniq(step.substeps.flatMap((substep) => substep.roles))
 		}));
 
-		const selectedOrganizations: Config.Organization[] = [];
-		const selectedRoles: Config.Role[] = [];
+		const selectedOrganizations: Stream.Organization[] = [];
+		const selectedRoles: Stream.Role[] = [];
 
 		for (const data of baseData) {
 			const organization = this.catalog.organizations.find((org) => org.slug === data.organization);
@@ -113,17 +112,17 @@ export class App {
 	}
 
 	get canSave() {
-		return !this.configErrors;
+		return !this.errors;
 	}
 
 	/**
-	 * Saves the config to the server.
+	 * Saves the stream document to the server.
 	 */
-	async saveConfig() {
+	async save() {
 		if (!this.canSave) return;
 		this.#state = { type: 'loading' };
 
-		await saveStream(this.buildConfig(), this.#editData?.streamId, this.#editData?.new).match({
+		await Stream.save(this.build(), this.#editData?.streamId, this.#editData?.new).match({
 			Resolved: () => toast.success('Workflow saved successfully'),
 			Rejected: (error) => toast.error(error.message)
 		});
@@ -132,10 +131,10 @@ export class App {
 	}
 
 	/**
-	 * Imports a config from a string.
+	 * Imports a stream document from a YAML string.
 	 */
-	importConfigFromString(text: string) {
-		const result = Config.deserialize(text);
+	importFromString(text: string) {
+		const result = Stream.deserialize(text);
 		if (result.isErr) {
 			if (result.error instanceof Error) {
 				toast.error(result.error.message);
@@ -148,7 +147,7 @@ export class App {
 		}
 	}
 
-	getSerializedConfig() {
-		return Config.serialize(this.buildConfig());
+	getSerialized() {
+		return Stream.serialize(this.build());
 	}
 }

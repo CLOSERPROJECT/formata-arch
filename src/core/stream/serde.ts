@@ -1,14 +1,14 @@
 import Result from 'true-myth/result';
 import { parse, stringify } from 'yaml';
 
-import type { Config } from './types.js';
+import type { Data } from './types.js';
 
 import { validate } from './validation.js';
 
 /**
- * Serialize AttestaConfig to a YAML string.
+ * Serialize a stream document to a YAML string.
  */
-export function serialize(config: Config): Result<string, Error> {
+export function serialize(config: Data): Result<string, Error> {
 	try {
 		return Result.ok(stringify(config));
 	} catch (e) {
@@ -17,10 +17,10 @@ export function serialize(config: Config): Result<string, Error> {
 }
 
 /**
- * Deserialize a YAML string to AttestaConfig.
+ * Deserialize a YAML string to a stream document.
  * Validates the parsed result with AJV; returns Err on parse or validation failure.
  */
-export function deserialize(str: string): Result<Config, Error> {
+export function deserialize(str: string): Result<Data, Error> {
 	try {
 		const data = parse(str) as unknown;
 		return validate(data).mapErr(

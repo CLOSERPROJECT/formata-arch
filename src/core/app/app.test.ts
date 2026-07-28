@@ -4,9 +4,9 @@ import { Catalog } from '$core';
 import * as Task from 'true-myth/task';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { deserialize } from '../config/serde.js';
+import { deserialize } from '../stream/serde.js';
 import { appData } from './app.svelte.js';
-import { DEFAULT_CONFIG } from './utils.js';
+import { DEFAULT_STREAM } from './utils.js';
 
 //
 
@@ -30,17 +30,17 @@ vi.mock('$core/catalog/client.js', () => ({
 	}
 }));
 
-vi.mock('$core/api/index.js', () => ({
-	loadStream: () => Task.reject(new Error('unexpected loadStream')),
-	saveStream: () => Task.resolve(undefined)
+vi.mock('$core/stream/client.js', () => ({
+	load: () => Task.reject(new Error('unexpected Stream.load')),
+	save: () => Task.resolve(undefined)
 }));
 
 async function loadSampleConfig() {
-	const url = new URL('../config/config.sample.yaml', import.meta.url);
+	const url = new URL('../stream/stream.sample.yaml', import.meta.url);
 	const raw = await readFile(fileURLToPath(url), 'utf-8');
 	const result = deserialize(raw);
 	if (!result.isOk) {
-		throw new Error('failed to load config.sample.yaml');
+		throw new Error('failed to load stream.sample.yaml');
 	}
 	return result.value;
 }
@@ -49,9 +49,9 @@ function flushMicrotasks() {
 	return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-describe('App configErrors / canSave wiring', () => {
+describe('App errors / canSave wiring', () => {
 	beforeEach(() => {
-		appData.config = structuredClone(DEFAULT_CONFIG);
+		appData.config = structuredClone(DEFAULT_STREAM);
 		vi.stubGlobal('window', { location: { search: '', origin: 'http://localhost' } });
 	});
 
@@ -72,7 +72,7 @@ describe('App configErrors / canSave wiring', () => {
 
 		await flushMicrotasks();
 
-		expect(app.configErrors).toBeDefined();
+		expect(app.errors).toBeDefined();
 		expect(app.canSave).toBe(false);
 	});
 
@@ -93,7 +93,7 @@ describe('App configErrors / canSave wiring', () => {
 
 		await flushMicrotasks();
 
-		expect(app.configErrors).toBeDefined();
+		expect(app.errors).toBeDefined();
 		expect(app.canSave).toBe(false);
 	});
 
@@ -114,7 +114,7 @@ describe('App configErrors / canSave wiring', () => {
 
 		await flushMicrotasks();
 
-		expect(app.configErrors).toBeUndefined();
+		expect(app.errors).toBeUndefined();
 		expect(app.canSave).toBe(true);
 	});
 });

@@ -3,7 +3,7 @@ import type { Schema as JSONSchema } from '@sjsf/form';
 import { cloneDeep } from 'lodash';
 
 import { Schema } from './schema.js';
-import * as Config from './types.js';
+import type { Data } from './types.js';
 
 //
 
@@ -18,7 +18,7 @@ export function getEntitySchema(entity: Entity): JSONSchema {
 
 //
 
-export function createTestSample(): Config.Config {
+export function createTestSample(): Data {
 	return {
 		workflow: { name: 'Test', steps: [] },
 		organizations: [{ slug: 'd1', name: 'Dept' }],

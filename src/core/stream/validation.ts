@@ -3,7 +3,7 @@ import { Result } from 'true-myth/result';
 
 import * as Catalog from '../catalog/index.js';
 
-import type { Config } from './types.js';
+import type { Data } from './types.js';
 
 import { Schema } from './schema.js';
 
@@ -16,7 +16,7 @@ export type ValidateOptions = {
 const ajv = new Ajv2019({ allErrors: true });
 ajv.addSchema(Schema);
 
-export function isConfig(data: unknown): data is Config {
+export function isData(data: unknown): data is Data {
 	return ajv.validate(Schema.$id, data);
 }
 
@@ -47,7 +47,7 @@ function isKnownTaxonomyPath(
 	return category.subCategories.some((sub) => sub.slug === subCategorySlug);
 }
 
-function validateTaxonomy(data: Config, categories: Catalog.Category[]): ErrorObject[] {
+function validateTaxonomy(data: Data, categories: Catalog.Category[]): ErrorObject[] {
 	const workflow = data.workflow;
 	const categorySlug = workflow.categorySlug;
 	const subCategorySlug = workflow.subCategorySlug;
@@ -69,17 +69,17 @@ function validateTaxonomy(data: Config, categories: Catalog.Category[]): ErrorOb
 	return [];
 }
 
-function hasWorkflowObject(data: unknown): data is Config {
+function hasWorkflowObject(data: unknown): data is Data {
 	return (
 		typeof data === 'object' &&
 		data !== null &&
-		typeof (data as Config).workflow === 'object' &&
-		(data as Config).workflow !== null
+		typeof (data as Data).workflow === 'object' &&
+		(data as Data).workflow !== null
 	);
 }
 
-export function validate(data: unknown, options?: ValidateOptions): Result<Config, ErrorObject[]> {
-	const valid = isConfig(data);
+export function validate(data: unknown, options?: ValidateOptions): Result<Data, ErrorObject[]> {
+	const valid = isData(data);
 	const errors = [...(ajv.errors ?? [])];
 
 	// Always merge taxonomy when categories are provided — even if AJV already
@@ -97,5 +97,5 @@ export function validate(data: unknown, options?: ValidateOptions): Result<Confi
 		return Result.err(errors);
 	}
 
-	return Result.ok(data as Config);
+	return Result.ok(data as Data);
 }
