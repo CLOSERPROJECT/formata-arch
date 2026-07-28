@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CheckIcon, Pencil, TriangleAlert } from '@lucide/svelte';
+	import { CheckIcon, Cog, TriangleAlert } from '@lucide/svelte';
 	import { appData } from '$core/app/app.svelte.js';
 	import { app } from '$core/app/index.js';
 	import CategorySelect from '$core/workflow/components/category-select.svelte';
@@ -17,7 +17,7 @@
 	const workflowTree = new WorkflowTree();
 
 	setTopbar({
-		title: 'Stream / Workflow',
+		title: 'Stream',
 		left: navbarLeft,
 		right: navbarRight
 	});
@@ -35,7 +35,6 @@
 </script>
 
 {#snippet navbarLeft()}
-	<CategorySelect />
 	<div class="flex max-w-md grow items-center gap-1">
 		<Input
 			bind:value={appData.config.workflow.name}
@@ -45,19 +44,23 @@
 		<Popover.Root>
 			<Popover.Trigger>
 				{#snippet child({ props })}
-					<Button {...props} variant="ghost" size="sm" class="text-xs text-muted-foreground">
-						<Pencil size={12} />
-						<span>Edit description</span>
+					<Button {...props} variant="ghost" size="icon-sm" aria-label="Metadata">
+						<Cog size={14} />
 					</Button>
 				{/snippet}
 			</Popover.Trigger>
-			<Popover.Content>
-				<p class="mb-2 text-sm font-medium">Description</p>
-				<Textarea
-					bind:value={descriptionBinding.value}
-					placeholder="Workflow description"
-					class="w-full"
-				/>
+			<Popover.Content class="w-80">
+				<div class="flex flex-col gap-6">
+					<div class="flex flex-col gap-1.5">
+						<p class="text-sm font-medium">Description</p>
+						<Textarea
+							bind:value={descriptionBinding.value}
+							placeholder="Workflow description"
+							class="w-full"
+						/>
+					</div>
+					<CategorySelect />
+				</div>
 			</Popover.Content>
 		</Popover.Root>
 	</div>
