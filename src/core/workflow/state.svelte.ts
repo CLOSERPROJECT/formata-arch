@@ -1,5 +1,5 @@
+import type { Role } from '$core/catalog/schema.js';
 import type { Step } from '$core/config/types.js';
-import type { CatalogRole } from '$core/api/catalog-schema.js';
 
 import { app } from '$core/app/index.js';
 
@@ -19,6 +19,6 @@ const roles = $derived.by(() =>
 	app.catalog.roles.filter((role) => role.orgSlug === currentOrganization?.slug)
 );
 
-export function getAvailableRoleOptions(): CatalogRole[] {
+export function getAvailableRoleOptions(): Role[] {
 	return roles;
 }

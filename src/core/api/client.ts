@@ -3,29 +3,13 @@ import {
 	createDevAwareFetcher,
 	fetchJsonTask,
 	fetchTask,
-	ValidationError,
-	zod
+	ValidationError
 } from '$core/utils/fetch.js';
 import * as Task from 'true-myth/task';
 
-import { CatalogSchema, type Catalog } from './catalog-schema.js';
-import catalogMockData from './catalog.mock.json' with { type: 'json' };
 import streamMockData from './stream.mock.json' with { type: 'json' };
 
 //
-
-export function parseCatalog(payload: unknown) {
-	return zod(CatalogSchema)(payload);
-}
-
-export function loadCatalog(): Task.Task<Catalog, Error> {
-	return fetchJsonTask(
-		'/api/catalog',
-		zod(CatalogSchema),
-		undefined,
-		createDevAwareFetcher(() => catalogMockData)
-	);
-}
 
 export function loadStream(id: string): Task.Task<Config.Config, Error> {
 	return fetchJsonTask(

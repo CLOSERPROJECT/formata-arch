@@ -2,21 +2,21 @@ import z from 'zod';
 
 //
 
-export const CatalogOrganizationSchema = z.object({
+export const OrganizationSchema = z.object({
 	slug: z.string(),
 	name: z.string()
 });
 
-export type CatalogOrganization = z.infer<typeof CatalogOrganizationSchema>;
+export type Organization = z.infer<typeof OrganizationSchema>;
 
-export const CatalogRoleSchema = z.object({
+export const RoleSchema = z.object({
 	orgSlug: z.string(),
 	name: z.string(),
 	slug: z.string(),
 	palette: z.string().optional()
 });
 
-export type CatalogRole = z.infer<typeof CatalogRoleSchema>;
+export type Role = z.infer<typeof RoleSchema>;
 
 export const CategorySubTreeSchema = z.object({
 	slug: z.string(),
@@ -41,8 +41,8 @@ export const CategoryTreeSchema = z.object({
 export type CategoryTree = z.infer<typeof CategoryTreeSchema>;
 
 export const CatalogSchema = z.object({
-	organizations: z.array(CatalogOrganizationSchema),
-	roles: z.array(CatalogRoleSchema),
+	organizations: z.array(OrganizationSchema),
+	roles: z.array(RoleSchema),
 	categories: z.array(CategoryTreeSchema)
 });
 

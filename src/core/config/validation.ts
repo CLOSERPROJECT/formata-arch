@@ -1,4 +1,4 @@
-import type { CategoryTree } from '../api/catalog-schema.js';
+import type { CategoryTree } from '../catalog/schema.js';
 import Ajv2019, { type ErrorObject } from 'ajv/dist/2019.js';
 import { Result } from 'true-myth/result';
 

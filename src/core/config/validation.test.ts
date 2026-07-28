@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-import type { CategoryTree } from '../api/catalog-schema.js';
+import type { CategoryTree } from '../catalog/schema.js';
 
 import { deserialize } from './serde.js';
 import { validate } from './validation.js';

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { CategoryTree } from '$core/api/catalog-schema.js';
+import type { CategoryTree } from '$core/catalog/schema.js';
 import { appData } from '$core/app/app.svelte.js';
 import { DEFAULT_CONFIG } from '$core/app/utils.js';
 

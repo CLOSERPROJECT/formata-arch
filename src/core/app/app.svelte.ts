@@ -1,8 +1,7 @@
-import type { Catalog } from '$core/api/catalog-schema.js';
 import type { ErrorObject } from 'ajv';
 
-import { Config } from '$core';
-import { loadCatalog, loadStream, saveStream } from '$core/api/index.js';
+import { Catalog, Config } from '$core';
+import { loadStream, saveStream } from '$core/api/index.js';
 import { uniq } from 'lodash';
 import { lsSync } from 'rune-sync/localstorage';
 import { toast } from 'svelte-sonner';
@@ -21,7 +20,7 @@ type AppState = { type: 'loading' } | { type: 'loading-error'; error: Error } | 
 
 type EditData = { streamId: string; new: boolean };
 
-const EMPTY_CATALOG: Catalog = {
+const EMPTY_CATALOG: Catalog.Catalog = {
 	organizations: [],
 	roles: [],
 	categories: []
@@ -32,7 +31,7 @@ export class App {
 		this.init();
 	}
 
-	catalog: Catalog = $state(structuredClone(EMPTY_CATALOG));
+	catalog: Catalog.Catalog = $state(structuredClone(EMPTY_CATALOG));
 
 	configErrors: ErrorObject[] | undefined = $derived.by(() => {
 		const res = Config.validate(appData.config, { categories: this.catalog.categories });
@@ -57,7 +56,7 @@ export class App {
 	 * Loads catalog data and detects if the app is in edit mode.
 	 */
 	private async init() {
-		const res = await loadCatalog();
+		const res = await Catalog.load();
 		if (res.isOk) {
 			this.catalog = res.value;
 		} else {

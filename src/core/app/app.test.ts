@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import * as Task from 'true-myth/task';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { CategoryTree } from '../api/catalog-schema.js';
+import type { CategoryTree } from '../catalog/schema.js';
 
 import { deserialize } from '../config/serde.js';
 import { appData } from './app.svelte.js';
@@ -19,13 +19,19 @@ const SAMPLE_CATEGORIES: CategoryTree[] = [
 	}
 ];
 
-vi.mock('$core/api/index.js', () => ({
-	loadCatalog: () =>
+vi.mock('$core/catalog/client.js', () => ({
+	load: () =>
 		Task.resolve({
 			organizations: [],
 			roles: [],
 			categories: SAMPLE_CATEGORIES
 		}),
+	parse: () => {
+		throw new Error('unexpected Catalog.parse');
+	}
+}));
+
+vi.mock('$core/api/index.js', () => ({
 	loadStream: () => Task.reject(new Error('unexpected loadStream')),
 	saveStream: () => Task.resolve(undefined)
 }));
