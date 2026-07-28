@@ -26,7 +26,7 @@ export class App {
 	}
 
 	configErrors: ErrorObject[] | undefined = $derived.by(() => {
-		const res = Config.validate(appData.config, { categories: this.#availableCategories });
+		const res = Config.validate(appData.config, { categories: this.availableCategories });
 		if (res.isOk) {
 			return undefined;
 		} else {
@@ -34,20 +34,14 @@ export class App {
 		}
 	});
 
-	#availableOrganizations: Config.Organization[] = [];
-	get availableOrganizations() {
-		return this.#availableOrganizations;
-	}
+	availableOrganizations: Config.Organization[] = $state([]);
 
-	#availableRoles: Config.Role[] = [];
+	availableRoles: Config.Role[] = $state([]);
 	get roles() {
-		return this.#availableRoles;
+		return this.availableRoles;
 	}
 
-	#availableCategories: Config.CategoryTree[] = [];
-	get availableCategories() {
-		return this.#availableCategories;
-	}
+	availableCategories: Config.CategoryTree[] = $state([]);
 
 	#state = $state.raw<AppState>({ type: 'loading' });
 	get state() {
@@ -66,9 +60,9 @@ export class App {
 	private async init() {
 		const res = await loadOrganizationData();
 		if (res.isOk) {
-			this.#availableOrganizations = res.value.organizations;
-			this.#availableRoles = res.value.roles;
-			this.#availableCategories = res.value.categories;
+			this.availableOrganizations = res.value.organizations;
+			this.availableRoles = res.value.roles;
+			this.availableCategories = res.value.categories;
 		} else {
 			this.#state = { type: 'loading-error', error: res.error };
 			return;
@@ -105,12 +99,12 @@ export class App {
 		const selectedRoles: Config.Role[] = [];
 
 		for (const data of baseData) {
-			const organization = this.#availableOrganizations.find(
+			const organization = this.availableOrganizations.find(
 				(org) => org.slug === data.organization
 			);
 			if (organization) selectedOrganizations.push(organization);
 			for (const role of data.roles) {
-				const foundRole = this.#availableRoles.find(
+				const foundRole = this.availableRoles.find(
 					(r) => r.slug === role && r.orgSlug === data.organization
 				);
 				if (foundRole) selectedRoles.push(foundRole);

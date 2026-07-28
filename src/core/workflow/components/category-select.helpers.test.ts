@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import type { CategoryTree } from '$core/config/validation.js';
-import type { Config } from '$core/config/types.js';
+import { appData } from '$core/app/app.svelte.js';
+import { DEFAULT_CONFIG } from '$core/app/utils.js';
 
 import {
 	clearWorkflowCategorySlugs,
@@ -27,6 +28,10 @@ const SAMPLE_CATEGORIES: CategoryTree[] = [
 ];
 
 describe('category-select helpers', () => {
+	beforeEach(() => {
+		appData.config = structuredClone(DEFAULT_CONFIG);
+	});
+
 	it('filters sub-categories by selected category slug', () => {
 		expect(filteredSubCategories(SAMPLE_CATEGORIES, 'materials')).toEqual([
 			{ slug: 'metals', name: 'Metals' },
@@ -40,43 +45,49 @@ describe('category-select helpers', () => {
 	});
 
 	it('sets category slug and clears sub-category', () => {
-		const workflow = {
-			name: 'Test',
-			steps: [],
-			categorySlug: 'materials',
-			subCategorySlug: 'metals'
-		} as Config['workflow'];
+		appData.config = {
+			...appData.config,
+			workflow: {
+				...appData.config.workflow,
+				categorySlug: 'materials',
+				subCategorySlug: 'metals'
+			}
+		};
 
-		setWorkflowCategorySlug(workflow, 'supply-chain');
+		setWorkflowCategorySlug(appData.config.workflow, 'supply-chain');
 
-		expect(workflow.categorySlug).toBe('supply-chain');
-		expect(workflow.subCategorySlug).toBeUndefined();
+		expect(appData.config.workflow.categorySlug).toBe('supply-chain');
+		expect(appData.config.workflow.subCategorySlug).toBeUndefined();
 	});
 
 	it('sets sub-category slug without changing category', () => {
-		const workflow = {
-			name: 'Test',
-			steps: [],
-			categorySlug: 'materials'
-		} as Config['workflow'];
+		appData.config = {
+			...appData.config,
+			workflow: {
+				...appData.config.workflow,
+				categorySlug: 'materials'
+			}
+		};
 
-		setWorkflowSubCategorySlug(workflow, 'metals');
+		setWorkflowSubCategorySlug(appData.config.workflow, 'metals');
 
-		expect(workflow.categorySlug).toBe('materials');
-		expect(workflow.subCategorySlug).toBe('metals');
+		expect(appData.config.workflow.categorySlug).toBe('materials');
+		expect(appData.config.workflow.subCategorySlug).toBe('metals');
 	});
 
 	it('clears both category slugs', () => {
-		const workflow = {
-			name: 'Test',
-			steps: [],
-			categorySlug: 'materials',
-			subCategorySlug: 'metals'
-		} as Config['workflow'];
+		appData.config = {
+			...appData.config,
+			workflow: {
+				...appData.config.workflow,
+				categorySlug: 'materials',
+				subCategorySlug: 'metals'
+			}
+		};
 
-		clearWorkflowCategorySlugs(workflow);
+		clearWorkflowCategorySlugs(appData.config.workflow);
 
-		expect(workflow.categorySlug).toBeUndefined();
-		expect(workflow.subCategorySlug).toBeUndefined();
+		expect(appData.config.workflow.categorySlug).toBeUndefined();
+		expect(appData.config.workflow.subCategorySlug).toBeUndefined();
 	});
 });

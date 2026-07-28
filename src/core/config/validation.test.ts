@@ -145,6 +145,20 @@ describe('validate taxonomy (categories option passed)', () => {
 			: [];
 		expect(taxonomyOneSided).toHaveLength(0);
 	});
+
+	it('still includes both-absent taxonomy error when AJV also fails', async () => {
+		const config = await loadSampleConfig();
+		const { categorySlug: _c, subCategorySlug: _s, ...workflow } = config.workflow;
+		const invalidAndUncategorized = {
+			...config,
+			workflow: { ...workflow, steps: [] }
+		};
+
+		const result = validate(invalidAndUncategorized, { categories: SAMPLE_CATEGORIES });
+		expect(result.isOk).toBe(false);
+		expect(taxonomyErrorMessages(result)).toContain('Category and sub-category are required');
+		expect(result.isErr && result.error.some((e) => e.keyword !== 'taxonomy')).toBe(true);
+	});
 });
 
 describe('validate without categories option (import / deserialize)', () => {

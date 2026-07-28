@@ -85,12 +85,23 @@ function validateTaxonomy(data: Config, categories: CategoryTree[]): ErrorObject
 	return [];
 }
 
+function hasWorkflowObject(data: unknown): data is Config {
+	return (
+		typeof data === 'object' &&
+		data !== null &&
+		typeof (data as Config).workflow === 'object' &&
+		(data as Config).workflow !== null
+	);
+}
+
 export function validate(data: unknown, options?: ValidateOptions): Result<Config, ErrorObject[]> {
 	const valid = isConfig(data);
 	const errors = [...(ajv.errors ?? [])];
 
-	if (options?.categories !== undefined && valid) {
-		const taxonomyErrors = validateTaxonomy(data as Config, options.categories);
+	// Always merge taxonomy when categories are provided — even if AJV already
+	// failed — so missing category shows up in the same errors list as schema issues.
+	if (options?.categories !== undefined && hasWorkflowObject(data)) {
+		const taxonomyErrors = validateTaxonomy(data, options.categories);
 		const filteredTaxonomyErrors = taxonomyErrors.filter((err) => {
 			if (err.params?.reason !== 'one-sided') return true;
 			return !hasDependentRequiredError(errors);
