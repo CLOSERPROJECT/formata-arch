@@ -1,7 +1,7 @@
+import type { Catalog } from '$core/api/catalog-schema.js';
 import type { ErrorObject } from 'ajv';
 
 import { Config } from '$core';
-import type { Catalog } from '$core/api/catalog-schema.js';
 import { loadCatalog, loadStream, saveStream } from '$core/api/index.js';
 import { uniq } from 'lodash';
 import { lsSync } from 'rune-sync/localstorage';
@@ -96,9 +96,7 @@ export class App {
 		const selectedRoles: Config.Role[] = [];
 
 		for (const data of baseData) {
-			const organization = this.catalog.organizations.find(
-				(org) => org.slug === data.organization
-			);
+			const organization = this.catalog.organizations.find((org) => org.slug === data.organization);
 			if (organization) selectedOrganizations.push(organization);
 			for (const role of data.roles) {
 				const foundRole = this.catalog.roles.find(

@@ -1,11 +1,11 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as Task from 'true-myth/task';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { CategoryTree } from '../api/catalog-schema.js';
-import { deserialize } from '../config/serde.js';
 
+import { deserialize } from '../config/serde.js';
 import { appData } from './app.svelte.js';
 import { DEFAULT_CONFIG } from './utils.js';
 
