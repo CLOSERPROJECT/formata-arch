@@ -117,16 +117,31 @@ export class App {
 
 	/**
 	 * Saves the stream document to the server.
+	 * When the server reports that instances would be purged, asks for confirmation and retries.
 	 */
-	async save() {
+	async save(confirmPurge = false) {
 		if (!this.canSave) return;
 		this.#state = { type: 'loading' };
 
-		await Stream.save(this.build(), this.#editData?.streamId, this.#editData?.new).match({
-			Resolved: () => toast.success('Workflow saved successfully'),
-			Rejected: (error) => toast.error(error.message)
-		});
-
+		const result = await Stream.save(
+			this.build(),
+			this.#editData?.streamId,
+			this.#editData?.new,
+			confirmPurge
+		);
+		if (result.isOk) {
+			toast.success('Workflow saved successfully');
+			this.#state = { type: 'ready' };
+			return;
+		}
+		if (result.error instanceof Stream.PurgeConfirmRequiredError) {
+			this.#state = { type: 'ready' };
+			if (window.confirm(result.error.message)) {
+				await this.save(true);
+			}
+			return;
+		}
+		toast.error(result.error.message);
 		this.#state = { type: 'ready' };
 	}
 
