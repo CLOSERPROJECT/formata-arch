@@ -115,9 +115,24 @@ export class App {
 		return !this.errors;
 	}
 
+	#purgeConfirmMessage: string | undefined = $state(undefined);
+
+	get purgeConfirmOpen() {
+		return this.#purgeConfirmMessage !== undefined;
+	}
+	set purgeConfirmOpen(v: boolean) {
+		if (!v) {
+			this.#purgeConfirmMessage = undefined;
+		}
+	}
+
+	get purgeConfirmMessage() {
+		return this.#purgeConfirmMessage ?? '';
+	}
+
 	/**
 	 * Saves the stream document to the server.
-	 * When the server reports that instances would be purged, asks for confirmation and retries.
+	 * When the server reports that instances would be purged, opens a confirmation dialog and retries.
 	 */
 	async save(confirmPurge = false) {
 		if (!this.canSave) return;
@@ -136,13 +151,20 @@ export class App {
 		}
 		if (result.error instanceof Stream.PurgeConfirmRequiredError) {
 			this.#state = { type: 'ready' };
-			if (window.confirm(result.error.message)) {
-				await this.save(true);
-			}
+			this.#purgeConfirmMessage = result.error.message;
 			return;
 		}
 		toast.error(result.error.message);
 		this.#state = { type: 'ready' };
+	}
+
+	async confirmPurgeSave() {
+		this.#purgeConfirmMessage = undefined;
+		await this.save(true);
+	}
+
+	cancelPurgeSave() {
+		this.#purgeConfirmMessage = undefined;
 	}
 
 	/**

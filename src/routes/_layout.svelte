@@ -17,6 +17,7 @@
 	import { app } from '$core/app/index.js';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { type Snippet } from 'svelte';
 
@@ -74,5 +75,25 @@
 				</Alert.Description>
 			</Alert.Root>
 		{/if}
+	</AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root bind:open={app.purgeConfirmOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Danger zone — save stream</AlertDialog.Title>
+			<AlertDialog.Description>
+				{app.purgeConfirmMessage}
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel onclick={() => app.cancelPurgeSave()}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action
+				class={buttonVariants({ variant: 'destructive' })}
+				onclick={() => app.confirmPurgeSave()}
+			>
+				Continue
+			</AlertDialog.Action>
+		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
