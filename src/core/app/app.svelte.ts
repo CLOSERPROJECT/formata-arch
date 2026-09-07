@@ -9,15 +9,15 @@ import { DEFAULT_STREAM } from './utils.js';
 
 //
 
-export const appData = lsSync<{ config: Stream.Data }>('formata-config', {
+type EditData = { streamId: string; new: boolean };
+
+export const appData = lsSync<{ config: Stream.Data; edit?: EditData }>('formata-config', {
 	config: DEFAULT_STREAM
 });
 
 //
 
 type AppState = { type: 'loading' } | { type: 'loading-error'; error: Error } | { type: 'ready' };
-
-type EditData = { streamId: string; new: boolean };
 
 const EMPTY_CATALOG: Catalog.Data = {
 	organizations: [],
@@ -49,7 +49,37 @@ export class App {
 		return this.#state.type === 'loading' || this.#state.type === 'loading-error';
 	}
 
-	#editData: EditData | undefined;
+	/** Plain clone of the last known-good stream config (load / create / save / discard). */
+	#baselineConfig: Stream.Data | undefined = $state.raw(undefined);
+
+	private setBaseline(config: Stream.Data) {
+		this.#baselineConfig = structuredClone($state.snapshot(config));
+	}
+
+	private serializeConfigSnapshot(config: Stream.Data) {
+		return Stream.serialize($state.snapshot(config) as Stream.Data);
+	}
+
+	/**
+	 * True when the draft config serializes differently from the baseline.
+	 */
+	get hasChanges() {
+		if (this.#baselineConfig === undefined) return false;
+		const current = this.serializeConfigSnapshot(appData.config);
+		const baseline = this.serializeConfigSnapshot(this.#baselineConfig);
+		if (current.isErr || baseline.isErr) return false;
+		return current.value !== baseline.value;
+	}
+
+	/**
+	 * Restores `appData.config` from the baseline clone.
+	 */
+	discardChanges() {
+		if (this.#baselineConfig === undefined) return;
+		appData.config = structuredClone(this.#baselineConfig);
+		this.setBaseline(this.#baselineConfig);
+		toast.success('Changes discarded');
+	}
 
 	/**
 	 * Loads catalog data and detects if the app is in edit mode.
@@ -74,8 +104,26 @@ export class App {
 				return;
 			} else {
 				appData.config = res.value;
-				this.#editData = { streamId, new: newFlag === 'true' };
+				appData.edit = { streamId, new: newFlag === 'true' };
+				this.setBaseline(appData.config);
 			}
+		} else if (newFlag === 'true') {
+			// Intentional fresh create: discard draft edit identity and config.
+			appData.edit = undefined;
+			appData.config = structuredClone(DEFAULT_STREAM);
+			this.setBaseline(appData.config);
+		} else if (appData.edit?.streamId) {
+			// Resume — keep draft; fetch server copy for baseline only.
+			const res = await Stream.load(appData.edit.streamId);
+			if (res.isOk) {
+				this.setBaseline(res.value);
+			} else {
+				this.setBaseline(appData.config);
+			}
+		} else {
+			// Create mode (no persisted edit identity).
+			appData.edit = undefined;
+			this.setBaseline(appData.config);
 		}
 
 		this.#state = { type: 'ready' };
@@ -140,12 +188,13 @@ export class App {
 
 		const result = await Stream.save(
 			this.build(),
-			this.#editData?.streamId,
-			this.#editData?.new,
+			appData.edit?.streamId,
+			appData.edit?.new,
 			confirmPurge
 		);
 		if (result.isOk) {
 			toast.success('Workflow saved successfully');
+			this.setBaseline(appData.config);
 			this.#state = { type: 'ready' };
 			return;
 		}

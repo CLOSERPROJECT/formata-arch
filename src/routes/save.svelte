@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SaveIcon } from '@lucide/svelte';
+	import { RotateCcw, SaveIcon } from '@lucide/svelte';
 	import { app } from '$core/app/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -15,10 +15,18 @@
 </script>
 
 {#snippet topbarRight()}
-	<Button onclick={() => app.save()} disabled={!app.canSave}>
-		<SaveIcon />
-		Save
-	</Button>
+	<div class="flex items-center gap-2">
+		{#if app.hasChanges}
+			<Button variant="outline" onclick={() => app.discardChanges()} disabled={app.isLoading}>
+				<RotateCcw />
+				Discard changes
+			</Button>
+		{/if}
+		<Button onclick={() => app.save()} disabled={!app.canSave}>
+			<SaveIcon />
+			Save
+		</Button>
+	</div>
 {/snippet}
 
 <div class="flex min-h-0 grow flex-col gap-4 p-4">

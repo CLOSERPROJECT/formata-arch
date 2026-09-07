@@ -78,7 +78,12 @@
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
-<AlertDialog.Root bind:open={app.purgeConfirmOpen}>
+<AlertDialog.Root
+	open={app.purgeConfirmOpen}
+	onOpenChange={(open) => {
+		if (!open) app.cancelPurgeSave();
+	}}
+>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
 			<AlertDialog.Title>Danger zone — save stream</AlertDialog.Title>
@@ -90,7 +95,10 @@
 			<AlertDialog.Cancel onclick={() => app.cancelPurgeSave()}>Cancel</AlertDialog.Cancel>
 			<AlertDialog.Action
 				class={buttonVariants({ variant: 'destructive' })}
-				onclick={() => app.confirmPurgeSave()}
+				onclick={(e) => {
+					e.preventDefault();
+					void app.confirmPurgeSave();
+				}}
 			>
 				Continue
 			</AlertDialog.Action>
