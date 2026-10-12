@@ -1,4 +1,5 @@
 import type { ErrorObject } from 'ajv';
+import type Result from 'true-myth/result';
 
 import { Catalog, Stream } from '$core';
 import { uniq } from 'lodash';
@@ -217,20 +218,25 @@ export class App {
 	}
 
 	/**
-	 * Imports a stream document from a YAML string.
+	 * Validates import YAML without applying it to the draft.
 	 */
-	importFromString(text: string) {
-		const result = Stream.deserialize(text);
+	parseImport(text: string): Result<Stream.Data, Error> {
+		return Stream.deserialize(text);
+	}
+
+	/**
+	 * Imports a stream document from a YAML string.
+	 * Returns Ok on apply so callers can close UI without relying only on toast.
+	 */
+	importFromString(text: string): Result<Stream.Data, Error> {
+		const result = this.parseImport(text);
 		if (result.isErr) {
-			if (result.error instanceof Error) {
-				toast.error(result.error.message);
-			} else {
-				toast.error('Failed to import config');
-			}
-		} else {
-			appData.config = result.value;
-			toast.success('Config imported');
+			toast.error(result.error.message || 'Failed to import stream');
+			return result;
 		}
+		appData.config = result.value;
+		toast.success('Stream imported');
+		return result;
 	}
 
 	getSerialized() {
