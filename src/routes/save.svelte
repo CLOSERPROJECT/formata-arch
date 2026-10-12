@@ -17,14 +17,14 @@
 
 {#snippet topbarRight()}
 	<div class="flex items-center gap-2">
-		{#if app.hasChanges}
-			<Button variant="outline" onclick={() => app.discardChanges()} disabled={app.isLoading}>
-				<RotateCcw />
-				Discard changes
-			</Button>
-		{/if}
 		{#if !app.errors && serialized.isOk}
 			<CopyButton variant="outline" text={() => serialized.value}>Copy</CopyButton>
+		{/if}
+		{#if app.hasChanges}
+			<Button variant="outline" onclick={() => app.discardChanges()} disabled={app.isLoading}>
+				<RotateCcw class="text-warning" />
+				Discard changes
+			</Button>
 		{/if}
 		<Button onclick={() => app.save()} disabled={!app.canSave}>
 			<SaveIcon />
