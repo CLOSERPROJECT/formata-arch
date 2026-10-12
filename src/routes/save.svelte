@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { RotateCcw, SaveIcon } from '@lucide/svelte';
 	import { app } from '$core/app/index.js';
+	import { CopyButton } from '$lib/components/copy-button/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { highlight, highlighterPromise } from '$lib/shiki.js';
@@ -21,6 +22,9 @@
 				<RotateCcw />
 				Discard changes
 			</Button>
+		{/if}
+		{#if !app.errors && serialized.isOk}
+			<CopyButton variant="outline" text={() => serialized.value}>Copy</CopyButton>
 		{/if}
 		<Button onclick={() => app.save()} disabled={!app.canSave}>
 			<SaveIcon />
