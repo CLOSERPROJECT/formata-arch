@@ -2,11 +2,11 @@
 	import type { Icon } from '$lib/types.js';
 
 	import { HouseIcon, IdCardIcon, SaveIcon, UploadIcon, WaypointsIcon } from '@lucide/svelte';
-	import { app } from '$core/app/index.js';
 	import ThemeButton from '$lib/components/theme-button.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 
+	import ImportStreamDialog from './import-stream-dialog.svelte';
 	import { isActive, p } from './_index.js';
 
 	//
@@ -20,35 +20,10 @@
 
 	//
 
-	let importInput: HTMLInputElement | undefined = $state();
-
-	function onImportChange(e: Event) {
-		const input = e.target as HTMLInputElement;
-		const file = input.files?.[0];
-		input.value = '';
-		if (!file) return;
-		const reader = new FileReader();
-		reader.onload = () => {
-			const text = reader.result as string;
-			app.importFromString(text);
-		};
-		reader.readAsText(file, 'utf-8');
-	}
-
-	function triggerImport() {
-		importInput?.click();
-	}
+	let importOpen = $state(false);
 </script>
 
-<input
-	type="file"
-	accept=".yaml,.yml,application/x-yaml,text/yaml"
-	class="hidden"
-	bind:this={importInput}
-	onchange={onImportChange}
-	aria-hidden="true"
-	tabindex="-1"
-/>
+<ImportStreamDialog bind:open={importOpen} />
 
 <Sidebar.Root>
 	<Sidebar.Header class="flex h-[53px] flex-row items-center justify-between border-b px-4">
@@ -69,7 +44,7 @@
 			<Sidebar.Menu>
 				{@render sidebarLinkButton({ label: 'Save', href: p('/save'), icon: SaveIcon })}
 				<Sidebar.MenuItem>
-					<Sidebar.MenuButton onclick={triggerImport}>
+					<Sidebar.MenuButton onclick={() => (importOpen = true)}>
 						<UploadIcon />
 						Import
 					</Sidebar.MenuButton>
