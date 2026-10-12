@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { RotateCcw, SaveIcon } from '@lucide/svelte';
 	import { app } from '$core/app/index.js';
+	import { CopyButton } from '$lib/components/copy-button/index.js';
 	import * as Alert from '$lib/components/ui/alert/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { highlight, highlighterPromise } from '$lib/shiki.js';
@@ -16,9 +17,12 @@
 
 {#snippet topbarRight()}
 	<div class="flex items-center gap-2">
+		{#if !app.errors && serialized.isOk}
+			<CopyButton variant="outline" text={() => serialized.value}>Copy</CopyButton>
+		{/if}
 		{#if app.hasChanges}
 			<Button variant="outline" onclick={() => app.discardChanges()} disabled={app.isLoading}>
-				<RotateCcw />
+				<RotateCcw class="text-warning" />
 				Discard changes
 			</Button>
 		{/if}

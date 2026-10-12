@@ -4,8 +4,13 @@ import { Catalog, Stream } from '$core';
 import { uniq } from 'lodash';
 import { lsSync } from 'rune-sync/localstorage';
 import { toast } from 'svelte-sonner';
+import { parse as parseYaml } from 'yaml';
+
+import type { ParseImportResult } from './import-result.js';
 
 import { DEFAULT_STREAM } from './utils.js';
+
+export type { ParseImportResult } from './import-result.js';
 
 //
 
@@ -217,23 +222,59 @@ export class App {
 	}
 
 	/**
-	 * Imports a stream document from a YAML string.
+	 * Two-tier import parse: Import-blocking (YAML/shape) vs Composer-fixable (schema/taxonomy).
+	 * Does not apply the draft. Stream.deserialize stays strict for serde.
 	 */
-	importFromString(text: string) {
-		const result = Stream.deserialize(text);
-		if (result.isErr) {
-			if (result.error instanceof Error) {
-				toast.error(result.error.message);
-			} else {
-				toast.error('Failed to import config');
-			}
-		} else {
-			appData.config = result.value;
-			toast.success('Config imported');
+	parseImport(text: string): ParseImportResult {
+		let data: unknown;
+		try {
+			data = parseYaml(text);
+		} catch (e) {
+			return {
+				status: 'blocking',
+				message: e instanceof Error ? e.message : String(e)
+			};
 		}
+
+		if (!hasWorkflowObject(data)) {
+			return {
+				status: 'blocking',
+				message: 'Stream document must be an object with a workflow object'
+			};
+		}
+
+		const validation = Stream.validate(data, { categories: this.catalog.categories });
+		const fixable = validation.isErr ? validation.error : [];
+		return { status: 'loadable', data, fixable };
+	}
+
+	/**
+	 * Imports a stream document from a YAML string.
+	 * Blocking → toast error; loadable → apply draft (fixable issues still load).
+	 */
+	importFromString(text: string): ParseImportResult {
+		const result = this.parseImport(text);
+		if (result.status === 'blocking') {
+			toast.error(result.message || 'Failed to import stream');
+			return result;
+		}
+		appData.config = result.data;
+		toast.success(
+			result.fixable.length > 0 ? 'Stream imported with issues' : 'Stream imported'
+		);
+		return result;
 	}
 
 	getSerialized() {
 		return Stream.serialize(this.build());
 	}
+}
+
+function hasWorkflowObject(data: unknown): data is Stream.Data {
+	return (
+		typeof data === 'object' &&
+		data !== null &&
+		typeof (data as Stream.Data).workflow === 'object' &&
+		(data as Stream.Data).workflow !== null
+	);
 }

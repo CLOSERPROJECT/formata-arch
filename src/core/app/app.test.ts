@@ -118,3 +118,100 @@ describe('App errors / canSave wiring', () => {
 		expect(app.canSave).toBe(true);
 	});
 });
+
+describe('App parseImport tiers', () => {
+	beforeEach(() => {
+		appData.config = structuredClone(DEFAULT_STREAM);
+		vi.stubGlobal('window', { location: { search: '', origin: 'http://localhost' } });
+	});
+
+	afterEach(() => {
+		vi.unstubAllGlobals();
+	});
+
+	it('returns blocking for invalid YAML', async () => {
+		const { App } = await import('./app.svelte.js');
+		const app = new App();
+		await flushMicrotasks();
+
+		const result = app.parseImport('workflow: [unterminated');
+		expect(result.status).toBe('blocking');
+		if (result.status === 'blocking') {
+			expect(result.message.length).toBeGreaterThan(0);
+		}
+	});
+
+	it('returns blocking when workflow object is missing', async () => {
+		const { App } = await import('./app.svelte.js');
+		const app = new App();
+		await flushMicrotasks();
+
+		const result = app.parseImport('organizations: []\nroles: []\n');
+		expect(result).toEqual({
+			status: 'blocking',
+			message: 'Stream document must be an object with a workflow object'
+		});
+	});
+
+	it('returns loadable with empty fixable for a valid sample', async () => {
+		const { App } = await import('./app.svelte.js');
+		const app = new App();
+		await flushMicrotasks();
+
+		const url = new URL('../stream/stream.sample.yaml', import.meta.url);
+		const raw = await readFile(fileURLToPath(url), 'utf-8');
+		const result = app.parseImport(raw);
+
+		expect(result.status).toBe('loadable');
+		if (result.status === 'loadable') {
+			expect(result.fixable).toEqual([]);
+			expect(result.data.workflow.name).toBeTruthy();
+		}
+	});
+
+	it('returns loadable with fixable taxonomy issues', async () => {
+		const { App } = await import('./app.svelte.js');
+		const app = new App();
+		await flushMicrotasks();
+
+		const config = await loadSampleConfig();
+		const { stringify } = await import('yaml');
+		const yaml = stringify({
+			...config,
+			workflow: {
+				...config.workflow,
+				categorySlug: 'unknown-cat',
+				subCategorySlug: 'metals'
+			}
+		});
+
+		const result = app.parseImport(yaml);
+		expect(result.status).toBe('loadable');
+		if (result.status === 'loadable') {
+			expect(result.fixable.length).toBeGreaterThan(0);
+			expect(result.fixable.some((e) => e.keyword === 'taxonomy')).toBe(true);
+			expect(result.data.workflow.categorySlug).toBe('unknown-cat');
+		}
+	});
+
+	it('importFromString applies loadable data with fixable issues', async () => {
+		const { App } = await import('./app.svelte.js');
+		const app = new App();
+		await flushMicrotasks();
+
+		const config = await loadSampleConfig();
+		const { stringify } = await import('yaml');
+		const yaml = stringify({
+			...config,
+			workflow: {
+				...config.workflow,
+				categorySlug: 'unknown-cat',
+				subCategorySlug: 'metals'
+			}
+		});
+
+		const result = app.importFromString(yaml);
+		expect(result.status).toBe('loadable');
+		expect(appData.config.workflow.categorySlug).toBe('unknown-cat');
+	});
+});
