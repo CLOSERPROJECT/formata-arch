@@ -20,6 +20,7 @@
 
 	//
 
+	const sidebar = Sidebar.useSidebar();
 	let importOpen = $state(false);
 </script>
 
@@ -44,7 +45,13 @@
 			<Sidebar.Menu>
 				{@render sidebarLinkButton({ label: 'Save', href: p('/save'), icon: SaveIcon })}
 				<Sidebar.MenuItem>
-					<Sidebar.MenuButton onclick={() => (importOpen = true)}>
+					<Sidebar.MenuButton
+						onclick={() => {
+							importOpen = true;
+							sidebar.setOpen(false);
+							sidebar.setOpenMobile(false);
+						}}
+					>
 						<UploadIcon />
 						Import
 					</Sidebar.MenuButton>
